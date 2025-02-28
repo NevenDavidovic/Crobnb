@@ -1,0 +1,17 @@
+@import "@fontsource/mulish/300.css";
+@import "@fontsource/mulish/400.css";
+@import "@fontsource/mulish/500.css";
+@import "@fontsource/mulish/700.css";
+
+@import "@fontsource/museomoderno/400.css";
+@import "@fontsource/museomoderno/700.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "Mulish", system-ui, sans-serif;
+  }
+}
