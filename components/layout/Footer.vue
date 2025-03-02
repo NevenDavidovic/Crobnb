@@ -1,7 +1,7 @@
 <template>
   <footer class="bg-[#EEF4F7] py-10 border-t border-gray-40">
     <div
-      class="flex md:flex-row flex-col-reverse justify-between max-w-1200 mx-auto px-8"
+      class="flex md:flex-row flex-col-reverse justify-between max-w-1200 mx-auto px-4"
     >
       <div
         class="flex md:flex-row flex-col gap-[46px] items-center md:items-start"

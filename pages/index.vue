@@ -3,7 +3,7 @@
     <HomepageHeroSection />
     <SearchFilterComponent />
 
-    <div class="max-w-1200 mx-auto px-8 pt-24 pb-16">
+    <div class="max-w-1200 mx-auto pt-24 px-4 pb-16">
       <h1 class="text-2xl font-bold mb-8">Tip smještaja</h1>
       <HomepageTipoviSmjestaja
         :tipovi="tipovi"
@@ -13,7 +13,7 @@
       />
     </div>
 
-    <div class="max-w-1200 mx-auto px-8 py-8">
+    <div class="max-w-1200 mx-auto py-8 px-4">
       <h1 class="text-2xl font-bold mb-8">Regije Hrvatske</h1>
       <HomepageRegijeGrid
         :regije="regije"
@@ -24,40 +24,39 @@
     </div>
 
     <div class="mx-auto py-16 bg-primary-5">
-      <div
-        class="flex justify-between items-center mb-8 max-w-1200 mx-auto px-4"
-      >
-        <h1 class="text-2xl font-bold">Novosti</h1>
-        <NuxtLink
-          to="#"
-          class="text-blue-600 hover:text-blue-800 flex items-center"
-        >
-          Vidi sve novosti
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4 ml-1"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+      <div class="mx-auto max-w-1200 px-4">
+        <div class="flex justify-between items-center mb-8 mx-auto">
+          <h1 class="text-2xl font-bold">Novosti</h1>
+          <NuxtLink
+            to="#"
+            class="text-blue-600 hover:text-blue-800 flex items-center"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </NuxtLink>
-      </div>
+            Vidi sve novosti
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 ml-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </NuxtLink>
+        </div>
 
-      <NovostiGrid
-        :novosti="novosti"
-        :is-loading="novostiLoading"
-        :error="novostiError"
-        :get-hero-image-url="getHeroImageUrl"
-        :format-date="formatDate"
-        class="max-w-1200 mx-auto px-4"
-      />
+        <NovostiGrid
+          :novosti="novosti"
+          :is-loading="novostiLoading"
+          :error="novostiError"
+          :get-hero-image-url="getHeroImageUrl"
+          :format-date="formatDate"
+        />
+      </div>
     </div>
     <HomepageAboutUs class="mb-44" />
   </div>

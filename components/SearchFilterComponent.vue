@@ -1,6 +1,6 @@
 <template>
-  <div class="w-full z-10 relative p-8">
-    <div class="max-w-6xl mx-auto bg-white rounded-lg p-6 shadow-md">
+  <div class="w-full z-10 relative py-4 max-w-1200 mx-auto px-4">
+    <div class="bg-white rounded-lg p-6 shadow-md">
       <div class="flex flex-col md:flex-row items-end gap-4">
         <!-- Location filter -->
         <div class="flex-1">

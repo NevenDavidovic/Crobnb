@@ -1,5 +1,5 @@
 <template>
-  <div class="px-8">
+  <div>
     <div v-if="isLoading" class="flex justify-center">
       <div class="text-gray-500">Loading news...</div>
     </div>

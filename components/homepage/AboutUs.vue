@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-1200 mx-auto py-12 px-8">
+  <div class="max-w-1200 mx-auto py-12 px-4">
     <h2 class="text-3xl font-bold mb-8">O nama</h2>
 
     <div class="flex flex-col md:flex-row items-center justify-between gap-8">

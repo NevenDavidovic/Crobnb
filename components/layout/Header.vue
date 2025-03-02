@@ -1,9 +1,9 @@
 <template>
   <header class="w-full border-b border-gray-200">
     <div
-      class="container mx-auto px-8 py-2 flex items-center justify-between h-[82px] max-w-1200"
+      class="mx-auto py-2 flex items-center justify-between h-[82px] max-w-1200 px-4"
     >
-      <NuxtLink to="/" class="flex items-center">
+      <NuxtLink to="/" class="flex items-center pl-2">
         <img src="/images/logo.svg" alt="Crobnb" class="w-5 h-5" />
         <span class="ml-2 text-gray-100 text-xl font-medium font-museo"
           >Crobnb</span
@@ -39,7 +39,7 @@
           </svg>
         </button>
 
-        <div class="hidden md:block">
+        <div class="hidden md:block pr-2">
           <HeaderLanguageSelector />
         </div>
 

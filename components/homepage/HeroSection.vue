@@ -13,18 +13,14 @@
         class="absolute inset-0 bg-gradient-to-r from-teal-900/30 to-transparent"
       ></div>
 
-      <div
-        class="absolute inset-0 flex flex-col justify-center px-6 sm:px-10 lg:px-20"
-      >
-        <div class="max-w-1200 mx-auto w-full">
+      <div class="absolute inset-0 flex flex-col justify-center">
+        <div class="w-full max-w-1200 mx-auto px-4">
           <h1
-            class="text-3xl md:text-4xl lg:text-[55px] font-bold text-primary-100 px-4 max-w-[700px] !leading-normal"
+            class="text-3xl md:text-4xl lg:text-[55px] font-bold text-primary-100 max-w-[700px] !leading-normal"
           >
             Otkrijte najbolje smještaje diljem Hrvatske
           </h1>
-          <p
-            class="mt-3 md:mt-4 text-base md:text-lg text-gray-100 max-w-xl px-4"
-          >
+          <p class="mt-3 md:mt-4 text-base md:text-lg text-gray-100 max-w-xl">
             {{ subheading }}
           </p>
         </div>
