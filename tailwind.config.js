@@ -26,7 +26,7 @@ module.exports = {
         museo: ["MuseoModerno", "cursive"],
       },
       maxWidth: {
-        1200: "1200px",
+        1200: "1216px",
         1344: "1344px",
       },
       colors: {

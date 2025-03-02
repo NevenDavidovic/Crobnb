@@ -1,7 +1,7 @@
 <template>
   <header class="w-full border-b border-gray-200">
     <div
-      class="container mx-auto px-4 py-2 flex items-center justify-between h-[82px] max-w-1200"
+      class="container mx-auto px-8 py-2 flex items-center justify-between h-[82px] max-w-1200"
     >
       <NuxtLink to="/" class="flex items-center">
         <img src="/images/logo.svg" alt="Crobnb" class="w-5 h-5" />
@@ -85,22 +85,29 @@
   </header>
 </template>
 
-<script setup lang="ts">
-const navItems = [
-  { label: "Tipovi smještaja", path: "#" },
-  { label: "Regije", path: "#" },
-  { label: "Novosti", path: "#" },
-];
+<script lang="ts">
+export default defineComponent({
+  setup() {
+    const navItems = [
+      { label: "Tipovi smještaja", path: "#" },
+      { label: "Regije", path: "#" },
+      { label: "Novosti", path: "#" },
+    ];
 
-// Add mobile-specific navigation items
-const mobileNavItems = [
-  ...navItems,
-  { label: "Favoriti", path: "#" }, // Add Favoriti only for mobile
-];
+    const mobileNavItems = [...navItems, { label: "Favoriti", path: "#" }];
 
-const mobileMenuOpen = ref(false);
+    const mobileMenuOpen = ref(false);
 
-const toggleMobileMenu = () => {
-  mobileMenuOpen.value = !mobileMenuOpen.value;
-};
+    const toggleMobileMenu = () => {
+      mobileMenuOpen.value = !mobileMenuOpen.value;
+    };
+
+    return {
+      navItems,
+      mobileNavItems,
+      mobileMenuOpen,
+      toggleMobileMenu,
+    };
+  },
+});
 </script>

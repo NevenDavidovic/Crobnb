@@ -1,4 +1,5 @@
 <template>
+  <!-- Template remains unchanged -->
   <div class="relative" ref="dropdownElement">
     <div @click="toggleDropdown" class="flex items-center cursor-pointer">
       <div
@@ -55,49 +56,71 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 interface Language {
   code: string;
   name: string;
   label: string;
 }
 
-const languages: Language[] = [
-  { code: "hr", name: "Hrvatski", label: "HRV" },
-  { code: "en", name: "English", label: "ENG" },
-];
+export default defineComponent({
+  name: "HeaderLanguageSelector",
 
-const isOpen = ref(false);
-const selectedLanguage = ref(languages[0]);
-const dropdownElement = ref<HTMLElement | null>(null);
+  setup() {
+    // Reactive state
+    const languages: Language[] = [
+      { code: "hr", name: "Hrvatski", label: "HRV" },
+      { code: "en", name: "English", label: "ENG" },
+    ];
 
-const getFlagSrc = (code: string) => `/images/${code}-flag.svg`;
+    const isOpen = ref(false);
+    const selectedLanguage = ref<Language>(languages[0]);
+    const dropdownElement = ref<HTMLElement | null>(null);
 
-const toggleDropdown = () => {
-  isOpen.value = !isOpen.value;
-};
+    // Methods
+    const getFlagSrc = (code: string) => `/images/${code}-flag.svg`;
 
-const clickOutsideHandler = (event: MouseEvent) => {
-  const target = event.target as HTMLElement;
-  if (dropdownElement.value && !dropdownElement.value.contains(target)) {
-    isOpen.value = false;
-  }
-};
+    const toggleDropdown = () => {
+      isOpen.value = !isOpen.value;
+    };
 
-watch(isOpen, (newVal: boolean) => {
-  if (newVal) {
-    window.addEventListener("click", clickOutsideHandler);
-  } else {
-    window.removeEventListener("click", clickOutsideHandler);
-  }
+    const selectLanguage = (language: Language) => {
+      selectedLanguage.value = language;
+      isOpen.value = false;
+    };
+
+    // Event handlers
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (dropdownElement.value && !dropdownElement.value.contains(target)) {
+        isOpen.value = false;
+      }
+    };
+
+    // Watchers
+    watch(isOpen, (newValue: boolean) => {
+      if (newValue) {
+        window.addEventListener("click", handleClickOutside);
+      } else {
+        window.removeEventListener("click", handleClickOutside);
+      }
+    });
+
+    // Lifecycle hooks
+    onUnmounted(() => {
+      window.removeEventListener("click", handleClickOutside);
+    });
+
+    // Expose to template
+    return {
+      languages,
+      isOpen,
+      selectedLanguage,
+      dropdownElement,
+      getFlagSrc,
+      toggleDropdown,
+      selectLanguage,
+    };
+  },
 });
-
-onUnmounted(() => {
-  window.removeEventListener("click", clickOutsideHandler);
-});
-
-const selectLanguage = (language: Language) => {
-  selectedLanguage.value = language;
-  isOpen.value = false;
-};
 </script>

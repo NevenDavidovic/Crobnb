@@ -1,7 +1,7 @@
 <template>
   <footer class="bg-[#EEF4F7] py-10 border-t border-gray-40">
     <div
-      class="flex md:flex-row flex-col-reverse justify-between max-w-1200 mx-auto px-4"
+      class="flex md:flex-row flex-col-reverse justify-between max-w-1200 mx-auto px-8"
     >
       <div
         class="flex md:flex-row flex-col gap-[46px] items-center md:items-start"
@@ -141,38 +141,55 @@
   </footer>
 </template>
 
-<script setup lang="ts">
-const accommodationTypes = [
-  { label: "Hoteli", link: "/tipovi-smjestaja/hoteli" },
-  { label: "Apartmani", link: "/tipovi-smjestaja/apartmani" },
-  { label: "Mobilne kućice", link: "/tipovi-smjestaja/mobilne-kucice" },
-  { label: "Ville", link: "/tipovi-smjestaja/ville" },
-  { label: "Turistička naselja", link: "/tipovi-smjestaja/turisticka-naselja" },
-  { label: "Skijališta", link: "/tipovi-smjestaja/skijalista" },
-];
+<script lang="ts">
+export default defineComponent({
+  name: "AppFooter",
 
-const regions = [
-  { label: "Istočna Hrvatska", link: "/regije/istocna-hrvatska" },
-  { label: "Središnja Hrvatska", link: "/regije/sredisnja-hrvatska" },
-  { label: "Gorska Hrvatska", link: "/regije/gorska-hrvatska" },
-  { label: "Sjeverna Dalmacija", link: "/regije/sjeverna-dalmacija" },
-  { label: "Središnja Dalmacija", link: "/regije/sredisnja-dalmacija" },
-  { label: "Južna Dalmacija", link: "/regije/juzna-dalmacija" },
-];
+  setup() {
+    const accommodationTypes = [
+      { label: "Hoteli", link: "/tipovi-smjestaja/hoteli" },
+      { label: "Apartmani", link: "/tipovi-smjestaja/apartmani" },
+      { label: "Mobilne kućice", link: "/tipovi-smjestaja/mobilne-kucice" },
+      { label: "Ville", link: "/tipovi-smjestaja/ville" },
+      {
+        label: "Turistička naselja",
+        link: "/tipovi-smjestaja/turisticka-naselja",
+      },
+      { label: "Skijališta", link: "/tipovi-smjestaja/skijalista" },
+    ];
 
-const currentYear = new Date().getFullYear();
+    const regions = [
+      { label: "Istočna Hrvatska", link: "/regije/istocna-hrvatska" },
+      { label: "Središnja Hrvatska", link: "/regije/sredisnja-hrvatska" },
+      { label: "Gorska Hrvatska", link: "/regije/gorska-hrvatska" },
+      { label: "Sjeverna Dalmacija", link: "/regije/sjeverna-dalmacija" },
+      { label: "Središnja Dalmacija", link: "/regije/sredisnja-dalmacija" },
+      { label: "Južna Dalmacija", link: "/regije/juzna-dalmacija" },
+    ];
 
-const scrollToTop = () => {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
-};
+    const currentYear = new Date().getFullYear();
 
-const scrollToBottom = () => {
-  window.scrollTo({
-    top: document.body.scrollHeight,
-    behavior: "smooth",
-  });
-};
+    const scrollToTop = () => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    };
+
+    const scrollToBottom = () => {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
+    };
+
+    return {
+      accommodationTypes,
+      regions,
+      currentYear,
+      scrollToTop,
+      scrollToBottom,
+    };
+  },
+});
 </script>
