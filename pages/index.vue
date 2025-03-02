@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HomepageHeroSection />
+    <HomepageHeroSection class="hidden md:block" />
     <SearchFilterComponent />
 
     <div class="max-w-1200 mx-auto pt-24 px-4 pb-16">
