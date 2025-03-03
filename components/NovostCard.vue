@@ -34,9 +34,13 @@
 
     <div class="p-4">
       <div class="flex justify-between items-center mb-2 text-sm">
-        <span class="text-gray-500 uppercase">{{
-          novost.kategorija_novosti?.naziv
-        }}</span>
+        <span
+          v-if="novost.kategorija_novosti?.naziv"
+          class="text-gray-500 uppercase"
+        >
+          {{ novost.kategorija_novosti.naziv }}
+        </span>
+        <span v-else class="text-gray-500 uppercase">Općenito</span>
         <span class="text-gray-500">{{ formatDate(novost.date_created) }}</span>
       </div>
 
@@ -72,6 +76,12 @@
 <script lang="ts">
 import type { Novost } from "~/types/directus/index";
 
+interface NovostCardProps {
+  novost: Novost;
+  getHeroImageUrl: (novost: Novost) => string | null;
+  formatDate: (dateString: string) => string;
+}
+
 export default defineComponent({
   props: {
     novost: {
@@ -88,7 +98,9 @@ export default defineComponent({
     },
   },
 
-  setup() {
+  setup({ novost, getHeroImageUrl, formatDate }: NovostCardProps) {
+    console.log("Category info:", novost?.kategorija_novosti);
+
     return {};
   },
 });

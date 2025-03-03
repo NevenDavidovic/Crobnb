@@ -27,6 +27,14 @@
 <script lang="ts">
 import type { Novost } from "~/types/directus/index";
 
+interface NovostiGridProps {
+  novosti: Novost[];
+  isLoading: boolean;
+  error: string | null;
+  getHeroImageUrl: (novost: Novost) => string | null;
+  formatDate: (dateString: string) => string;
+}
+
 export default defineComponent({
   props: {
     novosti: {
@@ -51,7 +59,46 @@ export default defineComponent({
     },
   },
 
-  setup() {
+  setup({
+    novosti,
+    isLoading,
+    error,
+    getHeroImageUrl,
+    formatDate,
+  }: NovostiGridProps) {
+    // Add debugging to check what data we're receiving
+    onMounted(() => {
+      console.log("NovostiGrid - novosti array:", novosti);
+
+      if (novosti.length > 0) {
+        console.log("NovostiGrid - First item:", novosti[0]);
+        console.log(
+          "NovostiGrid - First item has kategorija_novosti?",
+          !!novosti[0].kategorija_novosti
+        );
+
+        if (novosti[0].kategorija_novosti) {
+          console.log(
+            "NovostiGrid - First item kategorija_novosti:",
+            novosti[0].kategorija_novosti
+          );
+          console.log(
+            "NovostiGrid - First item kategorija_novosti.naziv:",
+            novosti[0].kategorija_novosti.naziv
+          );
+        }
+
+        // Log all novosti items to check which ones have kategorija_novosti
+        novosti.forEach((item, index) => {
+          console.log(
+            `NovostiGrid - Item ${index} (ID: ${item.id}) has kategorija_novosti:`,
+            !!item.kategorija_novosti,
+            item.kategorija_novosti_id
+          );
+        });
+      }
+    });
+
     return {};
   },
 });

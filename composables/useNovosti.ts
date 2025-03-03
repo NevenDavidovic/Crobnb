@@ -17,6 +17,8 @@ export const useNovosti = () => {
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
+  const categoriesMap = ref<Record<number, KategorijaNovosti>>({});
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("hr-HR", {
@@ -26,25 +28,54 @@ export const useNovosti = () => {
     });
   };
 
+  const ensureCategoriesLoaded = async () => {
+    if (Object.keys(categoriesMap.value).length === 0) {
+      try {
+        const response = await $getKategorijeNovosti();
+        kategorijeNovosti.value = response.map((item: any) => ({
+          id: item.id,
+          naziv: item.naziv,
+        }));
+
+        kategorijeNovosti.value.forEach((cat) => {
+          categoriesMap.value[cat.id] = cat;
+        });
+
+        console.log("Categories loaded:", kategorijeNovosti.value);
+      } catch (err) {
+        console.error("Error loading categories:", err);
+      }
+    }
+  };
+
   const fetchNovosti = async (limit?: number) => {
     isLoading.value = true;
     error.value = null;
 
     try {
+      await ensureCategoriesLoaded();
+
       const response = await $getNovosti(limit);
 
-      novosti.value = response.map((item: any) => ({
-        id: item.id,
-        date_created: item.date_created,
-        date_updated: item.date_updated,
-        naslov: item.naslov,
-        kratki_opis: item.kratki_opis,
-        sadrzaj: item.sadrzaj,
-        hero_slika: item.hero_slika,
-        kategorija_novosti_id: item.kategorija_novosti_id,
-        kategorija_novosti: item.kategorija_novosti,
-        slug: item.slug,
-      }));
+      novosti.value = response.map((item: any) => {
+        const categoryId = item.kategorija_novosti_id;
+        const category = categoryId
+          ? categoriesMap.value[categoryId]
+          : undefined;
+
+        return {
+          id: item.id,
+          date_created: item.date_created,
+          date_updated: item.date_updated,
+          naslov: item.naslov,
+          kratki_opis: item.kratki_opis,
+          sadrzaj: item.sadrzaj,
+          hero_slika: item.hero_slika,
+          kategorija_novosti_id: item.kategorija_novosti_id,
+          kategorija_novosti: category,
+          slug: item.slug,
+        };
+      });
 
       isLoading.value = false;
     } catch (err) {
@@ -62,20 +93,29 @@ export const useNovosti = () => {
     error.value = null;
 
     try {
+      await ensureCategoriesLoaded();
+
       const response = await $getNovostiByKategorija(kategorijaId, limit);
 
-      novosti.value = response.map((item: any) => ({
-        id: item.id,
-        date_created: item.date_created,
-        date_updated: item.date_updated,
-        naslov: item.naslov,
-        kratki_opis: item.kratki_opis,
-        sadrzaj: item.sadrzaj,
-        hero_slika: item.hero_slika,
-        kategorija_novosti_id: item.kategorija_novosti_id,
-        kategorija_novosti: item.kategorija_novosti,
-        slug: item.slug,
-      }));
+      novosti.value = response.map((item: any) => {
+        const categoryId = item.kategorija_novosti_id;
+        const category = categoryId
+          ? categoriesMap.value[categoryId]
+          : undefined;
+
+        return {
+          id: item.id,
+          date_created: item.date_created,
+          date_updated: item.date_updated,
+          naslov: item.naslov,
+          kratki_opis: item.kratki_opis,
+          sadrzaj: item.sadrzaj,
+          hero_slika: item.hero_slika,
+          kategorija_novosti_id: item.kategorija_novosti_id,
+          kategorija_novosti: category,
+          slug: item.slug,
+        };
+      });
 
       isLoading.value = false;
     } catch (err) {
@@ -93,7 +133,12 @@ export const useNovosti = () => {
     error.value = null;
 
     try {
+      await ensureCategoriesLoaded();
+
       const response = await $getNovost(id);
+
+      const categoryId = response.kategorija_novosti_id;
+      const category = categoryId ? categoriesMap.value[categoryId] : undefined;
 
       currentNovost.value = {
         id: response.id,
@@ -104,7 +149,7 @@ export const useNovosti = () => {
         sadrzaj: response.sadrzaj,
         hero_slika: response.hero_slika,
         kategorija_novosti_id: response.kategorija_novosti_id,
-        kategorija_novosti: response.kategorija_novosti,
+        kategorija_novosti: category,
         slug: response.slug,
       };
 
@@ -121,12 +166,19 @@ export const useNovosti = () => {
     error.value = null;
 
     try {
+      await ensureCategoriesLoaded();
+
       const response = await $getNovostBySlug(slug);
 
       if (!response) {
         error.value = "News article not found";
         currentNovost.value = null;
       } else {
+        const categoryId = response.kategorija_novosti_id;
+        const category = categoryId
+          ? categoriesMap.value[categoryId]
+          : undefined;
+
         currentNovost.value = {
           id: response.id,
           date_created: response.date_created,
@@ -136,7 +188,7 @@ export const useNovosti = () => {
           sadrzaj: response.sadrzaj,
           hero_slika: response.hero_slika,
           kategorija_novosti_id: response.kategorija_novosti_id,
-          kategorija_novosti: response.kategorija_novosti,
+          kategorija_novosti: category,
           slug: response.slug,
         };
       }
@@ -160,7 +212,11 @@ export const useNovosti = () => {
         id: item.id,
         naziv: item.naziv,
       }));
-      console.log(kategorijeNovosti.value);
+
+      kategorijeNovosti.value.forEach((cat) => {
+        categoriesMap.value[cat.id] = cat;
+      });
+
       isLoading.value = false;
     } catch (err) {
       console.error("Error fetching kategorije novosti:", err);
