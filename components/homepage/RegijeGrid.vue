@@ -75,7 +75,7 @@
 </template>
 
 <script lang="ts">
-import type { Regija } from "~/types/directus";
+import type { Regija } from "~/types/directus/index";
 
 export default defineComponent({
   props: {

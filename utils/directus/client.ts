@@ -1,5 +1,5 @@
 import { createDirectus, rest, authentication } from "@directus/sdk";
-import type { Schema } from "~/types/directus/schema";
+import type { Schema } from "~/types/directus/exports/schema";
 
 /**
  * Create and configure Directus client

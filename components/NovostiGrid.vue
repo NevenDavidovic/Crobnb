@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import type { Novost } from "~/types/directus";
+import type { Novost } from "~/types/directus/index";
 
 export default defineComponent({
   props: {

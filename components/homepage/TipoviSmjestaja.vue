@@ -83,7 +83,7 @@
 </template>
 
 <script lang="ts">
-import type { TipSmjestaja } from "~/types/directus";
+import type { TipSmjestaja } from "~/types/directus/index";
 
 export default defineComponent({
   props: {

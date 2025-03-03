@@ -4,7 +4,7 @@ import type {
   RestClient,
   AuthenticationClient,
 } from "@directus/sdk";
-import type { Schema } from "~/types/directus/schema";
+import type { Schema } from "~/types/directus/exports/schema";
 
 type Client = DirectusClient<Schema> &
   RestClient<Schema> &

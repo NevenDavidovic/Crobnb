@@ -1,9 +1,8 @@
 <template>
   <div class="max-w-1200 mx-auto py-12 px-4">
-    <h2 class="text-3xl font-bold mb-8">O nama</h2>
-
     <div class="flex flex-col md:flex-row items-center justify-between gap-8">
       <div class="md:w-1/2 space-y-6">
+        <h2 class="text-3xl font-bold mb-8">O nama</h2>
         <p class="text-gray-700">
           Crobnb je platforma za iznajmljivanje smještaja koja omogućava
           putnicima da brzo i jednostavno pronađu savršeni smještaj za svoj
