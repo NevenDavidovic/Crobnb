@@ -401,6 +401,7 @@
         </div>
         <div class="mt-4 w-full md:w-auto">
           <button
+            @click="searchWithFilters"
             class="w-full md:w-auto md:col-span-auto bg-primary-80 text-white h-12 py-3 px-4 rounded-lg hover:bg-primary-60 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
           >
             <div class="flex justify-center items-center text-base">
@@ -456,7 +457,19 @@ interface RegijaItem {
   naziv?: string;
 }
 
+interface SearchFilters {
+  location: string;
+  type: string;
+  checkin: string;
+  checkout: string;
+  adults: string;
+  children: string;
+}
+
 export default defineComponent({
+  emits: {
+    search: (filters: SearchFilters) => true,
+  },
   props: {
     tipovi: {
       type: Array as PropType<TipItem[]>,
@@ -483,14 +496,51 @@ export default defineComponent({
       default: null,
     },
   },
-  setup(props: {
-    tipovi: TipItem[];
-    tipoviLoading: boolean;
-    tipoviError: string | null;
-    regije: RegijaItem[];
-    regijeLoading: boolean;
-    regijeError: string | null;
-  }) {
+  setup(
+    props: {
+      tipovi: TipItem[];
+      tipoviLoading: boolean;
+      tipoviError: string | null;
+      regije: RegijaItem[];
+      regijeLoading: boolean;
+      regijeError: string | null;
+    },
+    {
+      emit,
+    }: {
+      emit: (
+        event: "search",
+        filters: {
+          location: string;
+          type: string;
+          checkin: string;
+          checkout: string;
+          adults: string;
+          children: string;
+        }
+      ) => void;
+    }
+  ) {
+    const searchWithFilters = (): void => {
+      const startDate = datePickerRange.value.start
+        ? formatDate(datePickerRange.value.start)
+        : "";
+      const endDate = datePickerRange.value.end
+        ? formatDate(datePickerRange.value.end)
+        : "";
+
+      const filters: SearchFilters = {
+        location: selectedLocation.value,
+        type: selectedAccommodationType.value,
+        checkin: startDate,
+        checkout: endDate,
+        adults: adultCount.value.toString(),
+        children: childrenCount.value.toString(),
+      };
+
+      // Emit the filters
+      emit("search", filters);
+    };
     const selectedLocation = ref<string>("sredisnja-dalmacija");
 
     const selectedAccommodationType = ref<string>("hoteli");
@@ -649,6 +699,7 @@ export default defineComponent({
       incrementChildren,
       decrementChildren,
       confirmGuestSelection,
+      searchWithFilters,
     };
   },
 });

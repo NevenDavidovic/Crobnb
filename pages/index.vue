@@ -8,6 +8,7 @@
       :regije="regije"
       :regije-loading="regijeLoading"
       :regije-error="regijeError || undefined"
+      @search="onSearch"
     />
 
     <div class="max-w-1200 mx-auto pt-24 px-4 pb-16">
@@ -74,6 +75,14 @@ import { useTipoviSmjestaja } from "~/composables/useTipoviSmjestaja";
 import { useRegije } from "~/composables/useRegije";
 import { useNovosti } from "~/composables/useNovosti";
 
+interface SearchFilters {
+  location: string;
+  type: string;
+  checkin: string;
+  checkout: string;
+  adults: string;
+  children: string;
+}
 export default defineComponent({
   setup() {
     const {
@@ -92,7 +101,6 @@ export default defineComponent({
       getImageUrl,
     } = useRegije();
 
-    // Initialize novosti data
     const {
       novosti,
       isLoading: novostiLoading,
@@ -107,6 +115,23 @@ export default defineComponent({
       fetchRegije();
       fetchNovosti(3);
     });
+    const onSearch = (filters: SearchFilters): void => {
+      console.log("Search filters received:", filters);
+
+      const queryParams: Record<string, string> = {
+        location: filters.location,
+        type: filters.type,
+        checkin: filters.checkin,
+        checkout: filters.checkout,
+        adults: filters.adults,
+        children: filters.children,
+      };
+
+      navigateTo({
+        path: "/smjestaj",
+        query: queryParams,
+      });
+    };
 
     return {
       tipovi,
@@ -124,6 +149,7 @@ export default defineComponent({
       novostiError,
       getHeroImageUrl,
       formatDate,
+      onSearch,
     };
   },
 });
