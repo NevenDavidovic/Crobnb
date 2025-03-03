@@ -3,7 +3,6 @@ import { createDirectusClient } from "~/utils/directus/client";
 import { SmjestajService } from "~/utils/directus/services/smjestaj";
 import { RegijeService } from "~/utils/directus/services/regije";
 import { NovostiService } from "~/utils/directus/services/novosti";
-import { getFileUrl } from "~/utils/directus/utils";
 import type { DirectusFile } from "~/types/directus";
 
 export default defineNuxtPlugin(() => {
