@@ -128,7 +128,7 @@ export default defineComponent({
       };
 
       navigateTo({
-        path: "/smjestaj",
+        path: "/smjestaji",
         query: queryParams,
       });
     };

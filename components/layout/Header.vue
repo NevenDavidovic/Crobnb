@@ -42,7 +42,7 @@
         <div class="hidden md:block">
           <HeaderLanguageSelector />
         </div>
-        <NuxtLink to="/prijava" class="pr-2"> Prijava </NuxtLink>
+        <NuxtLink to="/auth/prijava" class="pr-2"> Prijava </NuxtLink>
 
         <button class="md:hidden text-gray-600" @click="toggleMobileMenu">
           <svg
