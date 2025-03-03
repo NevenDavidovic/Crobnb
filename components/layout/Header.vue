@@ -39,9 +39,10 @@
           </svg>
         </button>
 
-        <div class="hidden md:block pr-2">
+        <div class="hidden md:block">
           <HeaderLanguageSelector />
         </div>
+        <NuxtLink to="/prijava" class="pr-2"> Prijava </NuxtLink>
 
         <button class="md:hidden text-gray-600" @click="toggleMobileMenu">
           <svg
@@ -76,6 +77,7 @@
         >
           {{ item.label }}
         </NuxtLink>
+        <NuxtLink to="/prijava"> Prijava </NuxtLink>
 
         <div class="md:hidden mt-4 flex items-center justify-center">
           <HeaderLanguageSelector />

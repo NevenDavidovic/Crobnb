@@ -5,6 +5,9 @@
       :tipovi="tipovi"
       :tipovi-loading="tipoviLoading"
       :tipovi-error="tipoviError || undefined"
+      :regije="regije"
+      :regije-loading="regijeLoading"
+      :regije-error="regijeError || undefined"
     />
 
     <div class="max-w-1200 mx-auto pt-24 px-4 pb-16">

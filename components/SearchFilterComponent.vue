@@ -8,14 +8,26 @@
           >
           <div class="relative w-full">
             <select
-              class="text-sm appearance-none pl-10 pr-8 py-2 h-12 w-full border border-gray-300 rounded-lg text-gray-60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="text-sm appearance-none pl-10 pr-8 py-2 h-12 w-full border border-gray-40 rounded-lg text-gray-60 focus:outline-none focus:ring-2 focus:ring-blue-500"
               v-model="selectedLocation"
+              :disabled="regijeLoading"
             >
-              <option value="sredisnja-dalmacija">Središnja Dalmacija</option>
-              <option value="split">Split i okolica</option>
-              <option value="omis">Omiš i okolica</option>
-              <option value="makarska">Makarska i okolica</option>
+              <option v-if="regijeLoading" value="">Loading...</option>
+              <option v-else-if="regijeError" value="">
+                Error loading data
+              </option>
+              <option v-else-if="regije.length === 0" value="">
+                No regions found
+              </option>
+              <option
+                v-for="regija in regije"
+                :key="regija.id"
+                :value="regija.slug || regija.id"
+              >
+                {{ regija.naziv }}
+              </option>
             </select>
+
             <div
               class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
             >
@@ -131,18 +143,18 @@
           </div>
         </div>
 
-        <!-- Date filter -->
         <div class="flex-1 w-full">
           <label class="block text-sm font-medium text-gray-80 mb-3"
             >Datum prijave / odjave</label
           >
           <div class="relative w-full">
             <div
-              @click="showCalendar = !showCalendar"
-              class="text-sm appearance-none pl-10 pr-8 py-2 h-12 w-full border border-gray-300 rounded-lg text-gray-60 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer flex items-center"
+              @click="toggleCalendar"
+              class="text-sm appearance-none pl-10 pr-8 py-2 h-12 w-full border border-gray-40 rounded-lg text-gray-60 focus:outline-none focus:ring-2 focus:ring-primary-40 cursor-pointer flex items-center"
             >
               {{ dateRange }}
             </div>
+
             <div
               class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
             >
@@ -183,12 +195,13 @@
                 />
               </svg>
             </div>
+
             <div
               class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5 text-gray-500"
+                class="h-5 w-5 text-gray-60"
                 viewBox="0 0 20 20"
                 fill="#BEC0C5"
               >
@@ -200,108 +213,26 @@
               </svg>
             </div>
 
-            <!-- Calendar dropdown -->
             <div
               v-if="showCalendar"
-              class="absolute mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+              class="absolute mt-1 w-full bg-white border border-gray-40 rounded-lg shadow-lg z-50 !w-fit"
             >
               <div class="p-4">
-                <div class="flex justify-between items-center mb-4">
-                  <button
-                    class="text-gray-500 hover:text-gray-700"
-                    @click="prevMonth"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="#BEC0C5"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                  <div class="text-gray-800 font-medium">Ožujak 2023</div>
-                  <button
-                    class="text-gray-500 hover:text-gray-700"
-                    @click="nextMonth"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="#BEC0C5"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                </div>
-
-                <div
-                  class="grid grid-cols-7 gap-2 text-center text-xs text-gray-500 mb-2"
-                >
-                  <div>PON</div>
-                  <div>UTO</div>
-                  <div>SRI</div>
-                  <div>ČET</div>
-                  <div>PET</div>
-                  <div>SUB</div>
-                  <div>NED</div>
-                </div>
-
-                <div class="grid grid-cols-7 gap-2 text-center">
-                  <div></div>
-                  <div></div>
-                  <div class="py-1">1</div>
-                  <div class="py-1 bg-teal-500 text-white rounded-full">2</div>
-                  <div class="py-1 bg-teal-500 text-white rounded-full">3</div>
-                  <div class="py-1">4</div>
-                  <div class="py-1">5</div>
-
-                  <div class="py-1">6</div>
-                  <div class="py-1">7</div>
-                  <div class="py-1">8</div>
-                  <div class="py-1">9</div>
-                  <div class="py-1">10</div>
-                  <div class="py-1">11</div>
-                  <div class="py-1">12</div>
-
-                  <div class="py-1">13</div>
-                  <div class="py-1">14</div>
-                  <div class="py-1">15</div>
-                  <div class="py-1">16</div>
-                  <div class="py-1">17</div>
-                  <div class="py-1">18</div>
-                  <div class="py-1">19</div>
-
-                  <div class="py-1">20</div>
-                  <div class="py-1">21</div>
-                  <div class="py-1">22</div>
-                  <div class="py-1">23</div>
-                  <div class="py-1">24</div>
-                  <div class="py-1">25</div>
-                  <div class="py-1">26</div>
-
-                  <div class="py-1">27</div>
-                  <div class="py-1">28</div>
-                  <div class="py-1">29</div>
-                  <div class="py-1">30</div>
-                  <div class="py-1">31</div>
-                  <div></div>
-                  <div></div>
-                </div>
+                <v-date-picker
+                  v-model="datePickerRange"
+                  :min-date="new Date()"
+                  color="teal"
+                  :masks="{
+                    input: 'DD.MM.YYYY.',
+                  }"
+                  locale="hr"
+                  is-range
+                />
 
                 <div class="mt-4 flex justify-end">
                   <button
                     @click="confirmDateSelection"
-                    class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 text-sm"
+                    class="bg-primary-80 text-white px-4 py-2 rounded-lg hover:bg-teal-700 text-sm"
                   >
                     Potvrdi
                   </button>
@@ -311,7 +242,6 @@
           </div>
         </div>
 
-        <!-- Guests filter -->
         <div class="flex-1 w-full">
           <label class="block text-sm font-medium text-gray-700 mb-3"
             >Broj gostiju</label
@@ -319,7 +249,7 @@
           <div class="relative w-full">
             <div
               @click="showGuestsDropdown = !showGuestsDropdown"
-              class="text-sm appearance-none pl-10 pr-8 py-2 h-12 w-full border border-gray-300 rounded-lg text-gray-60 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer flex items-center"
+              class="text-sm appearance-none pl-10 pr-8 py-2 h-12 w-full border border-gray-40 rounded-lg text-gray-60 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer flex items-center"
             >
               {{ adultCount }} odraslih, {{ childrenCount }} djece
             </div>
@@ -366,10 +296,9 @@
               </svg>
             </div>
 
-            <!-- Guests dropdown -->
             <div
               v-if="showGuestsDropdown"
-              class="absolute mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+              class="absolute mt-1 w-full bg-white border border-gray-40 rounded-lg shadow-lg z-50"
             >
               <div class="p-4">
                 <div class="mb-4">
@@ -378,7 +307,7 @@
                     <div class="flex items-center space-x-2">
                       <button
                         @click="decrementAdults"
-                        class="w-8 h-8 flex items-center justify-center bg-teal-600 text-white rounded-md"
+                        class="w-8 h-8 flex items-center justify-center bg-primary-80 text-white rounded-md"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -396,7 +325,7 @@
                       <span class="w-6 text-center">{{ adultCount }}</span>
                       <button
                         @click="incrementAdults"
-                        class="w-8 h-8 flex items-center justify-center bg-teal-600 text-white rounded-md"
+                        class="w-8 h-8 flex items-center justify-center bg-primary-80 text-white rounded-md"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -421,7 +350,7 @@
                     <div class="flex items-center space-x-2">
                       <button
                         @click="decrementChildren"
-                        class="w-8 h-8 flex items-center justify-center bg-teal-600 text-white rounded-md"
+                        class="w-8 h-8 flex items-center justify-center bg-primary-80 text-white rounded-md"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -439,7 +368,7 @@
                       <span class="w-6 text-center">{{ childrenCount }}</span>
                       <button
                         @click="incrementChildren"
-                        class="w-8 h-8 flex items-center justify-center bg-teal-600 text-white rounded-md"
+                        class="w-8 h-8 flex items-center justify-center bg-primary-80 text-white rounded-md"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -461,7 +390,7 @@
                 <div class="mt-4 flex justify-end">
                   <button
                     @click="confirmGuestSelection"
-                    class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 text-sm"
+                    class="bg-primary-80 text-white px-4 py-2 rounded-lg hover:bg-primary-60 text-sm"
                   >
                     Potvrdi
                   </button>
@@ -472,7 +401,7 @@
         </div>
         <div class="mt-4 w-full md:w-auto">
           <button
-            class="w-full md:w-auto md:col-span-auto bg-primary-80 text-white h-12 py-3 px-4 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+            class="w-full md:w-auto md:col-span-auto bg-primary-80 text-white h-12 py-3 px-4 rounded-lg hover:bg-primary-60 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
           >
             <div class="flex justify-center items-center text-base">
               <svg
@@ -507,11 +436,30 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+interface DateRange {
+  start: Date | null;
+  end: Date | null;
+}
+
+interface TipItem {
+  id: number;
+  slug?: string;
+  name?: string;
+  naziv?: string;
+}
+
+interface RegijaItem {
+  id: number;
+  slug?: string;
+  name?: string;
+  naziv?: string;
+}
+
+export default defineComponent({
   props: {
     tipovi: {
-      type: Array,
+      type: Array as PropType<TipItem[]>,
       default: () => [],
     },
     tipoviLoading: {
@@ -519,65 +467,149 @@ export default {
       default: false,
     },
     tipoviError: {
-      type: String,
+      type: String as PropType<string | null>,
+      default: null,
+    },
+    regije: {
+      type: Array as PropType<RegijaItem[]>,
+      default: () => [],
+    },
+    regijeLoading: {
+      type: Boolean,
+      default: false,
+    },
+    regijeError: {
+      type: String as PropType<string | null>,
       default: null,
     },
   },
-  setup(props) {
-    // Location
-    const selectedLocation = ref("sredisnja-dalmacija");
+  setup(props: {
+    tipovi: TipItem[];
+    tipoviLoading: boolean;
+    tipoviError: string | null;
+    regije: RegijaItem[];
+    regijeLoading: boolean;
+    regijeError: string | null;
+  }) {
+    const selectedLocation = ref<string>("sredisnja-dalmacija");
 
-    // Accommodation type
-    const selectedAccommodationType = ref("hoteli");
+    const selectedAccommodationType = ref<string>("hoteli");
 
-    // Calendar
-    const showCalendar = ref(false);
-    const dateRange = ref("02.03.2023. - 03.03.2023.");
+    const showCalendar = ref<boolean>(false);
 
-    const prevMonth = () => {
-      // Logic for previous month
+    const datePickerRange = ref<DateRange>({
+      start: new Date(2023, 2, 2),
+      end: new Date(2023, 2, 3),
+    });
+
+    const formatDate = (date: Date): string => {
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}.${month}.${year}.`;
     };
 
-    const nextMonth = () => {
-      // Logic for next month
+    const dateRange = computed((): string => {
+      if (
+        datePickerRange.value &&
+        datePickerRange.value.start &&
+        datePickerRange.value.end
+      ) {
+        const start = formatDate(datePickerRange.value.start);
+        const end = formatDate(datePickerRange.value.end);
+        return `${start} - ${end}`;
+      }
+      return "";
+    });
+
+    const toggleCalendar = (event: MouseEvent): void => {
+      event.stopPropagation();
+      showCalendar.value = !showCalendar.value;
+
+      if (showGuestsDropdown.value) {
+        showGuestsDropdown.value = false;
+      }
     };
 
-    const confirmDateSelection = () => {
+    const toggleGuestsDropdown = (event: MouseEvent): void => {
+      event.stopPropagation();
+      showGuestsDropdown.value = !showGuestsDropdown.value;
+
+      if (showCalendar.value) {
+        showCalendar.value = false;
+      }
+    };
+
+    const confirmGuestSelection = (): void => {
+      showGuestsDropdown.value = false;
+    };
+
+    const confirmDateSelection = (): void => {
       showCalendar.value = false;
     };
 
-    // Guests
-    const showGuestsDropdown = ref(false);
-    const adultCount = ref(2);
-    const childrenCount = ref(0);
+    const showGuestsDropdown = ref<boolean>(false);
+    const adultCount = ref<number>(2);
+    const childrenCount = ref<number>(0);
 
-    const incrementAdults = () => {
+    const incrementAdults = (): void => {
       adultCount.value++;
     };
 
-    const decrementAdults = () => {
+    const decrementAdults = (): void => {
       if (adultCount.value > 0) {
         adultCount.value--;
       }
     };
 
-    const incrementChildren = () => {
+    const incrementChildren = (): void => {
       childrenCount.value++;
     };
 
-    const decrementChildren = () => {
+    const decrementChildren = (): void => {
       if (childrenCount.value > 0) {
         childrenCount.value--;
       }
     };
 
-    const confirmGuestSelection = () => {
-      showGuestsDropdown.value = false;
-    };
+    onMounted(() => {
+      document.addEventListener("click", () => {
+        showCalendar.value = false;
+        showGuestsDropdown.value = false;
+      });
+
+      nextTick(() => {
+        const calendarContainer = document.querySelector(
+          ".flex-1.w-full:nth-of-type(3) .relative.w-full"
+        );
+        const guestsContainer = document.querySelector(
+          ".flex-1.w-full:nth-of-type(4) .relative.w-full"
+        );
+
+        if (calendarContainer) {
+          calendarContainer.addEventListener("click", (e: Event) => {
+            e.stopPropagation();
+          });
+        }
+
+        if (guestsContainer) {
+          guestsContainer.addEventListener("click", (e: Event) => {
+            e.stopPropagation();
+          });
+        }
+      });
+    });
+
+    onUnmounted(() => {
+      document.removeEventListener("click", () => {
+        showCalendar.value = false;
+        showGuestsDropdown.value = false;
+      });
+    });
 
     watch(
       () => props.tipovi,
-      (newTipovi) => {
+      (newTipovi: TipItem[]) => {
         if (
           newTipovi &&
           newTipovi.length > 0 &&
@@ -590,15 +622,26 @@ export default {
       { immediate: true }
     );
 
+    watch(
+      () => props.regije,
+      (newRegije: RegijaItem[]) => {
+        if (newRegije && newRegije.length > 0 && !selectedLocation.value) {
+          selectedLocation.value = newRegije[0].slug || String(newRegije[0].id);
+        }
+      },
+      { immediate: true }
+    );
+
     return {
       selectedLocation,
       selectedAccommodationType,
       showCalendar,
       dateRange,
-      prevMonth,
-      nextMonth,
+      datePickerRange,
+      toggleCalendar,
       confirmDateSelection,
       showGuestsDropdown,
+      toggleGuestsDropdown,
       adultCount,
       childrenCount,
       incrementAdults,
@@ -608,5 +651,5 @@ export default {
       confirmGuestSelection,
     };
   },
-};
+});
 </script>
