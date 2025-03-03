@@ -34,6 +34,24 @@ export default defineNuxtPlugin(() => {
         );
       },
 
+      async getTipSmjestajaBySlug(slug: string) {
+        return await directus
+          .request(
+            readItems("tipovi_smjestaja", {
+              fields: ["*", "ikona.*"],
+              filter: {
+                slug: {
+                  _eq: slug,
+                },
+              },
+              limit: 1,
+            })
+          )
+          .then((response) =>
+            response && response.length > 0 ? response[0] : null
+          );
+      },
+
       // Regija methods
       async getRegije() {
         return await directus.request(

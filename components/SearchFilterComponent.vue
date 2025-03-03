@@ -69,12 +69,22 @@
             <select
               class="text-sm appearance-none pl-10 pr-8 py-2 h-12 w-full border border-gray-300 rounded-lg text-gray-60 focus:outline-none focus:ring-2 focus:ring-blue-500"
               v-model="selectedAccommodationType"
+              :disabled="tipoviLoading"
             >
-              <option value="hoteli">Hoteli</option>
-              <option value="apartmani">Apartmani</option>
-              <option value="turisticka-naselja">Turistička naselja</option>
-              <option value="ville">Ville</option>
-              <option value="mobilne-kucice">Mobilne kućice</option>
+              <option v-if="tipoviLoading" value="">Loading...</option>
+              <option v-else-if="tipoviError" value="">
+                Error loading data
+              </option>
+              <option v-else-if="tipovi.length === 0" value="">
+                No accommodation types
+              </option>
+              <option
+                v-for="tip in tipovi"
+                :key="tip.id"
+                :value="tip.slug || tip.id"
+              >
+                {{ tip.naziv }}
+              </option>
             </select>
             <div
               class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
@@ -499,7 +509,21 @@
 
 <script>
 export default {
-  setup() {
+  props: {
+    tipovi: {
+      type: Array,
+      default: () => [],
+    },
+    tipoviLoading: {
+      type: Boolean,
+      default: false,
+    },
+    tipoviError: {
+      type: String,
+      default: null,
+    },
+  },
+  setup(props) {
     // Location
     const selectedLocation = ref("sredisnja-dalmacija");
 
@@ -550,6 +574,21 @@ export default {
     const confirmGuestSelection = () => {
       showGuestsDropdown.value = false;
     };
+
+    watch(
+      () => props.tipovi,
+      (newTipovi) => {
+        if (
+          newTipovi &&
+          newTipovi.length > 0 &&
+          !selectedAccommodationType.value
+        ) {
+          selectedAccommodationType.value =
+            newTipovi[0].slug || newTipovi[0].id.toString();
+        }
+      },
+      { immediate: true }
+    );
 
     return {
       selectedLocation,

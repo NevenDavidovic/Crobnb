@@ -22,7 +22,7 @@
     <NuxtLink
       v-for="tip in tipovi"
       :key="tip.id"
-      :to="`/tipovi-smjestaja/${tip.id}`"
+      :to="`/ponuda-smjestaja/${tip.slug || tip.id}`"
       class="block"
     >
       <div

@@ -2,6 +2,7 @@ export interface TipSmjestaja {
   id: number;
   naziv: string;
   ikona: DirectusFile | null;
+  slug?: string;
 }
 
 export interface Regija {

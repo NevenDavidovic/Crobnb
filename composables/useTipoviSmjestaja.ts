@@ -1,27 +1,30 @@
 import type { TipSmjestaja } from "~/types/directus";
 
 export const useTipoviSmjestaja = () => {
-  const { $getTipoviSmjestaja, $getTipSmjestaja, $getFileUrl } = useNuxtApp();
+  const {
+    $getTipoviSmjestaja,
+    $getTipSmjestaja,
+    $getTipSmjestajaBySlug,
+    $getFileUrl,
+  } = useNuxtApp();
 
   const tipovi = ref<TipSmjestaja[]>([]);
   const currentTip = ref<TipSmjestaja | null>(null);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
-  // Fetch all accommodation types
   const fetchTipovi = async () => {
     isLoading.value = true;
     error.value = null;
 
     try {
-      // Cast the response to ensure TypeScript compatibility
       const response = await $getTipoviSmjestaja();
 
-      // Map the response to match your TipSmjestaja interface
       tipovi.value = response.map((item: any) => ({
         id: item.id,
         naziv: item.naziv,
         ikona: item.ikona,
+        slug: item.slug,
       }));
 
       isLoading.value = false;
@@ -32,7 +35,6 @@ export const useTipoviSmjestaja = () => {
     }
   };
 
-  // Fetch a single accommodation type by ID
   const fetchTip = async (id: number) => {
     isLoading.value = true;
     error.value = null;
@@ -40,11 +42,11 @@ export const useTipoviSmjestaja = () => {
     try {
       const response = await $getTipSmjestaja(id);
 
-      // Map the response to match your TipSmjestaja interface
       currentTip.value = {
         id: response.id,
         naziv: response.naziv,
         ikona: response.ikona,
+        slug: response.slug, // Add this line
       };
 
       isLoading.value = false;
@@ -55,7 +57,33 @@ export const useTipoviSmjestaja = () => {
     }
   };
 
-  // Get the URL for an icon file
+  const fetchTipBySlug = async (slug: string) => {
+    isLoading.value = true;
+    error.value = null;
+
+    try {
+      const response = await $getTipSmjestajaBySlug(slug);
+
+      if (!response) {
+        error.value = "Accommodation type not found";
+        currentTip.value = null;
+      } else {
+        currentTip.value = {
+          id: response.id,
+          naziv: response.naziv,
+          ikona: response.ikona,
+          slug: response.slug,
+        };
+      }
+
+      isLoading.value = false;
+    } catch (err) {
+      console.error(`Error fetching tip_smjestaja with slug ${slug}:`, err);
+      error.value = "Failed to load accommodation type";
+      isLoading.value = false;
+    }
+  };
+
   const getIconUrl = (tip: TipSmjestaja): string | null => {
     if (!tip.ikona) return null;
     return $getFileUrl(tip.ikona);
@@ -68,6 +96,7 @@ export const useTipoviSmjestaja = () => {
     error,
     fetchTipovi,
     fetchTip,
+    fetchTipBySlug,
     getIconUrl,
   };
 };

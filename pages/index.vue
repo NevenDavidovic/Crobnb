@@ -1,7 +1,11 @@
 <template>
   <div>
     <HomepageHeroSection class="hidden md:block" />
-    <SearchFilterComponent />
+    <SearchFilterComponent
+      :tipovi="tipovi"
+      :tipovi-loading="tipoviLoading"
+      :tipovi-error="tipoviError || undefined"
+    />
 
     <div class="max-w-1200 mx-auto pt-24 px-4 pb-16">
       <h1 class="text-2xl font-bold mb-8">Tip smještaja</h1>
