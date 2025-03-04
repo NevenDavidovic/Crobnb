@@ -5,7 +5,7 @@ import type { TipSmjestaja } from "./accommodation";
 export interface Sadrzaj {
   id: number;
   naziv: string;
-  ikona: DirectusFile | null;
+  icon: DirectusFile | null;
 }
 
 export interface SmjestajSadrzaj {
@@ -30,15 +30,13 @@ export interface Smjestaj {
   max_broj_gostiju: number;
   thumbnail: DirectusFile | null;
   regija_id: number;
-  smjestaj_id: number;
+  tipovi_smjestaja_id: number; // Changed from smjestaj_id to match DB structure
   boravisna_pristojba: number;
   detaljan_opis: string;
   kratki_opis: string;
   broj_kreveta: number;
   broj_kupaonica: number;
   slug: string;
-  broj_odraslih: number;
-  broj_djece: number;
 
   // Relations
   regija?: Regija;

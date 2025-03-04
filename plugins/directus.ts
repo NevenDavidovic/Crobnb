@@ -29,7 +29,8 @@ export default defineNuxtPlugin(() => {
   return {
     provide: {
       directus,
-
+      getSmjestajSadrzajiRelations: () =>
+        SmjestajiService.getSmjestajSadrzajiRelations(directus),
       getTipoviSmjestaja: () => SmjestajService.getTipoviSmjestaja(directus),
       getTipSmjestaja: (id: number) =>
         SmjestajService.getTipSmjestaja(directus, id),

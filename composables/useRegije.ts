@@ -9,7 +9,6 @@ export const useRegije = () => {
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
-  // Fetch all regions
   const fetchRegije = async () => {
     isLoading.value = true;
     error.value = null;
@@ -34,7 +33,6 @@ export const useRegije = () => {
     }
   };
 
-  // Fetch a single region by ID
   const fetchRegija = async (id: number) => {
     isLoading.value = true;
     error.value = null;
@@ -59,7 +57,6 @@ export const useRegije = () => {
     }
   };
 
-  // Fetch a single region by slug
   const fetchRegijaBySlug = async (slug: string) => {
     isLoading.value = true;
     error.value = null;
@@ -89,7 +86,6 @@ export const useRegije = () => {
     }
   };
 
-  // Get the URL for a region image
   const getImageUrl = (regija: Regija): string | null => {
     if (!regija.slika) return null;
     return $getFileUrl(regija.slika);

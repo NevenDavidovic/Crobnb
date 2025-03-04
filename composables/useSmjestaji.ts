@@ -1,4 +1,8 @@
-import type { Smjestaj, Sadrzaj } from "~/types/directus/index";
+import type {
+  Smjestaj,
+  Sadrzaj,
+  SmjestajSadrzaj,
+} from "~/types/directus/index";
 
 export const useSmjestaji = () => {
   const {
@@ -17,76 +21,35 @@ export const useSmjestaji = () => {
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
-  /**
-   * Format price to display with currency
-   * @param price Price in EUR
-   * @returns Formatted price string
-   */
   const formatPrice = (price: number): string => {
     return `${price.toFixed(2)} EUR`;
   };
 
-  /**
-   * Convert EUR to HRK (for display purposes)
-   * @param priceEUR Price in EUR
-   * @returns Price in HRK
-   */
   const convertToHRK = (priceEUR: number): number => {
     // Fixed conversion rate (Euro to Croatian Kuna)
     const conversionRate = 7.5345;
-    return priceEUR * conversionRate;
+    const result = priceEUR * conversionRate;
+    return result;
   };
 
-  /**
-   * Format price in HRK
-   * @param priceEUR Price in EUR
-   * @returns Formatted price in HRK
-   */
   const formatPriceHRK = (priceEUR: number): string => {
     const priceHRK = convertToHRK(priceEUR);
     return `${priceHRK.toFixed(2)} HRK`;
   };
 
-  /**
-   * Fetch all accommodation listings
-   * @param limit Maximum number of items to fetch
-   */
   const fetchSmjestaji = async (limit?: number) => {
     isLoading.value = true;
     error.value = null;
 
     try {
       const response = await $getSmjestaji(limit);
-      console.log("Raw smjestaji response:", response);
 
-      smjestaji.value = response.map((item: any) => ({
-        id: item.id,
-        date_created: item.date_created,
-        date_updated: item.date_updated,
-        naziv: item.naziv,
-        adresa: item.adresa,
-        postanski_broj: item.postanski_broj,
-        grad: item.grad,
-        cijena_nocenja: item.cijena_nocenja,
-        check_in: item.check_in,
-        check_out: item.check_out,
-        broj_zvjezdica: item.broj_zvjezdica,
-        max_broj_gostiju: item.max_broj_gostiju,
-        thumbnail: item.thumbnail,
-        regija_id: item.regija_id,
-        smjestaj_id: item.smjestaj_id,
-        boravisna_pristojba: item.boravisna_pristojba,
-        detaljan_opis: item.detaljan_opis,
-        kratki_opis: item.kratki_opis,
-        broj_kreveta: item.broj_kreveta,
-        broj_kupaonica: item.broj_kupaonica,
-        slug: item.slug,
-        broj_odraslih: item.broj_odraslih,
-        broj_djece: item.broj_djece,
-        regija: item.regija,
-        tip_smjestaja: item.tip_smjestaja,
-        sadrzaji: item.sadrzaji,
+      const mappedSmjestaji = response.map((item: any) => ({
+        ...item,
+        sadrzaji: item.sadrzaji || [],
       }));
+
+      smjestaji.value = mappedSmjestaji;
 
       isLoading.value = false;
     } catch (err) {
@@ -96,11 +59,6 @@ export const useSmjestaji = () => {
     }
   };
 
-  /**
-   * Fetch accommodation listings by region
-   * @param regijaId Region ID
-   * @param limit Maximum number of items to fetch
-   */
   const fetchSmjestajiByRegija = async (regijaId: number, limit?: number) => {
     isLoading.value = true;
     error.value = null;
@@ -123,15 +81,13 @@ export const useSmjestaji = () => {
         max_broj_gostiju: item.max_broj_gostiju,
         thumbnail: item.thumbnail,
         regija_id: item.regija_id,
-        smjestaj_id: item.smjestaj_id,
+        tipovi_smjestaja_id: item.tipovi_smjestaja_id,
         boravisna_pristojba: item.boravisna_pristojba,
         detaljan_opis: item.detaljan_opis,
         kratki_opis: item.kratki_opis,
         broj_kreveta: item.broj_kreveta,
         broj_kupaonica: item.broj_kupaonica,
         slug: item.slug,
-        broj_odraslih: item.broj_odraslih,
-        broj_djece: item.broj_djece,
         regija: item.regija,
         tip_smjestaja: item.tip_smjestaja,
         sadrzaji: item.sadrzaji,
@@ -145,11 +101,6 @@ export const useSmjestaji = () => {
     }
   };
 
-  /**
-   * Fetch accommodation listings by type
-   * @param tipId Accommodation type ID
-   * @param limit Maximum number of items to fetch
-   */
   const fetchSmjestajiByTip = async (tipId: number, limit?: number) => {
     isLoading.value = true;
     error.value = null;
@@ -172,15 +123,13 @@ export const useSmjestaji = () => {
         max_broj_gostiju: item.max_broj_gostiju,
         thumbnail: item.thumbnail,
         regija_id: item.regija_id,
-        smjestaj_id: item.smjestaj_id,
+        tipovi_smjestaja_id: item.tipovi_smjestaja_id,
         boravisna_pristojba: item.boravisna_pristojba,
         detaljan_opis: item.detaljan_opis,
         kratki_opis: item.kratki_opis,
         broj_kreveta: item.broj_kreveta,
         broj_kupaonica: item.broj_kupaonica,
         slug: item.slug,
-        broj_odraslih: item.broj_odraslih,
-        broj_djece: item.broj_djece,
         regija: item.regija,
         tip_smjestaja: item.tip_smjestaja,
         sadrzaji: item.sadrzaji,
@@ -194,10 +143,6 @@ export const useSmjestaji = () => {
     }
   };
 
-  /**
-   * Fetch a single accommodation by ID
-   * @param id Accommodation ID
-   */
   const fetchSmjestaj = async (id: number) => {
     isLoading.value = true;
     error.value = null;
@@ -220,15 +165,13 @@ export const useSmjestaji = () => {
         max_broj_gostiju: response.max_broj_gostiju,
         thumbnail: response.thumbnail,
         regija_id: response.regija_id,
-        smjestaj_id: response.smjestaj_id,
+        tipovi_smjestaja_id: response.tipovi_smjestaja_id,
         boravisna_pristojba: response.boravisna_pristojba,
         detaljan_opis: response.detaljan_opis,
         kratki_opis: response.kratki_opis,
         broj_kreveta: response.broj_kreveta,
         broj_kupaonica: response.broj_kupaonica,
         slug: response.slug,
-        broj_odraslih: response.broj_odraslih,
-        broj_djece: response.broj_djece,
         regija: response.regija,
         tip_smjestaja: response.tip_smjestaja,
         sadrzaji: response.sadrzaji,
@@ -242,10 +185,6 @@ export const useSmjestaji = () => {
     }
   };
 
-  /**
-   * Fetch a single accommodation by slug
-   * @param slug Accommodation slug
-   */
   const fetchSmjestajBySlug = async (slug: string) => {
     isLoading.value = true;
     error.value = null;
@@ -272,15 +211,13 @@ export const useSmjestaji = () => {
           max_broj_gostiju: response.max_broj_gostiju,
           thumbnail: response.thumbnail,
           regija_id: response.regija_id,
-          smjestaj_id: response.smjestaj_id,
+          tipovi_smjestaja_id: response.tipovi_smjestaja_id,
           boravisna_pristojba: response.boravisna_pristojba,
           detaljan_opis: response.detaljan_opis,
           kratki_opis: response.kratki_opis,
           broj_kreveta: response.broj_kreveta,
           broj_kupaonica: response.broj_kupaonica,
           slug: response.slug,
-          broj_odraslih: response.broj_odraslih,
-          broj_djece: response.broj_djece,
           regija: response.regija,
           tip_smjestaja: response.tip_smjestaja,
           sadrzaji: response.sadrzaji,
@@ -295,9 +232,66 @@ export const useSmjestaji = () => {
     }
   };
 
-  /**
-   * Fetch all amenities
-   */
+  const fetchSmjestajSadrzajiRelations = async () => {
+    isLoading.value = true;
+
+    try {
+      if (sadrzaji.value.length === 0) {
+        await fetchSadrzaji();
+      }
+
+      if (smjestaji.value.length === 0) {
+        await fetchSmjestaji();
+      }
+
+      const { $getSmjestajSadrzajiRelations } = useNuxtApp();
+      const relations = await $getSmjestajSadrzajiRelations();
+
+      const relationsBySmjestajId: Record<number, any[]> = {};
+      relations.forEach((relation: any) => {
+        if (!relationsBySmjestajId[relation.smjestaj_id]) {
+          relationsBySmjestajId[relation.smjestaj_id] = [];
+        }
+        relationsBySmjestajId[relation.smjestaj_id].push(relation);
+      });
+
+      smjestaji.value = smjestaji.value.map((smjestaj) => {
+        const smjestajRelations = relationsBySmjestajId[smjestaj.id] || [];
+
+        const smjestajSadrzaji: SmjestajSadrzaj[] = smjestajRelations.map(
+          (relation: any) => {
+            const sadrzajItem = sadrzaji.value.find(
+              (s) => s.id === relation.sadrzaj_id
+            );
+
+            if (!sadrzajItem) {
+              console.log(
+                `Warning: Sadrzaj ID ${relation.sadrzaj_id} not found in loaded sadrzaji list`
+              );
+            }
+
+            return {
+              id: relation.id,
+              sadrzaj_id: relation.sadrzaj_id,
+              smjestaj_id: relation.smjestaj_id,
+              sadrzaj: sadrzajItem || relation.sadrzaj, // Use either the found item or the one from relation if available
+            };
+          }
+        );
+
+        return {
+          ...smjestaj,
+          sadrzaji: smjestajSadrzaji,
+        };
+      });
+
+      isLoading.value = false;
+    } catch (error) {
+      console.error("Error fetching sadrzaji relations:", error);
+      isLoading.value = false;
+    }
+  };
+
   const fetchSadrzaji = async () => {
     isLoading.value = true;
     error.value = null;
@@ -308,7 +302,7 @@ export const useSmjestaji = () => {
       sadrzaji.value = response.map((item: any) => ({
         id: item.id,
         naziv: item.naziv,
-        ikona: item.ikona,
+        icon: item.icon,
       }));
 
       isLoading.value = false;
@@ -319,50 +313,54 @@ export const useSmjestaji = () => {
     }
   };
 
-  /**
-   * Get thumbnail URL for an accommodation
-   * @param smjestaj Accommodation object
-   * @returns URL for the thumbnail image or null
-   */
   const getThumbnailUrl = (smjestaj: Smjestaj): string | null => {
     if (!smjestaj.thumbnail) return null;
-    return $getFileUrl(smjestaj.thumbnail);
+    const url = $getFileUrl(smjestaj.thumbnail);
+    return url;
   };
 
-  /**
-   * Get full address string for an accommodation
-   * @param smjestaj Accommodation object
-   * @returns Full address string
-   */
   const getFullAddress = (smjestaj: Smjestaj): string => {
-    return `${smjestaj.adresa}, ${smjestaj.postanski_broj} ${smjestaj.grad}, ${
-      smjestaj.regija?.naziv || "Hrvatska"
-    }`;
+    const address = `${smjestaj.adresa}, ${smjestaj.postanski_broj} ${
+      smjestaj.grad
+    }, ${smjestaj.regija?.naziv || "Hrvatska"}`;
+    return address;
   };
 
-  /**
-   * Check if an accommodation has a specific amenity
-   * @param smjestaj Accommodation object
-   * @param amenityId Amenity ID to check
-   * @returns True if the accommodation has the amenity
-   */
   const hasAmenity = (smjestaj: Smjestaj, amenityId: number): boolean => {
     if (!smjestaj.sadrzaji) return false;
-    return smjestaj.sadrzaji.some(
-      (item) =>
+
+    const result = smjestaj.sadrzaji.some((item) => {
+      return (
         item.sadrzaj_id === amenityId ||
         (item.sadrzaj && item.sadrzaj.id === amenityId)
-    );
+      );
+    });
+
+    return result;
   };
 
-  /**
-   * Get icon URL for an amenity
-   * @param sadrzaj Amenity object
-   * @returns URL for the icon or null
-   */
   const getSadrzajIconUrl = (sadrzaj: Sadrzaj | undefined): string | null => {
-    if (!sadrzaj || !sadrzaj.ikona) return null;
-    return $getFileUrl(sadrzaj.ikona);
+    if (!sadrzaj || !sadrzaj.icon) return null;
+    const url = $getFileUrl(sadrzaj.icon);
+
+    return url;
+  };
+
+  const getSmjestajSadrzaji = (smjestaj: Smjestaj): Sadrzaj[] => {
+    if (!smjestaj.sadrzaji) return [];
+
+    const result = smjestaj.sadrzaji
+      .map((item) => {
+        return item.sadrzaj;
+      })
+      .filter((sadrzaj): sadrzaj is Sadrzaj => {
+        const isValid = !!sadrzaj;
+        if (!isValid) {
+        }
+        return isValid;
+      });
+
+    return result;
   };
 
   return {
@@ -376,6 +374,7 @@ export const useSmjestaji = () => {
     fetchSmjestajiByTip,
     fetchSmjestaj,
     fetchSmjestajBySlug,
+    fetchSmjestajSadrzajiRelations,
     fetchSadrzaji,
     formatPrice,
     formatPriceHRK,
@@ -383,5 +382,6 @@ export const useSmjestaji = () => {
     getFullAddress,
     hasAmenity,
     getSadrzajIconUrl,
+    getSmjestajSadrzaji,
   };
 };

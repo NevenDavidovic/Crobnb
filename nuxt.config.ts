@@ -15,4 +15,14 @@ export default defineNuxtConfig({
       directusUrl: process.env.DIRECTUS_URL || "http://localhost:8055",
     },
   },
+  app: {
+    head: {
+      link: [
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/icon?family=Material+Icons",
+        },
+      ],
+    },
+  },
 });
