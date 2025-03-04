@@ -1,5 +1,4 @@
-import { ref } from "vue";
-import type { Novost, KategorijaNovosti } from "~/types/directus";
+import type { Novost, KategorijaNovosti } from "~/types/directus/index";
 
 export const useNovosti = () => {
   const {

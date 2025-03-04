@@ -1,4 +1,4 @@
-import type { TipSmjestaja } from "~/types/directus";
+import type { TipSmjestaja } from "~/types/directus/index";
 
 export const useTipoviSmjestaja = () => {
   const {

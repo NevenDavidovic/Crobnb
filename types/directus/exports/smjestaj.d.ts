@@ -26,12 +26,12 @@ export interface Smjestaj {
   cijena_nocenja: number;
   check_in: string;
   check_out: string;
-  broj_prijatelja: number;
+  broj_zvjezdica: number;
   max_broj_gostiju: number;
   thumbnail: DirectusFile | null;
   regija_id: number;
   smjestaj_id: number;
-  boravimas_pristojba: number;
+  boravisna_pristojba: number;
   detaljan_opis: string;
   kratki_opis: string;
   broj_kreveta: number;

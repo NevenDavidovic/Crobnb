@@ -1,5 +1,4 @@
-import { ref } from "vue";
-import type { Regija } from "~/types/directus";
+import type { Regija } from "~/types/directus/index";
 
 export const useRegije = () => {
   const { $getRegije, $getRegija, $getRegijaBySlug, $getFileUrl } =

@@ -8,81 +8,82 @@
       :regije-loading="regijeLoading"
       :regije-error="regijeError || undefined"
     />
+    <div class="flex max-w-1200 px-4 mx-auto">
+      <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold mb-8">Accommodation Listings</h1>
 
-    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <h1 class="text-3xl font-bold mb-8">Accommodation Listings</h1>
-
-      <!-- Filters section (can be expanded later) -->
-      <div class="mb-8 p-4 bg-gray-50 rounded-lg">
-        <h2 class="text-xl font-semibold mb-4">Filters</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <!-- Region filter -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Region</label
-            >
-            <select
-              v-model="selectedRegion"
-              class="w-full p-2 border border-gray-300 rounded-md"
-              @change="handleRegionChange"
-            >
-              <option :value="null">All regions</option>
-              <option
-                v-for="regija in regije"
-                :key="regija.id"
-                :value="regija.id"
+        <!-- Filters section (can be expanded later) -->
+        <div class="mb-8 p-4 bg-gray-50 rounded-lg">
+          <h2 class="text-xl font-semibold mb-4">Filters</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Region filter -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Region</label
               >
-                {{ regija.naziv }}
-              </option>
-            </select>
-          </div>
+              <select
+                v-model="selectedRegion"
+                class="w-full p-2 border border-gray-300 rounded-md"
+                @change="handleRegionChange"
+              >
+                <option :value="null">All regions</option>
+                <option
+                  v-for="regija in regije"
+                  :key="regija.id"
+                  :value="regija.id"
+                >
+                  {{ regija.naziv }}
+                </option>
+              </select>
+            </div>
 
-          <!-- Accommodation type filter -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Type</label
-            >
-            <select
-              v-model="selectedType"
-              class="w-full p-2 border border-gray-300 rounded-md"
-              @change="handleTypeChange"
-            >
-              <option :value="null">All types</option>
-              <option v-for="tip in tipovi" :key="tip.id" :value="tip.id">
-                {{ tip.naziv }}
-              </option>
-            </select>
-          </div>
+            <!-- Accommodation type filter -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Type</label
+              >
+              <select
+                v-model="selectedType"
+                class="w-full p-2 border border-gray-300 rounded-md"
+                @change="handleTypeChange"
+              >
+                <option :value="null">All types</option>
+                <option v-for="tip in tipovi" :key="tip.id" :value="tip.id">
+                  {{ tip.naziv }}
+                </option>
+              </select>
+            </div>
 
-          <!-- Price range filter (could be expanded) -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Price range</label
-            >
-            <select
-              v-model="selectedPriceRange"
-              class="w-full p-2 border border-gray-300 rounded-md"
-              @change="applyFilters"
-            >
-              <option :value="null">Any price</option>
-              <option value="0-50">Up to 50 EUR</option>
-              <option value="50-100">50 - 100 EUR</option>
-              <option value="100-200">100 - 200 EUR</option>
-              <option value="200+">200+ EUR</option>
-            </select>
+            <!-- Price range filter (could be expanded) -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Price range</label
+              >
+              <select
+                v-model="selectedPriceRange"
+                class="w-full p-2 border border-gray-300 rounded-md"
+                @change="applyFilters"
+              >
+                <option :value="null">Any price</option>
+                <option value="0-50">Up to 50 EUR</option>
+                <option value="50-100">50 - 100 EUR</option>
+                <option value="100-200">100 - 200 EUR</option>
+                <option value="200+">200+ EUR</option>
+              </select>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Results section -->
-      <SmjestajGrid
-        :smjestaji="filteredSmjestaji"
-        :is-loading="isLoading"
-        :error="error"
-        :get-thumbnail-url="getThumbnailUrl"
-        :format-price="formatPrice"
-        :format-price-h-r-k="formatPriceHRK"
-      />
+        <!-- Results section -->
+        <SmjestajGrid
+          :smjestaji="filteredSmjestaji"
+          :is-loading="isLoading"
+          :error="error"
+          :get-thumbnail-url="getThumbnailUrl"
+          :format-price="formatPrice"
+          :format-price-h-r-k="formatPriceHRK"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -95,7 +96,6 @@ import type { Smjestaj } from "~/types/directus/index";
 
 export default defineComponent({
   setup() {
-    // Fetch composables
     const {
       tipovi,
       isLoading: tipoviLoading,
