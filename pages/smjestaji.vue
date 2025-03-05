@@ -270,6 +270,7 @@ import { useTipoviSmjestaja } from "~/composables/useTipoviSmjestaja";
 import { useRegije } from "~/composables/useRegije";
 import { useSmjestaji } from "~/composables/useSmjestaji";
 import type { TipSmjestaja, Smjestaj, Sadrzaj } from "~/types/directus/index";
+import type { SearchFilters } from "~/types/pages/search-filter";
 
 export default defineComponent({
   setup() {
@@ -417,8 +418,7 @@ export default defineComponent({
     const allSmjestaji = ref<Smjestaj[]>([]);
     const filteredSmjestaji = ref<Smjestaj[]>([]);
 
-    // Handle search from SearchFilterComponent
-    const onSearch = (filters: any): void => {
+    const onSearch = (filters: SearchFilters): void => {
       console.log("Search filters received:", filters);
 
       // Update the URL

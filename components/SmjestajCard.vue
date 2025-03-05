@@ -145,14 +145,7 @@
 </template>
 <script lang="ts">
 import type { Smjestaj, Sadrzaj } from "~/types/directus/index";
-
-interface SmjestajCardProps {
-  smjestaj: Smjestaj;
-  getThumbnailUrl: (smjestaj: Smjestaj) => string | null;
-  formatPrice: (price: number) => string;
-  formatPriceHRK: (price: number) => string;
-  getSadrzajIconUrl?: (sadrzaj: Sadrzaj) => string | null;
-}
+import type { SmjestajCardProps } from "~/types/pages/smjestaj-card";
 
 export default defineComponent({
   props: {
@@ -197,9 +190,7 @@ export default defineComponent({
           })
           .filter((sadrzaj): sadrzaj is Sadrzaj => {
             const isValid = !!sadrzaj;
-            if (!isValid) {
-              console.log("Filtered out null/undefined sadrzaj");
-            }
+
             return isValid;
           });
 

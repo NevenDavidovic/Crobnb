@@ -74,15 +74,8 @@
 import { useTipoviSmjestaja } from "~/composables/useTipoviSmjestaja";
 import { useRegije } from "~/composables/useRegije";
 import { useNovosti } from "~/composables/useNovosti";
+import type { SearchFilters } from "~/types/pages/search-filter";
 
-interface SearchFilters {
-  location: string;
-  type: string;
-  checkin: string;
-  checkout: string;
-  adults: string;
-  children: string;
-}
 export default defineComponent({
   setup() {
     const {

@@ -76,12 +76,6 @@
 <script lang="ts">
 import type { Novost } from "~/types/directus/index";
 
-interface NovostCardProps {
-  novost: Novost;
-  getHeroImageUrl: (novost: Novost) => string | null;
-  formatDate: (dateString: string) => string;
-}
-
 export default defineComponent({
   props: {
     novost: {
@@ -98,11 +92,7 @@ export default defineComponent({
     },
   },
 
-  setup({ novost, getHeroImageUrl, formatDate }: NovostCardProps) {
-    console.log("Category info:", novost?.kategorija_novosti);
-
-    return {};
-  },
+  setup() {},
 });
 </script>
 

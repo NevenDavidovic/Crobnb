@@ -59,11 +59,19 @@
   </div>
 </template>
 
-<script setup lang="ts">
-const email = ref("");
+<script lang="ts">
+export default defineComponent({
+  setup() {
+    const email = ref("");
 
-const handleSubmit = () => {
-  // Handle form submission logic here
-  console.log("Password reset requested for:", email.value);
-};
+    const handleSubmit = () => {
+      console.log("Password reset requested for:", email.value);
+    };
+
+    return {
+      email,
+      handleSubmit,
+    };
+  },
+});
 </script>

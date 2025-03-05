@@ -438,33 +438,11 @@
 </template>
 
 <script lang="ts">
-interface DateRange {
-  start: Date | null;
-  end: Date | null;
-}
-
-interface TipItem {
-  id: number;
-  slug?: string;
-  name?: string;
-  naziv?: string;
-}
-
-interface RegijaItem {
-  id: number;
-  slug?: string;
-  name?: string;
-  naziv?: string;
-}
-
-interface SearchFilters {
-  location: string;
-  type: string;
-  checkin: string;
-  checkout: string;
-  adults: string;
-  children: string;
-}
+import type { Regija } from "~/types/directus/index";
+import type { TipSmjestaja } from "~/types/directus/index";
+import type { DateRange } from "~/types/pages/date-range";
+import type { SearchFilters } from "~/types/pages/search-filter";
+import type { SearchComponentProps } from "~/types/pages/search-props";
 
 export default defineComponent({
   emits: {
@@ -472,7 +450,7 @@ export default defineComponent({
   },
   props: {
     tipovi: {
-      type: Array as PropType<TipItem[]>,
+      type: Array as PropType<TipSmjestaja[]>,
       default: () => [],
     },
     tipoviLoading: {
@@ -484,7 +462,7 @@ export default defineComponent({
       default: null,
     },
     regije: {
-      type: Array as PropType<RegijaItem[]>,
+      type: Array as PropType<Regija[]>,
       default: () => [],
     },
     regijeLoading: {
@@ -497,28 +475,11 @@ export default defineComponent({
     },
   },
   setup(
-    props: {
-      tipovi: TipItem[];
-      tipoviLoading: boolean;
-      tipoviError: string | null;
-      regije: RegijaItem[];
-      regijeLoading: boolean;
-      regijeError: string | null;
-    },
+    props: SearchComponentProps,
     {
       emit,
     }: {
-      emit: (
-        event: "search",
-        filters: {
-          location: string;
-          type: string;
-          checkin: string;
-          checkout: string;
-          adults: string;
-          children: string;
-        }
-      ) => void;
+      emit: (event: "search", filters: SearchFilters) => void;
     }
   ) {
     const searchWithFilters = (): void => {
@@ -538,7 +499,6 @@ export default defineComponent({
         children: childrenCount.value.toString(),
       };
 
-      // Emit the filters
       emit("search", filters);
     };
     const selectedLocation = ref<string>("sredisnja-dalmacija");
@@ -659,7 +619,7 @@ export default defineComponent({
 
     watch(
       () => props.tipovi,
-      (newTipovi: TipItem[]) => {
+      (newTipovi: TipSmjestaja[]) => {
         if (
           newTipovi &&
           newTipovi.length > 0 &&
@@ -674,7 +634,7 @@ export default defineComponent({
 
     watch(
       () => props.regije,
-      (newRegije: RegijaItem[]) => {
+      (newRegije: Regija[]) => {
         if (newRegije && newRegije.length > 0 && !selectedLocation.value) {
           selectedLocation.value = newRegije[0].slug || String(newRegije[0].id);
         }

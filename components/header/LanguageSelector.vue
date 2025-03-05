@@ -57,11 +57,7 @@
 </template>
 
 <script lang="ts">
-interface Language {
-  code: string;
-  name: string;
-  label: string;
-}
+import type { Language } from "~/types/pages/language";
 
 export default defineComponent({
   name: "HeaderLanguageSelector",

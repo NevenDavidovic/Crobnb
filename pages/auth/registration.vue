@@ -182,34 +182,46 @@
   </div>
 </template>
 
-<script setup lang="ts">
-const formData = reactive({
-  ime: "",
-  prezime: "",
-  email: "",
-  telefon: "",
-  lozinka: "",
-  potvrdiLozinku: "",
+<script lang="ts">
+export default defineComponent({
+  setup() {
+    const formData = reactive({
+      ime: "",
+      prezime: "",
+      email: "",
+      telefon: "",
+      lozinka: "",
+      potvrdiLozinku: "",
+    });
+
+    const showPassword = ref(false);
+    const showConfirmPassword = ref(false);
+
+    const togglePassword = () => {
+      showPassword.value = !showPassword.value;
+    };
+
+    const toggleConfirmPassword = () => {
+      showConfirmPassword.value = !showConfirmPassword.value;
+    };
+
+    const handleSubmit = () => {
+      if (formData.lozinka !== formData.potvrdiLozinku) {
+        alert("Lozinke se ne podudaraju");
+        return;
+      }
+
+      console.log("Registration form submitted with:", formData);
+    };
+
+    return {
+      formData,
+      showPassword,
+      showConfirmPassword,
+      togglePassword,
+      toggleConfirmPassword,
+      handleSubmit,
+    };
+  },
 });
-
-const showPassword = ref(false);
-const showConfirmPassword = ref(false);
-
-const togglePassword = () => {
-  showPassword.value = !showPassword.value;
-};
-
-const toggleConfirmPassword = () => {
-  showConfirmPassword.value = !showConfirmPassword.value;
-};
-
-const handleSubmit = () => {
-  if (formData.lozinka !== formData.potvrdiLozinku) {
-    alert("Lozinke se ne podudaraju");
-    return;
-  }
-
-  // Handle form submission logic here
-  console.log("Registration form submitted with:", formData);
-};
 </script>

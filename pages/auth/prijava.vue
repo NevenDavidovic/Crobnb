@@ -103,20 +103,31 @@
   </div>
 </template>
 
-<script setup lang="ts">
-const email = ref("");
-const password = ref("");
-const showPassword = ref(false);
+<script lang="ts">
+export default defineComponent({
+  setup() {
+    const email = ref("");
+    const password = ref("");
+    const showPassword = ref(false);
 
-const togglePassword = () => {
-  showPassword.value = !showPassword.value;
-};
+    const togglePassword = () => {
+      showPassword.value = !showPassword.value;
+    };
 
-const handleSubmit = () => {
-  // Handle form submission logic here
-  console.log("Form submitted with:", {
-    email: email.value,
-    password: password.value,
-  });
-};
+    const handleSubmit = () => {
+      console.log("Form submitted with:", {
+        email: email.value,
+        password: password.value,
+      });
+    };
+
+    return {
+      email,
+      password,
+      showPassword,
+      togglePassword,
+      handleSubmit,
+    };
+  },
+});
 </script>
