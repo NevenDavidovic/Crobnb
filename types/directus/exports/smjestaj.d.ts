@@ -30,9 +30,9 @@ export interface Smjestaj {
   max_broj_gostiju: number;
   thumbnail: DirectusFile | null;
   regija_id: number;
-  tipovi_smjestaja_id: number; // Changed from smjestaj_id to match DB structure
+  tipovi_smjestaja_id: number;
   boravisna_pristojba: number;
-  detaljan_opis: string;
+  details_opis: string;
   kratki_opis: string;
   broj_kreveta: number;
   broj_kupaonica: number;

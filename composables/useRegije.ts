@@ -14,17 +14,8 @@ export const useRegije = () => {
     error.value = null;
 
     try {
-      const response = await $getRegije();
-
-      regije.value = response.map((item: any) => ({
-        id: item.id,
-        naziv: item.naziv,
-        kratki_opis: item.kratki_opis,
-        opis: item.opis,
-        slika: item.slika,
-        slug: item.slug,
-      }));
-
+      const response = (await $getRegije()) as Regija[];
+      regije.value = response;
       isLoading.value = false;
     } catch (err) {
       console.error("Error fetching regije:", err);
@@ -38,17 +29,8 @@ export const useRegije = () => {
     error.value = null;
 
     try {
-      const response = await $getRegija(id);
-
-      currentRegija.value = {
-        id: response.id,
-        naziv: response.naziv,
-        kratki_opis: response.kratki_opis,
-        opis: response.opis,
-        slika: response.slika,
-        slug: response.slug,
-      };
-
+      const response = (await $getRegija(id)) as Regija;
+      currentRegija.value = response;
       isLoading.value = false;
     } catch (err) {
       console.error(`Error fetching regija with ID ${id}:`, err);
@@ -68,14 +50,7 @@ export const useRegije = () => {
         error.value = "Region not found";
         currentRegija.value = null;
       } else {
-        currentRegija.value = {
-          id: response.id,
-          naziv: response.naziv,
-          kratki_opis: response.kratki_opis,
-          opis: response.opis,
-          slika: response.slika,
-          slug: response.slug,
-        };
+        currentRegija.value = response;
       }
 
       isLoading.value = false;

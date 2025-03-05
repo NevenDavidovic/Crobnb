@@ -4,3 +4,4 @@ export * from "./exports/regions";
 export * from "./exports/news";
 export * from "./exports/schema";
 export * from "./exports/smjestaj";
+//export * from "./exports/rezervacije";

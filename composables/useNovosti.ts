@@ -30,11 +30,8 @@ export const useNovosti = () => {
   const ensureCategoriesLoaded = async () => {
     if (Object.keys(categoriesMap.value).length === 0) {
       try {
-        const response = await $getKategorijeNovosti();
-        kategorijeNovosti.value = response.map((item: any) => ({
-          id: item.id,
-          naziv: item.naziv,
-        }));
+        const response = (await $getKategorijeNovosti()) as KategorijaNovosti[];
+        kategorijeNovosti.value = response;
 
         kategorijeNovosti.value.forEach((cat) => {
           categoriesMap.value[cat.id] = cat;
@@ -54,27 +51,14 @@ export const useNovosti = () => {
     try {
       await ensureCategoriesLoaded();
 
-      const response = await $getNovosti(limit);
+      const response = (await $getNovosti(limit)) as Novost[];
 
-      novosti.value = response.map((item: any) => {
-        const categoryId = item.kategorija_novosti_id;
-        const category = categoryId
-          ? categoriesMap.value[categoryId]
-          : undefined;
-
-        return {
-          id: item.id,
-          date_created: item.date_created,
-          date_updated: item.date_updated,
-          naslov: item.naslov,
-          kratki_opis: item.kratki_opis,
-          sadrzaj: item.sadrzaj,
-          hero_slika: item.hero_slika,
-          kategorija_novosti_id: item.kategorija_novosti_id,
-          kategorija_novosti: category,
-          slug: item.slug,
-        };
-      });
+      novosti.value = response.map((item) => ({
+        ...item,
+        kategorija_novosti: item.kategorija_novosti_id
+          ? categoriesMap.value[item.kategorija_novosti_id]
+          : undefined,
+      }));
 
       isLoading.value = false;
     } catch (err) {
@@ -94,27 +78,17 @@ export const useNovosti = () => {
     try {
       await ensureCategoriesLoaded();
 
-      const response = await $getNovostiByKategorija(kategorijaId, limit);
+      const response = (await $getNovostiByKategorija(
+        kategorijaId,
+        limit
+      )) as Omit<Novost, "kategorija_novosti">[];
 
-      novosti.value = response.map((item: any) => {
-        const categoryId = item.kategorija_novosti_id;
-        const category = categoryId
-          ? categoriesMap.value[categoryId]
-          : undefined;
-
-        return {
-          id: item.id,
-          date_created: item.date_created,
-          date_updated: item.date_updated,
-          naslov: item.naslov,
-          kratki_opis: item.kratki_opis,
-          sadrzaj: item.sadrzaj,
-          hero_slika: item.hero_slika,
-          kategorija_novosti_id: item.kategorija_novosti_id,
-          kategorija_novosti: category,
-          slug: item.slug,
-        };
-      });
+      novosti.value = response.map((item) => ({
+        ...item,
+        kategorija_novosti: item.kategorija_novosti_id
+          ? categoriesMap.value[item.kategorija_novosti_id]
+          : undefined,
+      }));
 
       isLoading.value = false;
     } catch (err) {
@@ -134,22 +108,16 @@ export const useNovosti = () => {
     try {
       await ensureCategoriesLoaded();
 
-      const response = await $getNovost(id);
-
-      const categoryId = response.kategorija_novosti_id;
-      const category = categoryId ? categoriesMap.value[categoryId] : undefined;
+      const response = (await $getNovost(id)) as Omit<
+        Novost,
+        "kategorija_novosti"
+      >;
 
       currentNovost.value = {
-        id: response.id,
-        date_created: response.date_created,
-        date_updated: response.date_updated,
-        naslov: response.naslov,
-        kratki_opis: response.kratki_opis,
-        sadrzaj: response.sadrzaj,
-        hero_slika: response.hero_slika,
-        kategorija_novosti_id: response.kategorija_novosti_id,
-        kategorija_novosti: category,
-        slug: response.slug,
+        ...response,
+        kategorija_novosti: response.kategorija_novosti_id
+          ? categoriesMap.value[response.kategorija_novosti_id]
+          : undefined,
       };
 
       isLoading.value = false;
@@ -167,28 +135,20 @@ export const useNovosti = () => {
     try {
       await ensureCategoriesLoaded();
 
-      const response = await $getNovostBySlug(slug);
+      const response = (await $getNovostBySlug(slug)) as Omit<
+        Novost,
+        "kategorija_novosti"
+      > | null;
 
       if (!response) {
         error.value = "News article not found";
         currentNovost.value = null;
       } else {
-        const categoryId = response.kategorija_novosti_id;
-        const category = categoryId
-          ? categoriesMap.value[categoryId]
-          : undefined;
-
         currentNovost.value = {
-          id: response.id,
-          date_created: response.date_created,
-          date_updated: response.date_updated,
-          naslov: response.naslov,
-          kratki_opis: response.kratki_opis,
-          sadrzaj: response.sadrzaj,
-          hero_slika: response.hero_slika,
-          kategorija_novosti_id: response.kategorija_novosti_id,
-          kategorija_novosti: category,
-          slug: response.slug,
+          ...response,
+          kategorija_novosti: response.kategorija_novosti_id
+            ? categoriesMap.value[response.kategorija_novosti_id]
+            : undefined,
         };
       }
 
@@ -205,12 +165,9 @@ export const useNovosti = () => {
     error.value = null;
 
     try {
-      const response = await $getKategorijeNovosti();
+      const response = (await $getKategorijeNovosti()) as KategorijaNovosti[];
 
-      kategorijeNovosti.value = response.map((item: any) => ({
-        id: item.id,
-        naziv: item.naziv,
-      }));
+      kategorijeNovosti.value = response;
 
       kategorijeNovosti.value.forEach((cat) => {
         categoriesMap.value[cat.id] = cat;

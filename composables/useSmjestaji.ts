@@ -13,6 +13,7 @@ export const useSmjestaji = () => {
     $getSmjestajBySlug,
     $getSadrzaji,
     $getFileUrl,
+    $getSmjestajSadrzajiRelations,
   } = useNuxtApp();
 
   const smjestaji = ref<Smjestaj[]>([]);
@@ -42,14 +43,9 @@ export const useSmjestaji = () => {
     error.value = null;
 
     try {
-      const response = await $getSmjestaji(limit);
+      const response = (await $getSmjestaji(limit)) as Smjestaj[];
 
-      const mappedSmjestaji = response.map((item: any) => ({
-        ...item,
-        sadrzaji: item.sadrzaji || [],
-      }));
-
-      smjestaji.value = mappedSmjestaji;
+      smjestaji.value = response;
 
       isLoading.value = false;
     } catch (err) {
@@ -64,34 +60,12 @@ export const useSmjestaji = () => {
     error.value = null;
 
     try {
-      const response = await $getSmjestajiByRegija(regijaId, limit);
+      const response = (await $getSmjestajiByRegija(
+        regijaId,
+        limit
+      )) as Smjestaj[];
 
-      smjestaji.value = response.map((item: any) => ({
-        id: item.id,
-        date_created: item.date_created,
-        date_updated: item.date_updated,
-        naziv: item.naziv,
-        adresa: item.adresa,
-        postanski_broj: item.postanski_broj,
-        grad: item.grad,
-        cijena_nocenja: item.cijena_nocenja,
-        check_in: item.check_in,
-        check_out: item.check_out,
-        broj_zvjezdica: item.broj_zvjezdica,
-        max_broj_gostiju: item.max_broj_gostiju,
-        thumbnail: item.thumbnail,
-        regija_id: item.regija_id,
-        tipovi_smjestaja_id: item.tipovi_smjestaja_id,
-        boravisna_pristojba: item.boravisna_pristojba,
-        detaljan_opis: item.detaljan_opis,
-        kratki_opis: item.kratki_opis,
-        broj_kreveta: item.broj_kreveta,
-        broj_kupaonica: item.broj_kupaonica,
-        slug: item.slug,
-        regija: item.regija,
-        tip_smjestaja: item.tip_smjestaja,
-        sadrzaji: item.sadrzaji,
-      }));
+      smjestaji.value = response;
 
       isLoading.value = false;
     } catch (err) {
@@ -106,34 +80,12 @@ export const useSmjestaji = () => {
     error.value = null;
 
     try {
-      const response = await $getSmjestajiByTip(tipId, limit);
+      const response = (await $getSmjestajiByRegija(
+        tipId,
+        limit
+      )) as Smjestaj[];
 
-      smjestaji.value = response.map((item: any) => ({
-        id: item.id,
-        date_created: item.date_created,
-        date_updated: item.date_updated,
-        naziv: item.naziv,
-        adresa: item.adresa,
-        postanski_broj: item.postanski_broj,
-        grad: item.grad,
-        cijena_nocenja: item.cijena_nocenja,
-        check_in: item.check_in,
-        check_out: item.check_out,
-        broj_zvjezdica: item.broj_zvjezdica,
-        max_broj_gostiju: item.max_broj_gostiju,
-        thumbnail: item.thumbnail,
-        regija_id: item.regija_id,
-        tipovi_smjestaja_id: item.tipovi_smjestaja_id,
-        boravisna_pristojba: item.boravisna_pristojba,
-        detaljan_opis: item.detaljan_opis,
-        kratki_opis: item.kratki_opis,
-        broj_kreveta: item.broj_kreveta,
-        broj_kupaonica: item.broj_kupaonica,
-        slug: item.slug,
-        regija: item.regija,
-        tip_smjestaja: item.tip_smjestaja,
-        sadrzaji: item.sadrzaji,
-      }));
+      smjestaji.value = response;
 
       isLoading.value = false;
     } catch (err) {
@@ -148,34 +100,9 @@ export const useSmjestaji = () => {
     error.value = null;
 
     try {
-      const response = await $getSmjestaj(id);
+      const response = (await $getSmjestaj(id)) as Smjestaj;
 
-      currentSmjestaj.value = {
-        id: response.id,
-        date_created: response.date_created,
-        date_updated: response.date_updated,
-        naziv: response.naziv,
-        adresa: response.adresa,
-        postanski_broj: response.postanski_broj,
-        grad: response.grad,
-        cijena_nocenja: response.cijena_nocenja,
-        check_in: response.check_in,
-        check_out: response.check_out,
-        broj_zvjezdica: response.broj_zvjezdica,
-        max_broj_gostiju: response.max_broj_gostiju,
-        thumbnail: response.thumbnail,
-        regija_id: response.regija_id,
-        tipovi_smjestaja_id: response.tipovi_smjestaja_id,
-        boravisna_pristojba: response.boravisna_pristojba,
-        detaljan_opis: response.detaljan_opis,
-        kratki_opis: response.kratki_opis,
-        broj_kreveta: response.broj_kreveta,
-        broj_kupaonica: response.broj_kupaonica,
-        slug: response.slug,
-        regija: response.regija,
-        tip_smjestaja: response.tip_smjestaja,
-        sadrzaji: response.sadrzaji,
-      };
+      currentSmjestaj.value = response;
 
       isLoading.value = false;
     } catch (err) {
@@ -190,38 +117,13 @@ export const useSmjestaji = () => {
     error.value = null;
 
     try {
-      const response = await $getSmjestajBySlug(slug);
+      const response = (await $getSmjestajBySlug(slug)) as Smjestaj | null;
 
       if (!response) {
         error.value = "Accommodation not found";
         currentSmjestaj.value = null;
       } else {
-        currentSmjestaj.value = {
-          id: response.id,
-          date_created: response.date_created,
-          date_updated: response.date_updated,
-          naziv: response.naziv,
-          adresa: response.adresa,
-          postanski_broj: response.postanski_broj,
-          grad: response.grad,
-          cijena_nocenja: response.cijena_nocenja,
-          check_in: response.check_in,
-          check_out: response.check_out,
-          broj_zvjezdica: response.broj_zvjezdica,
-          max_broj_gostiju: response.max_broj_gostiju,
-          thumbnail: response.thumbnail,
-          regija_id: response.regija_id,
-          tipovi_smjestaja_id: response.tipovi_smjestaja_id,
-          boravisna_pristojba: response.boravisna_pristojba,
-          detaljan_opis: response.detaljan_opis,
-          kratki_opis: response.kratki_opis,
-          broj_kreveta: response.broj_kreveta,
-          broj_kupaonica: response.broj_kupaonica,
-          slug: response.slug,
-          regija: response.regija,
-          tip_smjestaja: response.tip_smjestaja,
-          sadrzaji: response.sadrzaji,
-        };
+        currentSmjestaj.value = response;
       }
 
       isLoading.value = false;
@@ -236,19 +138,17 @@ export const useSmjestaji = () => {
     isLoading.value = true;
 
     try {
-      if (sadrzaji.value.length === 0) {
-        await fetchSadrzaji();
-      }
+      await fetchSadrzaji();
 
       if (smjestaji.value.length === 0) {
         await fetchSmjestaji();
       }
 
-      const { $getSmjestajSadrzajiRelations } = useNuxtApp();
-      const relations = await $getSmjestajSadrzajiRelations();
+      const relations =
+        (await $getSmjestajSadrzajiRelations()) as SmjestajSadrzaj[];
 
-      const relationsBySmjestajId: Record<number, any[]> = {};
-      relations.forEach((relation: any) => {
+      const relationsBySmjestajId: Record<number, SmjestajSadrzaj[]> = {};
+      relations.forEach((relation: SmjestajSadrzaj) => {
         if (!relationsBySmjestajId[relation.smjestaj_id]) {
           relationsBySmjestajId[relation.smjestaj_id] = [];
         }
@@ -259,7 +159,7 @@ export const useSmjestaji = () => {
         const smjestajRelations = relationsBySmjestajId[smjestaj.id] || [];
 
         const smjestajSadrzaji: SmjestajSadrzaj[] = smjestajRelations.map(
-          (relation: any) => {
+          (relation: SmjestajSadrzaj) => {
             const sadrzajItem = sadrzaji.value.find(
               (s) => s.id === relation.sadrzaj_id
             );
@@ -274,7 +174,7 @@ export const useSmjestaji = () => {
               id: relation.id,
               sadrzaj_id: relation.sadrzaj_id,
               smjestaj_id: relation.smjestaj_id,
-              sadrzaj: sadrzajItem || relation.sadrzaj, // Use either the found item or the one from relation if available
+              sadrzaj: sadrzajItem || relation.sadrzaj,
             };
           }
         );
@@ -297,13 +197,9 @@ export const useSmjestaji = () => {
     error.value = null;
 
     try {
-      const response = await $getSadrzaji();
+      const response = (await $getSadrzaji()) as Sadrzaj[];
 
-      sadrzaji.value = response.map((item: any) => ({
-        id: item.id,
-        naziv: item.naziv,
-        icon: item.icon,
-      }));
+      sadrzaji.value = response;
 
       isLoading.value = false;
     } catch (err) {
@@ -355,8 +251,6 @@ export const useSmjestaji = () => {
       })
       .filter((sadrzaj): sadrzaj is Sadrzaj => {
         const isValid = !!sadrzaj;
-        if (!isValid) {
-        }
         return isValid;
       });
 

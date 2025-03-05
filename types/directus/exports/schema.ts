@@ -3,6 +3,7 @@ import type { TipSmjestaja } from "./accommodation";
 import type { Regija } from "./regions";
 import type { Novost, KategorijaNovosti } from "./news";
 import type { Smjestaj, Sadrzaj, SmjestajSadrzaj } from "./smjestaj";
+// import type { Rezervacija } from "./rezervacije";
 
 /**
  * Define the schema for Directus collections
@@ -17,7 +18,7 @@ export interface Schema {
   smjestaj: Smjestaj[];
   sadrzaji: Sadrzaj[];
   smjestaj_sadrzaji: SmjestajSadrzaj[];
-
+  //rezervacije: Rezervacija[];
   // Single items
   tipovi_smjestaja_items: {
     tipovi_smjestaja: TipSmjestaja;
@@ -37,6 +38,9 @@ export interface Schema {
   sadrzaji_items: {
     sadrzaji: Sadrzaj;
   };
+  // rezervacije_items: {
+  //rezervacije: Rezervacija;
+  // };
 
   // Files
   directus_files: DirectusFile;

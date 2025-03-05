@@ -18,15 +18,8 @@ export const useTipoviSmjestaja = () => {
     error.value = null;
 
     try {
-      const response = await $getTipoviSmjestaja();
-
-      tipovi.value = response.map((item: any) => ({
-        id: item.id,
-        naziv: item.naziv,
-        ikona: item.ikona,
-        slug: item.slug,
-      }));
-
+      const response = (await $getTipoviSmjestaja()) as TipSmjestaja[];
+      tipovi.value = response;
       isLoading.value = false;
     } catch (err) {
       console.error("Error fetching tipovi_smjestaja:", err);
@@ -40,15 +33,8 @@ export const useTipoviSmjestaja = () => {
     error.value = null;
 
     try {
-      const response = await $getTipSmjestaja(id);
-
-      currentTip.value = {
-        id: response.id,
-        naziv: response.naziv,
-        ikona: response.ikona,
-        slug: response.slug, // Add this line
-      };
-
+      const response = (await $getTipSmjestaja(id)) as TipSmjestaja;
+      currentTip.value = response;
       isLoading.value = false;
     } catch (err) {
       console.error(`Error fetching tip_smjestaja with ID ${id}:`, err);
@@ -68,12 +54,7 @@ export const useTipoviSmjestaja = () => {
         error.value = "Accommodation type not found";
         currentTip.value = null;
       } else {
-        currentTip.value = {
-          id: response.id,
-          naziv: response.naziv,
-          ikona: response.ikona,
-          slug: response.slug,
-        };
+        currentTip.value = response;
       }
 
       isLoading.value = false;
