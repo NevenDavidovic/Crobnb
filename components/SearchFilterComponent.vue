@@ -548,8 +548,8 @@ export default defineComponent({
     const showCalendar = ref<boolean>(false);
 
     const datePickerRange = ref<DateRange>({
-      start: new Date(2023, 2, 2),
-      end: new Date(2023, 2, 3),
+      start: new Date(),
+      end: new Date(new Date().setDate(new Date().getDate() + 1)),
     });
 
     const formatDate = (date: Date): string => {

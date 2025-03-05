@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="mb-[52px]">
     <SearchFilterComponent
       :tipovi="tipovi"
       :tipovi-loading="tipoviLoading"
@@ -7,21 +7,24 @@
       :regije="regije"
       :regije-loading="regijeLoading"
       :regije-error="regijeError || undefined"
+      @search="onSearch"
     />
-    <div class="flex max-w-1200 px-4 mx-auto">
+    <div class="flex max-w-1200 px-4 mx-auto gap-6">
       <div class="bg-white rounded-lg shadow p-4 w-full max-w-xs">
         <!-- Header -->
         <div class="flex justify-between items-center mb-4 pb-2 border-b">
           <h3 class="font-medium text-gray-800">Filtriroj po:</h3>
-          <button class="text-blue-500 text-sm">Resetiraj</button>
+          <button @click="resetFilters" class="text-blue-500 text-sm">
+            Resetiraj
+          </button>
         </div>
 
         <!-- Price Range -->
         <div class="mb-6 pb-4 border-b">
           <p class="text-gray-700 mb-2">Raspon cijena (EUR)</p>
           <div class="flex justify-between text-gray-500 text-sm mb-1">
-            <span>0</span>
-            <span>240</span>
+            <span>{{ currentPriceMin }}</span>
+            <span>{{ currentPriceMax }}</span>
           </div>
           <div class="relative h-2 mb-4">
             <!-- Track -->
@@ -30,19 +33,21 @@
             <!-- Selected range -->
             <div
               class="absolute h-2 bg-blue-500 rounded"
-              style="width: 25%; left: 0"
+              :style="`width: ${sliderWidth}%; left: ${sliderMinPercent}%`"
             ></div>
 
-            <!-- Min handle -->
+            <!-- Min handle - simplified for now -->
             <div
-              class="absolute w-5 h-5 bg-white border-2 border-blue-500 rounded-full -mt-1.5 -ml-1"
-              style="left: 0%"
+              class="absolute w-5 h-5 bg-white border-2 border-blue-500 rounded-full -mt-1.5 -ml-1 cursor-pointer"
+              :style="`left: ${sliderMinPercent}%`"
+              @mousedown="startDrag('min', $event)"
             ></div>
 
-            <!-- Max handle -->
+            <!-- Max handle - simplified for now -->
             <div
-              class="absolute w-5 h-5 bg-white border-2 border-blue-500 rounded-full -mt-1.5 -ml-1"
-              style="left: 25%"
+              class="absolute w-5 h-5 bg-white border-2 border-blue-500 rounded-full -mt-1.5 -ml-1 cursor-pointer"
+              :style="`left: ${sliderMaxPercent}%`"
+              @mousedown="startDrag('max', $event)"
             ></div>
           </div>
         </div>
@@ -55,6 +60,8 @@
               <input
                 type="checkbox"
                 class="h-4 w-4 text-blue-500 rounded border-gray-300 mr-2"
+                :checked="selectedStars.includes(5)"
+                @change="toggleStarRating(5)"
               />
               <div class="flex text-yellow-400">
                 <span>★</span><span>★</span><span>★</span><span>★</span
@@ -65,6 +72,8 @@
               <input
                 type="checkbox"
                 class="h-4 w-4 text-blue-500 rounded border-gray-300 mr-2"
+                :checked="selectedStars.includes(4)"
+                @change="toggleStarRating(4)"
               />
               <div class="flex text-yellow-400">
                 <span>★</span><span>★</span><span>★</span><span>★</span
@@ -75,6 +84,8 @@
               <input
                 type="checkbox"
                 class="h-4 w-4 text-blue-500 rounded border-gray-300 mr-2"
+                :checked="selectedStars.includes(3)"
+                @change="toggleStarRating(3)"
               />
               <div class="flex text-yellow-400">
                 <span>★</span><span>★</span><span>★</span
@@ -86,6 +97,8 @@
               <input
                 type="checkbox"
                 class="h-4 w-4 text-blue-500 rounded border-gray-300 mr-2"
+                :checked="selectedStars.includes(2)"
+                @change="toggleStarRating(2)"
               />
               <div class="flex text-yellow-400">
                 <span>★</span><span>★</span><span class="text-gray-200">★</span
@@ -97,6 +110,8 @@
               <input
                 type="checkbox"
                 class="h-4 w-4 text-blue-500 rounded border-gray-300 mr-2"
+                :checked="selectedStars.includes(1)"
+                @change="toggleStarRating(1)"
               />
               <div class="flex text-yellow-400">
                 <span>★</span><span class="text-gray-200">★</span
@@ -116,6 +131,10 @@
               <input
                 type="checkbox"
                 class="h-4 w-4 text-blue-500 rounded border-gray-300 mr-2"
+                :checked="
+                  selectedAmenities.includes(getAmenityIdByName('Bazen'))
+                "
+                @change="toggleAmenity('Bazen')"
               />
               <span class="text-gray-700">Bazen</span>
             </div>
@@ -123,6 +142,10 @@
               <input
                 type="checkbox"
                 class="h-4 w-4 text-blue-500 rounded border-gray-300 mr-2"
+                :checked="
+                  selectedAmenities.includes(getAmenityIdByName('WiFi'))
+                "
+                @change="toggleAmenity('WiFi')"
               />
               <span class="text-gray-700">WiFi</span>
             </div>
@@ -130,6 +153,10 @@
               <input
                 type="checkbox"
                 class="h-4 w-4 text-blue-500 rounded border-gray-300 mr-2"
+                :checked="
+                  selectedAmenities.includes(getAmenityIdByName('Klima'))
+                "
+                @change="toggleAmenity('Klima')"
               />
               <span class="text-gray-700">Klima</span>
             </div>
@@ -137,6 +164,10 @@
               <input
                 type="checkbox"
                 class="h-4 w-4 text-blue-500 rounded border-gray-300 mr-2"
+                :checked="
+                  selectedAmenities.includes(getAmenityIdByName('Parking'))
+                "
+                @change="toggleAmenity('Parking')"
               />
               <span class="text-gray-700">Parking</span>
             </div>
@@ -144,6 +175,8 @@
               <input
                 type="checkbox"
                 class="h-4 w-4 text-blue-500 rounded border-gray-300 mr-2"
+                :checked="isApartmanTypeSelected"
+                @change="toggleApartmanType"
               />
               <span class="text-gray-700">Apartman</span>
             </div>
@@ -151,86 +184,73 @@
               <input
                 type="checkbox"
                 class="h-4 w-4 text-blue-500 rounded border-gray-300 mr-2"
+                :checked="selectedAmenities.includes(getAmenityIdByName('TV'))"
+                @change="toggleAmenity('TV')"
               />
               <span class="text-gray-700">TV</span>
             </div>
           </div>
         </div>
 
-        <!-- Apply Button -->
         <button
+          @click="applyFilters"
           class="w-full py-2 bg-white border border-blue-500 text-blue-500 rounded font-medium hover:bg-blue-50 transition-colors"
         >
           Primijeni filter
         </button>
       </div>
 
-      <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold mb-8">Accommodation Listings</h1>
+      <div class="flex-1 py-8">
+        <div class="flex justify-between items-center mb-8">
+          <h1 class="text-[25px] font-bold text-gray-100">
+            {{ filteredSmjestaji.length }} smještaja pronađeno
+          </h1>
 
-        <!-- Filters section (can be expanded later) -->
-        <div class="mb-8 p-4 bg-gray-50 rounded-lg">
-          <h2 class="text-xl font-semibold mb-4">Filters</h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <!-- Region filter -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"
-                >Region</label
+          <div class="relative">
+            <button
+              @click="toggleSortDropdown"
+              class="flex items-center gap-2 px-4 py-2 bg-white text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <span class="text-gray-80 text-base">Sortiraj po:</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                :class="{ 'transform rotate-180': showSortDropdown }"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="#BEC0C5"
               >
-              <select
-                v-model="selectedRegion"
-                class="w-full p-2 border border-gray-300 rounded-md"
-                @change="handleRegionChange"
-              >
-                <option :value="null">All regions</option>
-                <option
-                  v-for="regija in regije"
-                  :key="regija.id"
-                  :value="regija.id"
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            <!-- Dropdown menu -->
+            <div
+              v-if="showSortDropdown"
+              class="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-md shadow-lg z-10"
+            >
+              <div class="py-1">
+                <button
+                  v-for="option in sortOptions"
+                  :key="option.value"
+                  @click="setSortOption(option.value)"
+                  class="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors"
+                  :class="{
+                    'font-medium text-blue-600': sortBy === option.value,
+                  }"
                 >
-                  {{ regija.naziv }}
-                </option>
-              </select>
-            </div>
-
-            <!-- Accommodation type filter -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"
-                >Type</label
-              >
-              <select
-                v-model="selectedType"
-                class="w-full p-2 border border-gray-300 rounded-md"
-                @change="handleTypeChange"
-              >
-                <option :value="null">All types</option>
-                <option v-for="tip in tipovi" :key="tip.id" :value="tip.id">
-                  {{ tip.naziv }}
-                </option>
-              </select>
-            </div>
-
-            <!-- Price range filter (could be expanded) -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"
-                >Price range</label
-              >
-              <select
-                v-model="selectedPriceRange"
-                class="w-full p-2 border border-gray-300 rounded-md"
-                @change="applyFilters"
-              >
-                <option :value="null">Any price</option>
-                <option value="0-50">Up to 50 EUR</option>
-                <option value="50-100">50 - 100 EUR</option>
-                <option value="100-200">100 - 200 EUR</option>
-                <option value="200+">200+ EUR</option>
-              </select>
+                  {{ option.label }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Results section -->
         <SmjestajGrid
           :smjestaji="filteredSmjestaji"
           :is-loading="isLoading"
@@ -249,10 +269,65 @@
 import { useTipoviSmjestaja } from "~/composables/useTipoviSmjestaja";
 import { useRegije } from "~/composables/useRegije";
 import { useSmjestaji } from "~/composables/useSmjestaji";
-import type { TipSmjestaja, Smjestaj } from "~/types/directus/index";
+import type { TipSmjestaja, Smjestaj, Sadrzaj } from "~/types/directus/index";
 
 export default defineComponent({
   setup() {
+    const route = useRoute();
+
+    const showSortDropdown = ref(false);
+    const sortBy = ref<string>("default");
+
+    const sortOptions = [
+      { label: "Cijena: niža prema višoj", value: "price-asc" },
+      { label: "Cijena: viša prema nižoj", value: "price-desc" },
+      { label: "Zvijezdice: niže prema višem", value: "stars-asc" },
+      { label: "Zvijezdice: više prema nižem", value: "stars-desc" },
+    ];
+
+    const toggleSortDropdown = () => {
+      showSortDropdown.value = !showSortDropdown.value;
+    };
+
+    const setSortOption = (option: string) => {
+      sortBy.value = option;
+      showSortDropdown.value = false;
+      applySort();
+    };
+
+    const applySort = () => {
+      const sortedResults = [...filteredSmjestaji.value];
+
+      switch (sortBy.value) {
+        case "price-asc":
+          sortedResults.sort(
+            (a, b) => (a.cijena_nocenja || 0) - (b.cijena_nocenja || 0)
+          );
+          break;
+        case "price-desc":
+          sortedResults.sort(
+            (a, b) => (b.cijena_nocenja || 0) - (a.cijena_nocenja || 0)
+          );
+          break;
+        case "stars-asc":
+          sortedResults.sort(
+            (a, b) => (a.broj_zvjezdica || 0) - (b.broj_zvjezdica || 0)
+          );
+          break;
+        case "stars-desc":
+          sortedResults.sort(
+            (a, b) => (b.broj_zvjezdica || 0) - (a.broj_zvjezdica || 0)
+          );
+          break;
+        default:
+          // No sorting applied
+          break;
+      }
+
+      // Update filtered results with the sorted array
+      filteredSmjestaji.value = sortedResults;
+    };
+
     const {
       tipovi,
       isLoading: tipoviLoading,
@@ -281,20 +356,133 @@ export default defineComponent({
       formatPrice,
       formatPriceHRK,
       getSadrzajIconUrl,
+      hasAmenity,
     } = useSmjestaji();
 
     // Filter states
     const selectedRegion = ref<number | null>(null);
     const selectedType = ref<number | null>(null);
     const selectedPriceRange = ref<string | null>(null);
+    const checkinDate = ref<string | null>(null);
+    const checkoutDate = ref<string | null>(null);
+    const adults = ref<number>(2);
+    const children = ref<number>(0);
 
-    // Local copy of smjestaji for filtering
+    // Advanced filter states
+    const priceMin = ref(0);
+    const priceMax = computed(() => {
+      if (allSmjestaji.value.length === 0) return 240; // Default fallback
+
+      // Find the maximum price from all accommodations
+      return Math.ceil(
+        Math.max(
+          ...allSmjestaji.value.map(
+            (item: { cijena_nocenja: number }) => item.cijena_nocenja || 0
+          )
+        )
+      );
+    });
+    const currentPriceMin = ref(0);
+    const currentPriceMax = ref(0);
+
+    const updatePriceRange = () => {
+      currentPriceMax.value = priceMax.value;
+    };
+
+    const selectedStars = ref<number[]>([]);
+    const selectedAmenities = ref<number[]>([]);
+
+    // Slider drag state
+    const dragType = ref<"min" | "max" | null>(null);
+
+    const sliderMinPercent = computed(
+      () => (currentPriceMin.value / priceMax.value) * 100
+    );
+    const sliderMaxPercent = computed(
+      () => (currentPriceMax.value / priceMax.value) * 100
+    );
+    const sliderWidth = computed(
+      () => sliderMaxPercent.value - sliderMinPercent.value
+    );
+
+    // Computed check for Apartman type
+    const isApartmanTypeSelected = computed(() => {
+      const apartmanType = tipovi.value.find(
+        (t: { naziv: string }) => t.naziv === "Apartman"
+      );
+      return apartmanType && selectedType.value === apartmanType.id;
+    });
+
+    // Main data arrays
     const allSmjestaji = ref<Smjestaj[]>([]);
     const filteredSmjestaji = ref<Smjestaj[]>([]);
 
+    // Handle search from SearchFilterComponent
+    const onSearch = (filters: any): void => {
+      console.log("Search filters received:", filters);
+
+      // Update the URL
+      const queryParams: Record<string, string> = {
+        location: filters.location,
+        type: filters.type,
+        checkin: filters.checkin,
+        checkout: filters.checkout,
+        adults: filters.adults.toString(),
+        children: filters.children.toString(),
+      };
+
+      navigateTo({
+        path: "/smjestaji",
+        query: queryParams,
+      });
+    };
+
+    // Function to apply filters based on URL parameters
+    const applyFiltersFromUrl = async () => {
+      const query = route.query;
+
+      // Parse and apply location/region filter
+      if (query.location) {
+        const regionId = parseInt(query.location as string);
+        if (!isNaN(regionId)) {
+          selectedRegion.value = regionId;
+          await fetchSmjestajiByRegija(regionId);
+        }
+      }
+
+      // Parse and apply type filter
+      if (query.type) {
+        const typeId = parseInt(query.type as string);
+        if (!isNaN(typeId)) {
+          selectedType.value = typeId;
+
+          // If region is already selected, we filter client-side
+          if (selectedRegion.value !== null) {
+            allSmjestaji.value = smjestaji.value.filter(
+              (item: Smjestaj) => item.tipovi_smjestaja_id === typeId
+            );
+          } else {
+            await fetchSmjestajiByTip(typeId);
+          }
+        }
+      }
+
+      // Store checkin/checkout dates
+      checkinDate.value = (query.checkin as string) || null;
+      checkoutDate.value = (query.checkout as string) || null;
+
+      // Parse adults/children
+      adults.value = parseInt(query.adults as string) || 2;
+      children.value = parseInt(query.children as string) || 0;
+
+      // Apply linking and initial filtering
+      allSmjestaji.value = [...smjestaji.value];
+      linkTipoviSmjestaja();
+      applyFilters();
+    };
+
     // Connect accommodation types to their objects
     const linkTipoviSmjestaja = () => {
-      // Check if tipovi and smjestaji are both loaded
       if (tipovi.value.length === 0 || allSmjestaji.value.length === 0) {
         console.log("Cannot link types: missing data");
         return;
@@ -302,15 +490,12 @@ export default defineComponent({
 
       console.log("Linking accommodation types to accommodations");
 
-      // Create a new array with updated objects to ensure reactivity
       const linkedSmjestaji = [...allSmjestaji.value].map(
         (smjestaj: Smjestaj) => {
-          // Skip if already linked
           if (smjestaj.tip_smjestaja) {
             return smjestaj;
           }
 
-          // Find the matching tip_smjestaja by ID
           const matchingTip = tipovi.value.find(
             (tip: TipSmjestaja) => tip.id === smjestaj.tipovi_smjestaja_id
           );
@@ -320,7 +505,6 @@ export default defineComponent({
               `Linked type ${matchingTip.naziv} to smjestaj ${smjestaj.naziv}`
             );
 
-            // Important: create a new object to ensure Vue's reactivity
             return {
               ...smjestaj,
               tip_smjestaja: { ...matchingTip },
@@ -331,135 +515,202 @@ export default defineComponent({
         }
       );
 
-      // Update both refs with new arrays
       allSmjestaji.value = linkedSmjestaji;
       filteredSmjestaji.value = [...linkedSmjestaji];
 
-      // Log to verify linkage
       console.log(
         "After linking - First accommodation type:",
         allSmjestaji.value[0]?.tip_smjestaja
       );
     };
 
-    // Update filtered results based on price range
-    const applyFilters = () => {
-      // Make sure types are linked before filtering
-      linkTipoviSmjestaja();
+    // Reset all filters
+    const resetFilters = () => {
+      selectedRegion.value = null;
+      selectedType.value = null;
+      currentPriceMin.value = 0;
+      currentPriceMax.value = 60; // 25% of max
+      selectedStars.value = [];
+      selectedAmenities.value = [];
+      checkinDate.value = null;
+      checkoutDate.value = null;
+      adults.value = 2;
+      children.value = 0;
 
-      if (selectedPriceRange.value === null) {
-        filteredSmjestaji.value = [...allSmjestaji.value];
-        return;
-      }
-
-      let minPrice = 0;
-      let maxPrice = Infinity;
-
-      switch (selectedPriceRange.value) {
-        case "0-50":
-          maxPrice = 50;
-          break;
-        case "50-100":
-          minPrice = 50;
-          maxPrice = 100;
-          break;
-        case "100-200":
-          minPrice = 100;
-          maxPrice = 200;
-          break;
-        case "200+":
-          minPrice = 200;
-          break;
-      }
-
-      filteredSmjestaji.value = allSmjestaji.value.filter((item: Smjestaj) => {
-        const price = item.cijena_nocenja;
-        return price >= minPrice && price <= maxPrice;
+      // Reset URL params
+      navigateTo({
+        path: "/smjestaji",
+        query: {},
       });
+
+      // Reset filteredSmjestaji to show all
+      filteredSmjestaji.value = [...allSmjestaji.value];
     };
 
-    // Apply region filter
-    const handleRegionChange = async () => {
-      try {
-        if (selectedRegion.value === null) {
-          // Reset to all if no region is selected
-          if (selectedType.value === null) {
-            await fetchSmjestaji();
-          } else {
-            await fetchSmjestajiByTip(selectedType.value);
-          }
-        } else {
-          await fetchSmjestajiByRegija(selectedRegion.value);
-
-          // If type is also selected, we need to filter the results client-side
-          if (selectedType.value !== null) {
-            allSmjestaji.value = smjestaji.value.filter(
-              (item: Smjestaj) =>
-                item.tipovi_smjestaja_id === selectedType.value
-            );
-          } else {
-            allSmjestaji.value = [...smjestaji.value];
-          }
-        }
-
-        // Link types and apply filters
-        linkTipoviSmjestaja();
-        applyFilters();
-      } catch (err) {
-        console.error("Error applying region filter:", err);
+    // Toggle star rating filter
+    const toggleStarRating = (stars: number) => {
+      const index = selectedStars.value.indexOf(stars);
+      if (index === -1) {
+        selectedStars.value.push(stars);
+      } else {
+        selectedStars.value.splice(index, 1);
       }
     };
 
-    // Apply type filter
-    const handleTypeChange = async () => {
-      try {
-        if (selectedType.value === null) {
-          // Reset to all if no type is selected
-          if (selectedRegion.value === null) {
-            await fetchSmjestaji();
-          } else {
-            await fetchSmjestajiByRegija(selectedRegion.value);
-          }
-        } else {
-          await fetchSmjestajiByTip(selectedType.value);
+    // Get amenity ID by name
+    const getAmenityIdByName = (name: string): number => {
+      const amenity = sadrzaji.value.find(
+        (s: { naziv: string }) => s.naziv.toLowerCase() === name.toLowerCase()
+      );
+      return amenity ? amenity.id : -1;
+    };
 
-          if (selectedRegion.value !== null) {
-            allSmjestaji.value = smjestaji.value.filter(
-              (item: Smjestaj) => item.regija_id === selectedRegion.value
-            );
-          } else {
-            allSmjestaji.value = [...smjestaji.value];
-          }
-        }
+    // Toggle amenity filter
+    const toggleAmenity = (name: string) => {
+      const amenityId = getAmenityIdByName(name);
+      if (amenityId === -1) return;
 
-        // Link types and apply filters
-        linkTipoviSmjestaja();
-        applyFilters();
-      } catch (err) {
-        console.error("Error applying type filter:", err);
+      const index = selectedAmenities.value.indexOf(amenityId);
+      if (index === -1) {
+        selectedAmenities.value.push(amenityId);
+      } else {
+        selectedAmenities.value.splice(index, 1);
       }
     };
 
-    // Load initial data
+    // Toggle Apartman type
+    const toggleApartmanType = () => {
+      const apartmanType = tipovi.value.find(
+        (t: { naziv: string }) => t.naziv === "Apartman"
+      );
+      if (!apartmanType) return;
+
+      if (selectedType.value === apartmanType.id) {
+        selectedType.value = null;
+      } else {
+        selectedType.value = apartmanType.id;
+      }
+    };
+
+    // Start dragging slider handle
+    const startDrag = (type: "min" | "max", event: MouseEvent) => {
+      dragType.value = type;
+
+      document.addEventListener("mousemove", handleDrag);
+      document.addEventListener("mouseup", stopDrag);
+
+      event.preventDefault();
+    };
+
+    // Handle drag movement
+    const handleDrag = (event: MouseEvent) => {
+      if (!dragType.value) return;
+
+      const slider = event.target as HTMLElement;
+      const sliderRect = slider.parentElement?.getBoundingClientRect();
+      if (!sliderRect) return;
+
+      const offsetX = event.clientX - sliderRect.left;
+      const percent = Math.min(Math.max(0, offsetX / sliderRect.width), 1);
+      const newValue = Math.round(percent * priceMax.value);
+
+      if (dragType.value === "min") {
+        currentPriceMin.value = Math.min(newValue, currentPriceMax.value - 10);
+      } else {
+        currentPriceMax.value = Math.max(newValue, currentPriceMin.value + 10);
+      }
+    };
+
+    // Stop dragging
+    const stopDrag = () => {
+      dragType.value = null;
+      document.removeEventListener("mousemove", handleDrag);
+      document.removeEventListener("mouseup", stopDrag);
+    };
+
+    // Apply all filters - combining URL filters and sidebar filters
+    const applyFilters = () => {
+      let results = [...allSmjestaji.value];
+
+      // Apply region filter
+      if (selectedRegion.value !== null) {
+        results = results.filter(
+          (item) => item.regija_id === selectedRegion.value
+        );
+      }
+
+      // Apply type filter
+      if (selectedType.value !== null) {
+        results = results.filter(
+          (item) => item.tipovi_smjestaja_id === selectedType.value
+        );
+      }
+
+      // Apply price range filter
+      results = results.filter((item) => {
+        const price = item.cijena_nocenja;
+        return price >= currentPriceMin.value && price <= currentPriceMax.value;
+      });
+
+      // Apply star rating filter
+      if (selectedStars.value.length > 0) {
+        results = results.filter((item) =>
+          selectedStars.value.includes(item.broj_zvjezdica || 0)
+        );
+      }
+
+      // Apply amenities filter
+      if (selectedAmenities.value.length > 0) {
+        results = results.filter((item) =>
+          selectedAmenities.value.every((amenityId: number) =>
+            hasAmenity(item, amenityId)
+          )
+        );
+      }
+
+      // Update filtered results
+      filteredSmjestaji.value = results;
+
+      if (sortBy.value !== "default") {
+        applySort();
+      }
+      //Important - might be a good choice You lucky Son- Yes I talk to myself
+      // Optionally, you could update the URL here with the sidebar filter values
+      // This would create a unified URL-based filtering system
+    };
+
+    // Initial load
     onMounted(async () => {
       try {
-        // Fetch all required data
+        document.addEventListener("click", (event) => {
+          const target = event.target as HTMLElement;
+          if (showSortDropdown.value && !target.closest(".relative")) {
+            showSortDropdown.value = false;
+          }
+        });
         await fetchTipovi();
         await fetchRegije();
         await fetchSadrzaji();
-        await fetchSmjestaji();
 
-        // Process relationships
+        if (!route.query.location && !route.query.type) {
+          await fetchSmjestaji();
+          allSmjestaji.value = [...smjestaji.value];
+        } else {
+          await applyFiltersFromUrl();
+        }
+
         await fetchSmjestajSadrzajiRelations();
 
-        // Set initial data
-        allSmjestaji.value = [...smjestaji.value];
-
-        // Link accommodation types and apply initial filters
         linkTipoviSmjestaja();
-        applyFilters();
 
-        // Debug information
+        updatePriceRange();
+
+        if (Object.keys(route.query).length === 0) {
+          filteredSmjestaji.value = [...allSmjestaji.value];
+        } else {
+          applyFilters();
+        }
+
         console.log(
           "First accommodation type:",
           allSmjestaji.value[0]?.tip_smjestaja
@@ -473,42 +724,51 @@ export default defineComponent({
       }
     });
 
-    // Watch for changes in source data
+    // Watch for URL changes
+    watch(
+      () => route.query,
+      async () => {
+        if (Object.keys(route.query).length > 0) {
+          await applyFiltersFromUrl();
+        } else {
+          // Reset to all if URL is cleared
+          await fetchSmjestaji();
+          allSmjestaji.value = [...smjestaji.value];
+          linkTipoviSmjestaja();
+          filteredSmjestaji.value = [...allSmjestaji.value];
+        }
+      },
+      { deep: true }
+    );
+
+    // Watch for smjestaji changes
     watch(smjestaji, (newSmjestaji: Smjestaj[]) => {
       allSmjestaji.value = [...newSmjestaji];
       linkTipoviSmjestaja();
       applyFilters();
     });
 
-    // Watch for changes in types data
+    // Watch for types data changes
     watch(
       tipovi,
       () => {
         if (allSmjestaji.value.length > 0) {
           linkTipoviSmjestaja();
+          applyFilters();
         }
       },
       { deep: true }
     );
 
-    // Watch for price range changes
-    watch(selectedPriceRange, () => {
-      applyFilters();
-    });
-
     return {
-      // From tipovi composable
+      // Basic data
       tipovi,
       tipoviLoading,
       tipoviError,
-
-      // From regije composable
       regije,
       regijeLoading,
       regijeError,
-
-      // From smjestaji composable
-      smjestaji: allSmjestaji, // Important: passing linked data
+      smjestaji: allSmjestaji,
       filteredSmjestaji,
       isLoading,
       error,
@@ -517,13 +777,45 @@ export default defineComponent({
       formatPriceHRK,
       getSadrzajIconUrl,
 
-      // Filter state and handlers
+      // Basic filters
       selectedRegion,
       selectedType,
       selectedPriceRange,
-      handleRegionChange,
-      handleTypeChange,
+      checkinDate,
+      checkoutDate,
+      adults,
+      children,
+
+      // Advanced filters
+      priceMin,
+      priceMax,
+      currentPriceMin,
+      currentPriceMax,
+      sliderMinPercent,
+      sliderMaxPercent,
+      sliderWidth,
+      selectedStars,
+      selectedAmenities,
+      isApartmanTypeSelected,
+      showSortDropdown,
+      sortBy,
+      sortOptions,
+      toggleSortDropdown,
+      setSortOption,
+      applySort,
+
+      // Methods
+      onSearch,
+      resetFilters,
+      toggleStarRating,
+      toggleAmenity,
+      toggleApartmanType,
+      getAmenityIdByName,
       applyFilters,
+      startDrag,
+      handleDrag,
+      stopDrag,
+      updatePriceRange,
     };
   },
 });
