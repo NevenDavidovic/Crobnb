@@ -4,7 +4,9 @@ import { SmjestajService } from "~/utils/directus/services/smjestaj";
 import { SmjestajiService } from "~/utils/directus/services/smjestaji";
 import { RegijeService } from "~/utils/directus/services/regije";
 import { NovostiService } from "~/utils/directus/services/novosti";
+import { RezervacijeService } from "~/utils/directus/services/rezervacije";
 import type { DirectusFile } from "~/types/directus";
+import type { SearchFilters } from "~/types/pages/search-filter";
 
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig();
@@ -61,6 +63,23 @@ export default defineNuxtPlugin(() => {
       getSmjestajBySlug: (slug: string) =>
         SmjestajiService.getSmjestajBySlug(directus, slug),
       getSadrzaji: () => SmjestajiService.getSadrzaji(directus),
+
+      // New Rezervacije methods
+      getRezervacije: (filters?: Partial<SearchFilters>) =>
+        RezervacijeService.getRezervacije(directus, filters),
+      getAvailableSmjestaji: (filters: SearchFilters) =>
+        RezervacijeService.getAvailableSmjestaji(directus, filters),
+      checkSmjestajAvailability: (
+        smjestajId: number,
+        checkin: string,
+        checkout: string
+      ) =>
+        RezervacijeService.checkSmjestajAvailability(
+          directus,
+          smjestajId,
+          checkin,
+          checkout
+        ),
 
       getFileUrl,
     },

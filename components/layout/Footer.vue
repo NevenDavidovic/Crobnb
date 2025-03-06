@@ -171,30 +171,32 @@
 </template>
 
 <script lang="ts">
+import type { Regija, TipSmjestaja } from "~/types/directus/index";
+
 export default defineComponent({
   name: "AppFooter",
 
   setup() {
-    const accommodationTypes = [
-      { label: "Hoteli", link: "/tipovi-smjestaja/hoteli" },
-      { label: "Apartmani", link: "/tipovi-smjestaja/apartmani" },
-      { label: "Mobilne kućice", link: "/tipovi-smjestaja/mobilne-kucice" },
-      { label: "Ville", link: "/tipovi-smjestaja/ville" },
-      {
-        label: "Turistička naselja",
-        link: "/tipovi-smjestaja/turisticka-naselja",
-      },
-      { label: "Skijališta", link: "/tipovi-smjestaja/skijalista" },
-    ];
+    const { regije, fetchRegije } = useRegije();
+    const { tipovi, fetchTipovi } = useTipoviSmjestaja();
 
-    const regions = [
-      { label: "Istočna Hrvatska", link: "/regije/istocna-hrvatska" },
-      { label: "Središnja Hrvatska", link: "/regije/sredisnja-hrvatska" },
-      { label: "Gorska Hrvatska", link: "/regije/gorska-hrvatska" },
-      { label: "Sjeverna Dalmacija", link: "/regije/sjeverna-dalmacija" },
-      { label: "Središnja Dalmacija", link: "/regije/sredisnja-dalmacija" },
-      { label: "Južna Dalmacija", link: "/regije/juzna-dalmacija" },
-    ];
+    onMounted(async () => {
+      await Promise.all([fetchRegije(), fetchTipovi()]);
+    });
+
+    const accommodationTypes = computed(() => {
+      return tipovi.value.map((tip: TipSmjestaja) => ({
+        label: tip.naziv,
+        link: `/tipovi-smjestaja/${tip.slug}`,
+      }));
+    });
+
+    const regions = computed(() => {
+      return regije.value.map((regija: Regija) => ({
+        label: regija.naziv,
+        link: `/regije/${regija.slug}`,
+      }));
+    });
 
     const currentYear = new Date().getFullYear();
 
@@ -218,6 +220,8 @@ export default defineComponent({
       currentYear,
       scrollToTop,
       scrollToBottom,
+      isLoadingRegije: computed(() => regije.value.length === 0),
+      isLoadingTipovi: computed(() => tipovi.value.length === 0),
     };
   },
 });

@@ -16,6 +16,8 @@ export interface SmjestajSadrzaj {
 }
 
 export interface Smjestaj {
+  smjestaj_id: number | null;
+  smjestaj_id: any;
   id: number;
   date_created: string;
   date_updated: string;
