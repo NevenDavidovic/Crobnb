@@ -429,50 +429,6 @@ export default defineComponent({
       });
     };
 
-    // Function to apply filters based on URL parameters
-    const applyFiltersFromUrl = async () => {
-      const query = route.query;
-
-      // Parse and apply location/region filter
-      if (query.location) {
-        const regionId = parseInt(query.location as string);
-        if (!isNaN(regionId)) {
-          selectedRegion.value = regionId;
-          await fetchSmjestajiByRegija(regionId);
-        }
-      }
-
-      // Parse and apply type filter
-      if (query.type) {
-        const typeId = parseInt(query.type as string);
-        if (!isNaN(typeId)) {
-          selectedType.value = typeId;
-
-          // If region is already selected, we filter client-side
-          if (selectedRegion.value !== null) {
-            allSmjestaji.value = smjestaji.value.filter(
-              (item: Smjestaj) => item.tipovi_smjestaja_id === typeId
-            );
-          } else {
-            await fetchSmjestajiByTip(typeId);
-          }
-        }
-      }
-
-      // Store checkin/checkout dates
-      checkinDate.value = (query.checkin as string) || null;
-      checkoutDate.value = (query.checkout as string) || null;
-
-      // Parse adults/children
-      adults.value = parseInt(query.adults as string) || 2;
-      children.value = parseInt(query.children as string) || 0;
-
-      // Apply linking and initial filtering
-      allSmjestaji.value = [...smjestaji.value];
-      linkTipoviSmjestaja();
-      applyFilters();
-    };
-
     // Connect accommodation types to their objects
     const linkTipoviSmjestaja = () => {
       if (tipovi.value.length === 0 || allSmjestaji.value.length === 0) {
@@ -547,6 +503,7 @@ export default defineComponent({
       } else {
         selectedStars.value.splice(index, 1);
       }
+      applyFilters();
     };
 
     // Get amenity ID by name
@@ -584,7 +541,6 @@ export default defineComponent({
       }
     };
 
-    // Start dragging slider handle
     const startDrag = (type: "min" | "max", event: MouseEvent) => {
       dragType.value = type;
 
@@ -594,7 +550,6 @@ export default defineComponent({
       event.preventDefault();
     };
 
-    // Handle drag movement
     const handleDrag = (event: MouseEvent) => {
       if (!dragType.value) return;
 
@@ -613,45 +568,38 @@ export default defineComponent({
       }
     };
 
-    // Stop dragging
     const stopDrag = () => {
       dragType.value = null;
       document.removeEventListener("mousemove", handleDrag);
       document.removeEventListener("mouseup", stopDrag);
     };
 
-    // Apply all filters - combining URL filters and sidebar filters
     const applyFilters = () => {
       let results = [...allSmjestaji.value];
 
-      // Apply region filter
       if (selectedRegion.value !== null) {
         results = results.filter(
           (item) => item.regija_id === selectedRegion.value
         );
       }
 
-      // Apply type filter
       if (selectedType.value !== null) {
         results = results.filter(
           (item) => item.tipovi_smjestaja_id === selectedType.value
         );
       }
 
-      // Apply price range filter
       results = results.filter((item) => {
         const price = item.cijena_nocenja;
         return price >= currentPriceMin.value && price <= currentPriceMax.value;
       });
 
-      // Apply star rating filter
       if (selectedStars.value.length > 0) {
         results = results.filter((item) =>
           selectedStars.value.includes(item.broj_zvjezdica || 0)
         );
       }
 
-      // Apply amenities filter
       if (selectedAmenities.value.length > 0) {
         results = results.filter((item) =>
           selectedAmenities.value.every((amenityId: number) =>
@@ -660,18 +608,25 @@ export default defineComponent({
         );
       }
 
-      // Update filtered results
+      const totalPersons = adults.value + children.value;
+      results = results.filter((item) => {
+        if (
+          item.max_broj_gostiju === undefined ||
+          item.max_broj_gostiju === null
+        ) {
+          return true;
+        }
+
+        return totalPersons <= item.max_broj_gostiju;
+      });
+
       filteredSmjestaji.value = results;
 
       if (sortBy.value !== "default") {
         applySort();
       }
-      //Important - might be a good choice You lucky Son- Yes I talk to myself
-      // Optionally, you could update the URL here with the sidebar filter values
-      // This would create a unified URL-based filtering system
     };
 
-    // Initial load
     onMounted(async () => {
       try {
         document.addEventListener("click", (event) => {
@@ -688,7 +643,6 @@ export default defineComponent({
           await fetchSmjestaji();
           allSmjestaji.value = [...smjestaji.value];
         } else {
-          await applyFiltersFromUrl();
         }
 
         await fetchSmjestajSadrzajiRelations();
@@ -721,7 +675,6 @@ export default defineComponent({
       () => route.query,
       async () => {
         if (Object.keys(route.query).length > 0) {
-          await applyFiltersFromUrl();
         } else {
           // Reset to all if URL is cleared
           await fetchSmjestaji();

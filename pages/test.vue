@@ -622,6 +622,7 @@ export default defineComponent({
 
     // Apply all filters - combining URL filters and sidebar filters
     const applyFilters = () => {
+      // Start with the filtered results from date filtering or all accommodations
       let results = [...allSmjestaji.value];
 
       // Apply region filter
@@ -660,17 +661,28 @@ export default defineComponent({
         );
       }
 
+      // Apply number of persons filter using the correct property name
+      const totalPersons = adults.value + children.value;
+      results = results.filter((item) => {
+        // If max_broj_gostiju is not defined, assume no limit
+        if (
+          item.max_broj_gostiju === undefined ||
+          item.max_broj_gostiju === null
+        ) {
+          return true;
+        }
+
+        // Check if total persons is less than or equal to max capacity
+        return totalPersons <= item.max_broj_gostiju;
+      });
+
       // Update filtered results
       filteredSmjestaji.value = results;
 
       if (sortBy.value !== "default") {
         applySort();
       }
-      //Important - might be a good choice You lucky Son- Yes I talk to myself
-      // Optionally, you could update the URL here with the sidebar filter values
-      // This would create a unified URL-based filtering system
     };
-
     // Initial load
     onMounted(async () => {
       try {

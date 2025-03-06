@@ -20,11 +20,16 @@ export const useNovosti = () => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("hr-HR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
+
+    const parts = date
+      .toLocaleDateString("hr-HR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })
+      .split(".");
+
+    return parts.filter(Boolean).join("/");
   };
 
   const ensureCategoriesLoaded = async () => {

@@ -3,6 +3,7 @@ import type {
   Sadrzaj,
   SmjestajSadrzaj,
 } from "~/types/directus/index";
+import type { SearchFilters } from "~/types/pages/search-filter";
 
 export const useSmjestaji = () => {
   const {
@@ -14,13 +15,19 @@ export const useSmjestaji = () => {
     $getSadrzaji,
     $getFileUrl,
     $getSmjestajSadrzajiRelations,
+    // Use these provided methods instead of RezervacijeService
+    $getRezervacije,
+    $getAvailableSmjestaji,
+    $checkSmjestajAvailability,
   } = useNuxtApp();
 
   const smjestaji = ref<Smjestaj[]>([]);
+  const availableSmjestaji = ref<Smjestaj[]>([]);
   const currentSmjestaj = ref<Smjestaj | null>(null);
   const sadrzaji = ref<Sadrzaj[]>([]);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
+  const isSmjestajAvailable = ref<boolean>(true);
 
   const formatPrice = (price: number): string => {
     return `${price.toFixed(2)} EUR`;
@@ -46,6 +53,7 @@ export const useSmjestaji = () => {
       const response = (await $getSmjestaji(limit)) as Smjestaj[];
 
       smjestaji.value = response;
+      availableSmjestaji.value = response;
 
       isLoading.value = false;
     } catch (err) {
@@ -65,7 +73,10 @@ export const useSmjestaji = () => {
         limit
       )) as Smjestaj[];
 
+      console.log(`Smjestaji for region ${regijaId}:`, response.length);
+
       smjestaji.value = response;
+      availableSmjestaji.value = response;
 
       isLoading.value = false;
     } catch (err) {
@@ -80,12 +91,12 @@ export const useSmjestaji = () => {
     error.value = null;
 
     try {
-      const response = (await $getSmjestajiByRegija(
-        tipId,
-        limit
-      )) as Smjestaj[];
+      const response = (await $getSmjestajiByTip(tipId, limit)) as Smjestaj[];
+
+      console.log(`Smjestaji for type ${tipId}:`, response.length);
 
       smjestaji.value = response;
+      availableSmjestaji.value = response;
 
       isLoading.value = false;
     } catch (err) {
@@ -209,6 +220,57 @@ export const useSmjestaji = () => {
     }
   };
 
+  // Updated to use plugin-provided method
+  const fetchAvailableSmjestaji = async (filters: SearchFilters) => {
+    isLoading.value = true;
+    error.value = null;
+
+    try {
+      const response = await $getAvailableSmjestaji(filters);
+      availableSmjestaji.value = response;
+
+      // Also update the main smjestaji ref to show only available accommodations
+      smjestaji.value = response;
+
+      isLoading.value = false;
+    } catch (err) {
+      console.error("Error fetching available smjestaji:", err);
+      error.value = "Failed to load available accommodations";
+      isLoading.value = false;
+    }
+  };
+
+  // Updated to use plugin-provided method
+  const checkSmjestajAvailability = async (
+    smjestajId: number,
+    checkin: string,
+    checkout: string
+  ) => {
+    isLoading.value = true;
+    error.value = null;
+
+    try {
+      const result = await $checkSmjestajAvailability(
+        smjestajId,
+        checkin,
+        checkout
+      );
+
+      isSmjestajAvailable.value = result.isAvailable;
+      return result;
+    } catch (err) {
+      console.error(
+        `Error checking availability for smjestaj ID ${smjestajId}:`,
+        err
+      );
+      error.value = "Failed to check accommodation availability";
+      isLoading.value = false;
+      return { isAvailable: false, overlappingReservations: [] };
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   const getThumbnailUrl = (smjestaj: Smjestaj): string | null => {
     if (!smjestaj.thumbnail) return null;
     const url = $getFileUrl(smjestaj.thumbnail);
@@ -257,12 +319,31 @@ export const useSmjestaji = () => {
     return result;
   };
 
+  // Helper method to parse URL search params for accommodation filtering
+  const parseSearchParams = () => {
+    const route = useRoute();
+    const params = route.query;
+
+    const filters: SearchFilters = {
+      location: (params.location as string) || "",
+      type: (params.type as string) || "",
+      checkin: (params.checkin as string) || "",
+      checkout: (params.checkout as string) || "",
+      adults: (params.adults as string) || "",
+      children: (params.children as string) || "",
+    };
+
+    return filters;
+  };
+
   return {
     smjestaji,
+    availableSmjestaji,
     currentSmjestaj,
     sadrzaji,
     isLoading,
     error,
+    isSmjestajAvailable,
     fetchSmjestaji,
     fetchSmjestajiByRegija,
     fetchSmjestajiByTip,
@@ -270,6 +351,9 @@ export const useSmjestaji = () => {
     fetchSmjestajBySlug,
     fetchSmjestajSadrzajiRelations,
     fetchSadrzaji,
+    fetchAvailableSmjestaji,
+    checkSmjestajAvailability,
+    parseSearchParams,
     formatPrice,
     formatPriceHRK,
     getThumbnailUrl,

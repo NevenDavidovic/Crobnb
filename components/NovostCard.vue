@@ -36,7 +36,7 @@
       <div class="flex justify-between items-center mb-2 text-sm">
         <span
           v-if="novost.kategorija_novosti?.naziv"
-          class="text-gray-500 uppercase"
+          class="text-gray-500 uppercase text-xs"
         >
           {{ novost.kategorija_novosti.naziv }}
         </span>
@@ -44,16 +44,16 @@
         <span class="text-gray-500">{{ formatDate(novost.date_created) }}</span>
       </div>
 
-      <h3 class="text-lg font-semibold mb-2 text-gray-800">
+      <h3 class="text-[22px] font-semibold mb-2 text-gray-800">
         {{ novost.naslov }}
       </h3>
 
-      <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+      <p class="text-gray-600 text-base mb-4 line-clamp-3">
         {{ novost.kratki_opis }}
       </p>
 
       <div class="flex items-center text-blue-600 text-sm font-medium">
-        <span>Vidi više</span>
+        <span class="text-primary-80 text-base">Vidi više</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="h-4 w-4 ml-1"

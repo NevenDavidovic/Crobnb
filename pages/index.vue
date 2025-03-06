@@ -21,7 +21,7 @@
       />
     </div>
 
-    <div class="max-w-1200 mx-auto py-8 px-4">
+    <div class="max-w-1200 mx-auto py-8 px-4 mb-8">
       <h1 class="text-2xl font-bold mb-8">Regije Hrvatske</h1>
       <HomepageRegijeGrid
         :regije="regije"
@@ -32,8 +32,10 @@
     </div>
 
     <div class="mx-auto py-16 bg-primary-5">
-      <div class="mx-auto max-w-1200 px-4">
-        <div class="flex justify-between items-center mb-8 mx-auto">
+      <div class="mx-auto px-4">
+        <div
+          class="flex justify-between items-center mb-8 md:px-4 max-w-1200 mx-auto"
+        >
           <h1 class="text-2xl font-bold">Novosti</h1>
           <NuxtLink
             to="#"
@@ -58,6 +60,7 @@
         </div>
 
         <NovostiGrid
+          class="md:max-w-[1300px] md:mx-auto md:px-4"
           :novosti="novosti"
           :is-loading="novostiLoading"
           :error="novostiError"
@@ -106,7 +109,7 @@ export default defineComponent({
     onMounted(() => {
       fetchTipovi();
       fetchRegije();
-      fetchNovosti(3);
+      fetchNovosti(9);
     });
     const onSearch = (filters: SearchFilters): void => {
       console.log("Search filters received:", filters);

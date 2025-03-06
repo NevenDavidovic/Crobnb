@@ -11,66 +11,149 @@
     <p class="text-gray-600">No regions found.</p>
   </div>
 
-  <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-    <NuxtLink
-      v-for="regija in regije"
-      :key="regija.id"
-      :to="`/regije/${regija.slug || regija.id}`"
-      class="block relative group"
-    >
-      <div class="relative rounded-lg overflow-hidden aspect-[4/3]">
-        <img
-          v-if="getImageUrl(regija) !== null"
-          :src="getImageUrl(regija) || undefined"
-          :alt="regija.naziv"
-          class="w-full h-full object-cover"
-        />
-
-        <div
-          v-else
-          class="w-full h-full bg-gray-200 flex items-center justify-center"
+  <div v-else>
+    <!-- Mobile view with Swiper -->
+    <div class="block md:hidden">
+      <ClientOnly>
+        <swiper-container
+          ref="swiperRef"
+          :slides-per-view="1.2"
+          :space-between="16"
+          :pagination="false"
+          :navigation="false"
+          :breakpoints="{
+            '480': {
+              slidesPerView: 1.5,
+              spaceBetween: 20,
+            },
+          }"
+          class="regions-carousel px-4"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-16 w-16 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-            />
-          </svg>
-        </div>
-
-        <div class="absolute inset-x-0 bottom-0">
-          <div
-            class="flex justify-between items-center w-full text-white bg-gradient-to-r from-black/30 to-black/30 rounded px-3 py-2"
-          >
-            <h3 class="font-medium text-[22px]">{{ regija.naziv }}</h3>
-            <div class="text-white">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5l7 7-7 7"
+          <swiper-slide v-for="regija in regije" :key="regija.id" class="pb-4">
+            <NuxtLink
+              :to="`/regije/${regija.slug || regija.id}`"
+              class="block relative group"
+            >
+              <div class="relative rounded-lg overflow-hidden aspect-[4/3]">
+                <img
+                  v-if="getImageUrl(regija) !== null"
+                  :src="getImageUrl(regija) || undefined"
+                  :alt="regija.naziv"
+                  class="w-full h-full object-cover"
                 />
-              </svg>
+
+                <div
+                  v-else
+                  class="w-full h-full bg-gray-200 flex items-center justify-center"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-16 w-16 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                </div>
+
+                <div class="absolute inset-x-0 bottom-0">
+                  <div
+                    class="flex justify-between items-center w-full text-white bg-gradient-to-r from-black/30 to-black/30 rounded px-3 py-2"
+                  >
+                    <h3 class="font-medium text-[22px]">{{ regija.naziv }}</h3>
+                    <div class="text-white">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </NuxtLink>
+          </swiper-slide>
+        </swiper-container>
+      </ClientOnly>
+    </div>
+
+    <!-- Desktop view with grid -->
+    <div class="hidden md:grid md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <NuxtLink
+        v-for="regija in regije"
+        :key="regija.id"
+        :to="`/regije/${regija.slug || regija.id}`"
+        class="block relative group"
+      >
+        <div class="relative rounded-lg overflow-hidden aspect-[4/3]">
+          <img
+            v-if="getImageUrl(regija) !== null"
+            :src="getImageUrl(regija) || undefined"
+            :alt="regija.naziv"
+            class="w-full h-full object-cover"
+          />
+
+          <div
+            v-else
+            class="w-full h-full bg-gray-200 flex items-center justify-center"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-16 w-16 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+
+          <div class="absolute inset-x-0 bottom-0">
+            <div
+              class="flex justify-between items-center w-full text-white bg-gradient-to-r from-black/30 to-black/30 rounded px-3 py-2"
+            >
+              <h3 class="font-medium text-[22px]">{{ regija.naziv }}</h3>
+              <div class="text-white">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </NuxtLink>
+      </NuxtLink>
+    </div>
   </div>
 </template>
 
@@ -98,7 +181,29 @@ export default defineComponent({
   },
 
   setup() {
-    return {};
+    const swiperRef = ref(null);
+
+    return {
+      swiperRef,
+    };
   },
 });
 </script>
+
+<style>
+/* Mobile carousel styling */
+.regions-carousel {
+  padding-bottom: 20px;
+}
+
+swiper-slide {
+  height: auto;
+}
+
+/* This makes sure the slides look good on mobile */
+@media (max-width: 767px) {
+  swiper-slide {
+    width: 85% !important;
+  }
+}
+</style>
