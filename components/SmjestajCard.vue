@@ -1,10 +1,30 @@
 <template>
   <div
-    class="border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 p-6"
+    class="border border-gray-5 rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-300 p-6 max-w-[800px] mx-auto w-full"
   >
-    <div class="flex flex-col md:flex-row gap-8">
+    <div class="flex flex-col md:flex-row relative gap-8">
       <!-- Left column: Image -->
       <div class="w-full md:w-1/3 relative">
+        <button
+          class="absolute top-3 right-3 p-2 block md:hidden rounded-3xl bg-white"
+          @click="toggleFavorite"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-8 w-8"
+            :class="isFavorite ? 'text-red-500' : 'text-teal-700'"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+            />
+          </svg>
+        </button>
         <img
           v-if="getThumbnailUrl(smjestaj) !== null"
           :src="getThumbnailUrl(smjestaj) || undefined"
@@ -35,7 +55,10 @@
       <!-- Right column: Details -->
       <div class="w-full md:w-2/3 flex flex-col justify-between relative">
         <!-- Favorite button moved to top right outside of image -->
-        <button class="absolute top-0 right-0 p-2" @click="toggleFavorite">
+        <button
+          class="absolute top-0 right-0 p-2 hidden md:block"
+          @click="toggleFavorite"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-8 w-8"
@@ -85,7 +108,7 @@
             {{ smjestaj.grad }}, {{ smjestaj.regija?.naziv || "Hrvatska" }}
           </p>
 
-          <!-- Amenities - preserving the original logic but styled differently -->
+          <!-- Amenities -->
           <div v-if="amenities.length > 0" class="flex flex-wrap gap-3 mb-8">
             <div
               v-for="sadrzaj in amenities"
@@ -113,7 +136,7 @@
             </div>
           </div>
 
-          <!-- Message when no amenities are available - preserving original logic -->
+          <!-- Message when no amenities are available -->
           <div v-else class="text-gray-500 text-base mb-8">
             Nema dostupnih sadržaja
           </div>
@@ -123,7 +146,7 @@
         <div class="flex justify-between items-center mt-6">
           <!-- Button moved to the left -->
           <NuxtLink
-            :to="`/smjestaj/${smjestaj.id}`"
+            :to="`/smjestaj/${smjestaj.slug || smjestaj.id}`"
             class="bg-primary-80 hover:bg-teal-700 text-white font-medium text-xs py-3 px-4 rounded-md transition"
           >
             Pogledaj detalje
@@ -143,18 +166,25 @@
     </div>
   </div>
 </template>
+
 <script lang="ts">
-import type { Smjestaj, Sadrzaj } from "~/types/directus/index";
+import type {
+  Smjestaj,
+  Sadrzaj,
+  SmjestajWithRelations,
+} from "~/types/directus/index";
 import type { SmjestajCardProps } from "~/types/pages/smjestaj-card";
 
 export default defineComponent({
   props: {
     smjestaj: {
-      type: Object as PropType<Smjestaj>,
+      type: Object as PropType<SmjestajWithRelations>,
       required: true,
     },
     getThumbnailUrl: {
-      type: Function as PropType<(smjestaj: Smjestaj) => string | null>,
+      type: Function as PropType<
+        (smjestaj: SmjestajWithRelations | Smjestaj) => string | null
+      >,
       required: true,
     },
     formatPrice: {
@@ -179,27 +209,28 @@ export default defineComponent({
     };
 
     const amenities = computed(() => {
-      if (!props.smjestaj.sadrzaji) {
+      if (
+        !props.smjestaj.smjestaj_sadrzaji ||
+        !Array.isArray(props.smjestaj.smjestaj_sadrzaji)
+      ) {
         return [];
       }
 
-      if (Array.isArray(props.smjestaj.sadrzaji)) {
-        const result = props.smjestaj.sadrzaji
-          .map((item) => {
-            return item.sadrzaj;
-          })
-          .filter((sadrzaj): sadrzaj is Sadrzaj => {
-            const isValid = !!sadrzaj;
+      const result = [];
 
-            return isValid;
-          });
-
-        return result;
+      for (const item of props.smjestaj.smjestaj_sadrzaji) {
+        if (
+          item.sadrzaj &&
+          typeof item.sadrzaj === "object" &&
+          "id" in item.sadrzaj &&
+          "naziv" in item.sadrzaj
+        ) {
+          result.push(item.sadrzaj);
+        }
       }
 
-      return [];
+      return result as any[];
     });
-
     return {
       isFavorite,
       toggleFavorite,

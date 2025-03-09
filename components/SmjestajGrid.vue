@@ -29,13 +29,16 @@
 </template>
 
 <script lang="ts">
-import type { Smjestaj, Sadrzaj } from "~/types/directus/index";
-import type { SmjestajGridProps } from "~/types/pages/smjestaj-grid";
+import type {
+  Smjestaj,
+  Sadrzaj,
+  SmjestajWithRelations,
+} from "~/types/directus/index";
 
 export default defineComponent({
   props: {
     smjestaji: {
-      type: Array as PropType<Smjestaj[]>,
+      type: Array as PropType<SmjestajWithRelations[]>,
       required: true,
     },
     isLoading: {
@@ -47,7 +50,9 @@ export default defineComponent({
       default: null,
     },
     getThumbnailUrl: {
-      type: Function as PropType<(smjestaj: Smjestaj) => string | null>,
+      type: Function as PropType<
+        (smjestaj: SmjestajWithRelations | Smjestaj) => string | null
+      >,
       required: true,
     },
     formatPrice: {
@@ -64,29 +69,7 @@ export default defineComponent({
     },
   },
 
-  setup(props: SmjestajGridProps) {
-    onMounted(() => {
-      if (props.smjestaji.length > 0) {
-        const firstItem = props.smjestaji[0];
-      }
-    });
-
-    watch(
-      () => props.smjestaji,
-      (newValue: Smjestaj[]) => {
-        const missingLinks = newValue.filter(
-          (item) => item.tipovi_smjestaja_id && !item.tip_smjestaja
-        );
-
-        if (missingLinks.length > 0) {
-          console.warn(
-            `SmjestajGrid - Found ${missingLinks.length} items with tipovi_smjestaja_id but no linked tip_smjestaja object`
-          );
-        }
-      },
-      { immediate: true, deep: true }
-    );
-
+  setup() {
     return {};
   },
 });

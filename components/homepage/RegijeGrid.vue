@@ -27,7 +27,7 @@
               spaceBetween: 20,
             },
           }"
-          class="regions-carousel px-4"
+          class="regions-carousel lg:px-4"
         >
           <swiper-slide v-for="regija in regije" :key="regija.id" class="pb-4">
             <NuxtLink

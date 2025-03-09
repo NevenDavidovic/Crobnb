@@ -1,7 +1,8 @@
 <template>
   <div>
-    <HomepageHeroSection class="hidden md:block" />
+    <HomepageHeroSection class="hidden lg:block" />
     <SearchFilterComponent
+      :is-visible="false"
       :tipovi="tipovi"
       :tipovi-loading="tipoviLoading"
       :tipovi-error="tipoviError || undefined"
@@ -77,7 +78,7 @@
 import { useTipoviSmjestaja } from "~/composables/useTipoviSmjestaja";
 import { useRegije } from "~/composables/useRegije";
 import { useNovosti } from "~/composables/useNovosti";
-import type { SearchFilters } from "~/types/pages/search-filter";
+import { useFilter } from "~/composables/filters/useFilters";
 
 export default defineComponent({
   setup() {
@@ -106,28 +107,13 @@ export default defineComponent({
       formatDate,
     } = useNovosti();
 
+    const { onSearch } = useFilter();
+
     onMounted(() => {
       fetchTipovi();
       fetchRegije();
       fetchNovosti(9);
     });
-    const onSearch = (filters: SearchFilters): void => {
-      console.log("Search filters received:", filters);
-
-      const queryParams: Record<string, string> = {
-        location: filters.location,
-        type: filters.type,
-        checkin: filters.checkin,
-        checkout: filters.checkout,
-        adults: filters.adults,
-        children: filters.children,
-      };
-
-      navigateTo({
-        path: "/smjestaji",
-        query: queryParams,
-      });
-    };
 
     return {
       tipovi,

@@ -81,6 +81,28 @@ export default defineNuxtPlugin(() => {
           checkout
         ),
 
+      getCompleteSmjestaji: (limit?: number) =>
+        SmjestajiService.getCompleteSmjestaji(directus, limit),
+      getCompleteSmjestaj: (id: number) =>
+        SmjestajiService.getCompleteSmjestaj(directus, id),
+      getCompleteSmjestajBySlug: (slug: string) =>
+        SmjestajiService.getCompleteSmjestajBySlug(directus, slug),
+      getSlikeSmjestaja: (smjestajId: number) =>
+        SmjestajiService.getSlikeSmjestaja(directus, smjestajId),
+      getRezervacijeSmjestaja: (smjestajId: number) =>
+        SmjestajiService.getRezervacijeSmjestaja(directus, smjestajId),
+      provjeriDostupnost: (
+        smjestajId: number,
+        datumOd: string,
+        datumDo: string
+      ) =>
+        SmjestajiService.provjeriDostupnost(
+          directus,
+          smjestajId,
+          datumOd,
+          datumDo
+        ),
+
       getFileUrl,
     },
   };

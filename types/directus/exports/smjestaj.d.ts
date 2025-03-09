@@ -5,7 +5,7 @@ import type { TipSmjestaja } from "./accommodation";
 export interface Sadrzaj {
   id: number;
   naziv: string;
-  icon: DirectusFile | null;
+  icon: string | DirectusFile;
 }
 
 export interface SmjestajSadrzaj {

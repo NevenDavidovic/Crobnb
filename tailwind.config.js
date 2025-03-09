@@ -10,6 +10,12 @@ module.exports = {
   ],
   theme: {
     extend: {
+      height: {
+        "18px": "18px",
+      },
+      width: {
+        "18px": "18px",
+      },
       fontFamily: {
         sans: [
           "Mulish",

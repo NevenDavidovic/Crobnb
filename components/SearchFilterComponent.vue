@@ -1,7 +1,9 @@
 <template>
   <div class="w-full z-10 relative py-4 max-w-1200 mx-auto px-4">
-    <div class="bg-white rounded-lg md:p-6 md:shadow-md">
-      <div class="flex flex-col md:flex-row items-end gap-4">
+    <div
+      class="bg-white rounded-lg lg:p-6 border border-transparent mt-8 lg:mt-0 lg:border-gray-5"
+    >
+      <div class="flex flex-col lg:flex-row items-end gap-4">
         <div class="flex-1 w-full">
           <label class="block text-sm font-medium text-gray-80 mb-3"
             >Lokacije</label
@@ -79,7 +81,7 @@
           >
           <div class="relative w-full">
             <select
-              class="text-sm appearance-none pl-10 pr-8 py-2 h-12 w-full border border-gray-300 rounded-lg text-gray-60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="text-sm appearance-none pl-10 pr-8 py-2 h-12 w-full border border-gray-40 rounded-lg text-gray-60 focus:outline-none focus:ring-2 focus:ring-blue-500"
               v-model="selectedAccommodationType"
               :disabled="tipoviLoading"
             >
@@ -399,10 +401,10 @@
             </div>
           </div>
         </div>
-        <div class="mt-4 w-full md:w-auto">
+        <div class="mt-4 w-full lg:w-auto">
           <button
             @click="searchWithFilters"
-            class="w-full md:w-auto md:col-span-auto bg-primary-80 text-white h-12 py-3 px-4 rounded-lg hover:bg-primary-60 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+            class="w-full lg:w-auto lg:col-span-auto bg-primary-80 text-white h-12 py-3 px-4 rounded-lg hover:bg-primary-60 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
           >
             <div class="flex justify-center items-center text-base">
               <svg
@@ -449,6 +451,10 @@ export default defineComponent({
     search: (filters: SearchFilters) => true,
   },
   props: {
+    isVisible: {
+      type: Boolean,
+      default: false,
+    },
     tipovi: {
       type: Array as PropType<TipSmjestaja[]>,
       default: () => [],
@@ -473,6 +479,30 @@ export default defineComponent({
       type: String as PropType<string | null>,
       default: null,
     },
+    initialLocation: {
+      type: String as PropType<string | null>,
+      default: null,
+    },
+    initialType: {
+      type: String as PropType<string | null>,
+      default: null,
+    },
+    initialCheckin: {
+      type: String as PropType<string | null>,
+      default: null,
+    },
+    initialCheckout: {
+      type: String as PropType<string | null>,
+      default: null,
+    },
+    initialAdults: {
+      type: Number,
+      default: 2,
+    },
+    initialChildren: {
+      type: Number,
+      default: 0,
+    },
   },
   setup(
     props: SearchComponentProps,
@@ -482,6 +512,40 @@ export default defineComponent({
       emit: (event: "search", filters: SearchFilters) => void;
     }
   ) {
+    // Helper function to parse dates from DD.MM.YYYY. format
+    const parseDate = (dateStr: string): Date => {
+      if (!dateStr) return new Date();
+
+      const parts = dateStr.split(".");
+      if (parts.length >= 3) {
+        const day = parseInt(parts[0]);
+        const month = parseInt(parts[1]) - 1; // JS months are 0-indexed
+        const year = parseInt(parts[2]);
+        return new Date(year, month, day);
+      }
+      return new Date();
+    };
+
+    // Initialize with URL parameters if available
+    const selectedLocation = ref<string>(
+      props.initialLocation || "sredisnja-dalmacija"
+    );
+    const selectedAccommodationType = ref<string>(
+      props.initialType || "hoteli"
+    );
+    const adultCount = ref<number>(props.initialAdults || 2);
+    const childrenCount = ref<number>(props.initialChildren || 0);
+
+    // Initialize date picker with URL parameters if available
+    const datePickerRange = ref<DateRange>({
+      start: props.initialCheckin
+        ? parseDate(props.initialCheckin)
+        : new Date(),
+      end: props.initialCheckout
+        ? parseDate(props.initialCheckout)
+        : new Date(new Date().setDate(new Date().getDate() + 1)),
+    });
+
     const searchWithFilters = (): void => {
       const startDate = datePickerRange.value.start
         ? formatDate(datePickerRange.value.start)
@@ -501,16 +565,6 @@ export default defineComponent({
 
       emit("search", filters);
     };
-    const selectedLocation = ref<string>("sredisnja-dalmacija");
-
-    const selectedAccommodationType = ref<string>("hoteli");
-
-    const showCalendar = ref<boolean>(false);
-
-    const datePickerRange = ref<DateRange>({
-      start: new Date(),
-      end: new Date(new Date().setDate(new Date().getDate() + 1)),
-    });
 
     const formatDate = (date: Date): string => {
       const day = date.getDate().toString().padStart(2, "0");
@@ -531,6 +585,9 @@ export default defineComponent({
       }
       return "";
     });
+
+    const showCalendar = ref<boolean>(false);
+    const showGuestsDropdown = ref<boolean>(false);
 
     const toggleCalendar = (event: MouseEvent): void => {
       event.stopPropagation();
@@ -557,10 +614,6 @@ export default defineComponent({
     const confirmDateSelection = (): void => {
       showCalendar.value = false;
     };
-
-    const showGuestsDropdown = ref<boolean>(false);
-    const adultCount = ref<number>(2);
-    const childrenCount = ref<number>(0);
 
     const incrementAdults = (): void => {
       adultCount.value++;
