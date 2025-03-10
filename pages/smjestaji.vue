@@ -16,7 +16,7 @@
       :initial-children="urlParams.children"
       @search="onSearch"
     />
-    <!-- mOBILE -->
+
     <div class="px-4 max-w-1200 lg:hidden flex space-x-4">
       <button
         @click="showFilter"
@@ -416,6 +416,7 @@
           :format-price="formatPrice"
           :format-price-h-r-k="formatPriceHRK"
           :get-sadrzaj-icon-url="getSadrzajIconUrl"
+          :items-per-page="3"
         />
       </div>
     </div>
@@ -429,97 +430,21 @@ import { useSmjestaji } from "~/composables/useSmjestaji";
 import type { SmjestajWithRelations } from "~/types/directus/index";
 import { useFilter } from "~/composables/filters/useFilters";
 
+// Import new composables
+import { useSorting } from "~/composables/filters/useSorting";
+import { useTouch } from "~/composables/filters/useTouch";
+import { usePriceRange } from "~/composables/filters/usePriceRange";
+import { useAdvancedFilters } from "~/composables/filters/useAdvancedFilters";
+
 export default defineComponent({
   setup() {
     const route = useRoute();
 
-    const showSortDropdown = ref(false);
-    const sortBy = ref<string>("default");
-    const isFilterVisible = ref(false);
-    const showSortModal = ref(false);
-    const touchStartY = ref(0);
-    const touchMoveY = ref(0);
+    // Main data arrays
+    const allSmjestaji = ref<SmjestajWithRelations[]>([]);
+    const filteredSmjestaji = ref<SmjestajWithRelations[]>([]);
 
-    const handleTouchStart = (event: TouchEvent) => {
-      touchStartY.value = event.touches[0].clientY;
-    };
-
-    const handleTouchMove = (event: TouchEvent) => {
-      touchMoveY.value = event.touches[0].clientY;
-    };
-
-    const handleTouchEnd = () => {
-      const slideDistance = touchMoveY.value - touchStartY.value;
-
-      // If the user slides down more than 50px, close the modal
-      if (slideDistance > 50) {
-        showSortModal.value = false;
-      }
-
-      // Reset values
-      touchStartY.value = 0;
-      touchMoveY.value = 0;
-    };
-
-    const openSortModal = () => {
-      showSortModal.value = true;
-    };
-
-    const sortOptions = [
-      { label: "Cijena: niža prema višoj", value: "price-asc" },
-      { label: "Cijena: viša prema nižoj", value: "price-desc" },
-      { label: "Zvijezdice: niže prema višem", value: "stars-asc" },
-      { label: "Zvijezdice: više prema nižem", value: "stars-desc" },
-    ];
-
-    const closeFilter = () => {
-      isFilterVisible.value = false;
-    };
-    const showFilter = () => {
-      isFilterVisible.value = true;
-    };
-
-    const toggleSortDropdown = () => {
-      showSortDropdown.value = !showSortDropdown.value;
-    };
-
-    const setSortOption = (option: string) => {
-      sortBy.value = option;
-      showSortDropdown.value = false;
-      applySort();
-    };
-
-    const applySort = () => {
-      const sortedResults = [...filteredSmjestaji.value];
-
-      switch (sortBy.value) {
-        case "price-asc":
-          sortedResults.sort(
-            (a, b) => (a.cijena_nocenja || 0) - (b.cijena_nocenja || 0)
-          );
-          break;
-        case "price-desc":
-          sortedResults.sort(
-            (a, b) => (b.cijena_nocenja || 0) - (a.cijena_nocenja || 0)
-          );
-          break;
-        case "stars-asc":
-          sortedResults.sort(
-            (a, b) => (a.broj_zvjezdica || 0) - (b.broj_zvjezdica || 0)
-          );
-          break;
-        case "stars-desc":
-          sortedResults.sort(
-            (a, b) => (b.broj_zvjezdica || 0) - (a.broj_zvjezdica || 0)
-          );
-          break;
-        default:
-          break;
-      }
-
-      filteredSmjestaji.value = sortedResults;
-    };
-
+    // Use existing composables
     const {
       tipovi,
       isLoading: tipoviLoading,
@@ -550,325 +475,72 @@ export default defineComponent({
 
     const { onSearch, urlParams } = useFilter();
 
-    // Filter states
-    const selectedRegion = ref<number | null>(null);
-    const selectedType = ref<number | null>(null);
-    const selectedPriceRange = ref<string | null>(null);
-    const checkinDate = ref<Date | null>(null);
-    const checkoutDate = ref<Date | null>(null);
-    const adults = ref<number>(2);
-    const children = ref<number>(0);
+    // Use new composables
+    const {
+      showSortDropdown,
+      sortBy,
+      sortOptions,
+      showSortModal,
+      toggleSortDropdown,
+      setSortOption,
+      applySort,
+      openSortModal,
+    } = useSorting(filteredSmjestaji);
 
-    const priceMin = ref(0);
-    const priceMax = computed(() => {
-      if (allSmjestaji.value.length === 0) return 240;
+    const {
+      touchStartY,
+      touchMoveY,
+      handleTouchStart,
+      handleTouchMove,
+      handleTouchEnd,
+    } = useTouch(showSortModal);
 
-      return Math.ceil(
-        Math.max(
-          ...allSmjestaji.value.map(
-            (item: { cijena_nocenja: number }) => item.cijena_nocenja || 0
-          )
-        )
-      );
-    });
-    const currentPriceMin = ref(0);
-    const currentPriceMax = ref(0);
+    const {
+      priceMin,
+      priceMax,
+      currentPriceMin,
+      currentPriceMax,
+      sliderMinPercent,
+      sliderMaxPercent,
+      sliderWidth,
+      updatePriceRange,
+      startDrag,
+      handleDrag,
+      stopDrag,
+    } = usePriceRange(allSmjestaji);
 
-    const updatePriceRange = () => {
-      currentPriceMax.value = priceMax.value;
-    };
-
-    const selectedStars = ref<number[]>([]);
-    const selectedAmenities = ref<number[]>([]);
-
-    const dragType = ref<"min" | "max" | null>(null);
-
-    const sliderMinPercent = computed(
-      () => (currentPriceMin.value / priceMax.value) * 100
+    const {
+      isFilterVisible,
+      selectedRegion,
+      selectedType,
+      selectedPriceRange,
+      checkinDate,
+      checkoutDate,
+      adults,
+      children,
+      selectedStars,
+      selectedAmenities,
+      isApartmanTypeSelected,
+      closeFilter,
+      showFilter,
+      resetFilters,
+      toggleStarRating,
+      toggleAmenity,
+      toggleApartmanType,
+      getAmenityIdByName,
+      applyFilters,
+    } = useAdvancedFilters(
+      allSmjestaji,
+      filteredSmjestaji,
+      tipovi,
+      sadrzaji,
+      currentPriceMin,
+      currentPriceMax,
+      sortBy,
+      applySort,
+      hasAmenity,
+      updatePriceRange
     );
-    const sliderMaxPercent = computed(
-      () => (currentPriceMax.value / priceMax.value) * 100
-    );
-    const sliderWidth = computed(
-      () => sliderMaxPercent.value - sliderMinPercent.value
-    );
-
-    const isApartmanTypeSelected = computed(() => {
-      const apartmanType = tipovi.value.find(
-        (t: { naziv: string }) => t.naziv === "Apartman"
-      );
-      return apartmanType && selectedType.value === apartmanType.id;
-    });
-
-    // Main data arrays
-    const allSmjestaji = ref<SmjestajWithRelations[]>([]);
-    const filteredSmjestaji = ref<SmjestajWithRelations[]>([]);
-
-    // Reset all filters
-    const resetFilters = () => {
-      selectedRegion.value = null;
-      selectedType.value = null;
-      currentPriceMin.value = 0;
-
-      selectedStars.value = [];
-      selectedAmenities.value = [];
-      checkinDate.value = null;
-      checkoutDate.value = null;
-      adults.value = 2;
-      children.value = 0;
-      updatePriceRange();
-
-      navigateTo({
-        path: "/smjestaji",
-        query: {},
-      });
-
-      // Reset filteredSmjestaji to show all
-      filteredSmjestaji.value = [...allSmjestaji.value];
-    };
-
-    // Toggle star rating filter
-    const toggleStarRating = (stars: number) => {
-      const index = selectedStars.value.indexOf(stars);
-      if (index === -1) {
-        selectedStars.value.push(stars);
-      } else {
-        selectedStars.value.splice(index, 1);
-      }
-    };
-
-    // Get amenity ID by name
-    const getAmenityIdByName = (name: string): number => {
-      const amenity = sadrzaji.value.find(
-        (s: { naziv: string }) => s.naziv.toLowerCase() === name.toLowerCase()
-      );
-      return amenity ? amenity.id : -1;
-    };
-
-    // Toggle amenity filter
-    const toggleAmenity = (name: string) => {
-      const amenityId = getAmenityIdByName(name);
-      if (amenityId === -1) return;
-
-      const index = selectedAmenities.value.indexOf(amenityId);
-      if (index === -1) {
-        selectedAmenities.value.push(amenityId);
-      } else {
-        selectedAmenities.value.splice(index, 1);
-      }
-    };
-
-    // Toggle Apartman type
-    const toggleApartmanType = () => {
-      const apartmanType = tipovi.value.find(
-        (t: { naziv: string }) => t.naziv === "Apartman"
-      );
-      if (!apartmanType) return;
-
-      if (selectedType.value === apartmanType.id) {
-        selectedType.value = null;
-      } else {
-        selectedType.value = apartmanType.id;
-      }
-    };
-
-    // Start dragging slider handle
-    const startDrag = (type: "min" | "max", event: MouseEvent | TouchEvent) => {
-      dragType.value = type;
-
-      // Mouse events
-      document.addEventListener("mousemove", handleDrag);
-      document.addEventListener("mouseup", stopDrag);
-
-      // Touch events
-      document.addEventListener("touchmove", handleDrag);
-      document.addEventListener("touchend", stopDrag);
-      document.addEventListener("touchcancel", stopDrag);
-
-      // Prevent default to avoid page scrolling during touch drag
-      event.preventDefault();
-    };
-
-    // Handle drag movement
-    const handleDrag = (event: MouseEvent | TouchEvent) => {
-      if (!dragType.value) return;
-
-      // Get the clientX value from either mouse or touch event
-      const clientX =
-        "touches" in event ? event.touches[0].clientX : event.clientX;
-
-      const slider = (
-        "touches" in event ? event.target : event.target
-      ) as HTMLElement;
-      const sliderRect = slider.parentElement?.getBoundingClientRect();
-      if (!sliderRect) return;
-
-      const offsetX = clientX - sliderRect.left;
-      const percent = Math.min(Math.max(0, offsetX / sliderRect.width), 1);
-      const newValue = Math.round(percent * priceMax.value);
-
-      if (dragType.value === "min") {
-        currentPriceMin.value = Math.min(newValue, currentPriceMax.value - 10);
-      } else {
-        currentPriceMax.value = Math.max(newValue, currentPriceMin.value + 10);
-      }
-    };
-
-    // Stop dragging
-    const stopDrag = () => {
-      dragType.value = null;
-
-      // Remove mouse events
-      document.removeEventListener("mousemove", handleDrag);
-      document.removeEventListener("mouseup", stopDrag);
-
-      // Remove touch events
-      document.removeEventListener("touchmove", handleDrag);
-      document.removeEventListener("touchend", stopDrag);
-      document.removeEventListener("touchcancel", stopDrag);
-    };
-
-    const applyFilters = () => {
-      let results = [...allSmjestaji.value];
-
-      // First apply URL filters
-      const route = useRoute();
-      if (route.query.location) {
-        results = results.filter(
-          (item) => item.regija && item.regija.slug === route.query.location
-        );
-      }
-
-      if (route.query.type) {
-        results = results.filter(
-          (item) =>
-            item.tip_smjestaja && item.tip_smjestaja.slug === route.query.type
-        );
-      }
-
-      if (route.query.adults || route.query.children) {
-        const adults = route.query.adults
-          ? parseInt(route.query.adults as string)
-          : 0;
-        const children = route.query.children
-          ? parseInt(route.query.children as string)
-          : 0;
-        const totalGuests = adults + children;
-
-        results = results.filter((item) => {
-          const maxGuests = item.max_broj_gostiju || 0;
-          return maxGuests >= totalGuests;
-        });
-      }
-
-      // Filter by date availability
-      if (route.query.checkin && route.query.checkout) {
-        // Parse the checkin/checkout dates from URL
-        const checkinStr = route.query.checkin as string;
-        const checkoutStr = route.query.checkout as string;
-
-        // Convert from "DD.MM.YYYY." format to Date objects
-        const parseDate = (dateStr: string) => {
-          const parts = dateStr.split(".");
-          if (parts.length >= 3) {
-            const day = parseInt(parts[0]);
-            const month = parseInt(parts[1]) - 1; // JS months are 0-indexed
-            const year = parseInt(parts[2]);
-            return new Date(year, month, day);
-          }
-          return null;
-        };
-
-        const checkinDate = parseDate(checkinStr);
-        const checkoutDate = parseDate(checkoutStr);
-
-        if (checkinDate && checkoutDate) {
-          // Set time to beginning of day for consistent comparison
-          checkinDate.setHours(0, 0, 0, 0);
-          checkoutDate.setHours(0, 0, 0, 0);
-
-          results = results.filter((item) => {
-            // If the accommodation has no reservations, it's available
-            if (!item.rezervacije || item.rezervacije.length === 0) {
-              return true;
-            }
-
-            // Check each reservation for overlap
-            for (const reservation of item.rezervacije) {
-              const reservationStart = new Date(reservation.datum_od);
-              const reservationEnd = new Date(reservation.datum_do);
-
-              // Set time to beginning of day for consistent comparison
-              reservationStart.setHours(0, 0, 0, 0);
-              reservationEnd.setHours(0, 0, 0, 0);
-
-              // The guest arrives on checkinDate and leaves on checkoutDate,
-              // so they occupy the accommodation from checkinDate to the day before checkoutDate.
-              // Similarly, an existing reservation occupies from reservationStart to the day before reservationEnd.
-
-              // Create a date for the day before checkout (the last night of stay)
-              const lastNight = new Date(checkoutDate);
-              lastNight.setDate(lastNight.getDate() - 1);
-
-              // Create a date for the day before reservation end
-              const reservationLastNight = new Date(reservationEnd);
-              reservationLastNight.setDate(reservationLastNight.getDate() - 1);
-
-              // Check for overlap:
-              // If the requested checkin day is on or before the reservation's last night AND
-              // the requested last night is on or after the reservation's start day,
-              // then there's an overlap
-              if (
-                checkinDate <= reservationLastNight &&
-                lastNight >= reservationStart
-              ) {
-                return false;
-              }
-            }
-
-            // If no overlap with any reservation, the accommodation is available
-            return true;
-          });
-        }
-      }
-
-      // Apply star rating filter
-      if (selectedStars.value.length > 0) {
-        results = results.filter((item) => {
-          // Convert to number to ensure consistent comparison
-          const stars = Number(item.broj_zvjezdica || 0);
-          return selectedStars.value.includes(stars);
-        });
-      }
-
-      if (selectedAmenities.value.length > 0) {
-        results = results.filter((item) => {
-          for (const amenityId of selectedAmenities.value) {
-            if (!hasAmenity(item, amenityId)) {
-              return false;
-            }
-          }
-          return true;
-        });
-      }
-
-      if (selectedType.value !== null) {
-        results = results.filter(
-          (item) => item.tipovi_smjestaja_id === selectedType.value
-        );
-      }
-
-      results = results.filter((item) => {
-        const price = item.cijena_nocenja;
-        return price >= currentPriceMin.value && price <= currentPriceMax.value;
-      });
-
-      filteredSmjestaji.value = results;
-
-      if (sortBy.value !== "default") {
-        applySort();
-      }
-    };
 
     onMounted(async () => {
       try {

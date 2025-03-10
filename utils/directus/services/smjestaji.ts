@@ -30,6 +30,27 @@ export const SmjestajiService = {
     );
   },
 
+  async getSmjestajiByCity(directus: Client, city: string, limit?: number) {
+    return await directus.request(
+      readItems("smjestaj", {
+        fields: [
+          "*",
+          { thumbnail: ["*"] },
+          { regija: ["*", { slika: ["*"] }] },
+          { tip_smjestaja: ["*", { ikona: ["*"] }] },
+          { sadrzaji: ["*", { sadrzaj: ["*", { icon: ["*"] }] }] },
+        ],
+        filter: {
+          grad: {
+            _eq: city,
+          },
+        },
+        sort: ["-date_created"],
+        limit: limit || -1, // -1 means no limit, return all results
+      })
+    );
+  },
+
   async getSmjestaj(directus: Client, id: number) {
     return await directus.request(
       readItem("smjestaj", id, {
@@ -305,6 +326,7 @@ export const SmjestajiService = {
             _eq: smjestaj.id,
           },
         },
+        limit: -1, // Ensure all images are returned
       })
     );
 
@@ -330,16 +352,57 @@ export const SmjestajiService = {
             _eq: smjestaj.id,
           },
         },
+        limit: -1, // Ensure all amenities are returned
       })
     );
+
+    // Manually fetch regija if it's not already included
+    let regija = smjestaj.regija;
+    if (!regija && smjestaj.regija_id) {
+      regija = await directus.request(
+        readItem("regija", smjestaj.regija_id, {
+          fields: ["*", { slika: ["*"] }],
+        })
+      );
+    }
+
+    // Manually fetch tip_smjestaja if it's not already included
+    let tipSmjestaja = smjestaj.tip_smjestaja;
+    if (!tipSmjestaja && smjestaj.tipovi_smjestaja_id) {
+      tipSmjestaja = await directus.request(
+        readItem("tipovi_smjestaja", smjestaj.tipovi_smjestaja_id, {
+          fields: ["*", { ikona: ["*"] }],
+        })
+      );
+    }
+
+    // Check for missing sadrzaj in smjestaj_sadrzaji
+    for (let i = 0; i < smjestajSadrzaji.length; i++) {
+      if (!smjestajSadrzaji[i].sadrzaj && smjestajSadrzaji[i].sadrzaj_id) {
+        // Fetch the missing sadrzaj
+        const sadrzaj = await directus.request(
+          readItem("sadrzaji", smjestajSadrzaji[i].sadrzaj_id, {
+            fields: ["*", { icon: ["*"] }],
+          })
+        );
+
+        // Update the object with the fetched sadrzaj
+        smjestajSadrzaji[i] = {
+          ...smjestajSadrzaji[i],
+          sadrzaj: sadrzaj,
+        };
+      }
+    }
 
     // Combine all data into SmjestajWithRelations format
     return {
       ...smjestaj,
+      regija: regija,
+      tip_smjestaja: tipSmjestaja,
       smjestaj_sadrzaji: smjestajSadrzaji,
       slike_smjestaj: slike,
       rezervacije: rezervacije,
-    } as unknown as SmjestajWithRelations;
+    } as SmjestajWithRelations;
   },
 
   // Helper methods for specific tables

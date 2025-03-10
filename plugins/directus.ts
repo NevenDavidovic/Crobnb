@@ -55,6 +55,8 @@ export default defineNuxtPlugin(() => {
 
       getSmjestaji: (limit?: number) =>
         SmjestajiService.getSmjestaji(directus, limit),
+      getSmjestajiByCity: (city: string, limit?: number) =>
+        SmjestajiService.getSmjestajiByCity(directus, city, limit),
       getSmjestaj: (id: number) => SmjestajiService.getSmjestaj(directus, id),
       getSmjestajiByRegija: (regijaId: number, limit?: number) =>
         SmjestajiService.getSmjestajiByRegija(directus, regijaId, limit),
@@ -83,6 +85,7 @@ export default defineNuxtPlugin(() => {
 
       getCompleteSmjestaji: (limit?: number) =>
         SmjestajiService.getCompleteSmjestaji(directus, limit),
+
       getCompleteSmjestaj: (id: number) =>
         SmjestajiService.getCompleteSmjestaj(directus, id),
       getCompleteSmjestajBySlug: (slug: string) =>

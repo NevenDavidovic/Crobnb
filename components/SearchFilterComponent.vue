@@ -21,6 +21,7 @@
               <option v-else-if="regije.length === 0" value="">
                 No regions found
               </option>
+              <option value="sve">Sve</option>
               <option
                 v-for="regija in regije"
                 :key="regija.id"
@@ -92,6 +93,7 @@
               <option v-else-if="tipovi.length === 0" value="">
                 No accommodation types
               </option>
+              <option value="sve">Sve</option>
               <option
                 v-for="tip in tipovi"
                 :key="tip.id"

@@ -127,30 +127,15 @@ export const useRezervacije = () => {
     };
   };
 
-  /**
-   * Format date to ISO string
-   * @param date Date to format
-   * @returns Formatted date string
-   */
   const formatDateToISO = (date: Date): string => {
     return date.toISOString().split("T")[0];
   };
 
-  /**
-   * Parse date from DD.MM.YYYY format
-   * @param dateString Date string to parse
-   * @returns Parsed Date object
-   */
   const parseDateFromString = (dateString: string): Date => {
     const [day, month, year] = dateString.replace(/\.$/, "").split(".");
     return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
   };
 
-  /**
-   * Format date to DD.MM.YYYY
-   * @param date Date to format
-   * @returns Formatted date string
-   */
   const formatDateToDDMMYYYY = (date: Date): string => {
     return date
       .toLocaleDateString("hr-HR", {

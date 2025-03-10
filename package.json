@@ -14,6 +14,7 @@
     "@directus/types": "^13.0.0",
     "@fontsource/mulish": "^5.1.1",
     "@fontsource/museomoderno": "^5.1.1",
+    "@nuxt/ui": "^2.21.1",
     "@pinia/nuxt": "^0.10.1",
     "nuxt": "^3.15.4",
     "nuxt-swiper": "^2.0.0",

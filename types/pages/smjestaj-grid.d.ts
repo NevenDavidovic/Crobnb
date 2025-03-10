@@ -5,7 +5,6 @@ import type {
 } from "~/types/directus/index";
 
 export interface SmjestajGridProps {
-  itemsPerPage?: number;
   smjestaji: SmjestajWithRelations[];
   isLoading: boolean;
   error: string | null;
@@ -15,4 +14,5 @@ export interface SmjestajGridProps {
   formatPrice: (price: number) => string;
   formatPriceHRK: (price: number) => string;
   getSadrzajIconUrl: (sadrzaj: Sadrzaj) => string | null;
+  itemsPerPage?: number;
 }

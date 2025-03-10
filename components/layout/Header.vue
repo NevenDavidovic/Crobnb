@@ -5,7 +5,7 @@
     >
       <NuxtLink to="/" class="flex items-center pl-2">
         <img src="/images/logo.svg" alt="Crobnb" class="w-5 h-5" />
-        <span class="ml-2 text-gray-100 text-xl font-medium font-museo"
+        <span class="ml-2 text-gray-100 text-xl font-medium !font-museo"
           >Crobnb</span
         >
       </NuxtLink>

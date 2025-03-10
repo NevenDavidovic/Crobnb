@@ -21,6 +21,7 @@ export const useSmjestaji = () => {
     $getSadrzaji,
     $getSmjestajSadrzajiRelations,
     $getFileUrl,
+    $getSmjestajiByCity,
 
     // Complete methods
     $getCompleteSmjestaji,
@@ -55,6 +56,55 @@ export const useSmjestaji = () => {
   // Utility methods for formatting and display
   const formatPrice = (price: number): string => {
     return `${price.toFixed(2)} EUR`;
+  };
+
+  const fetchSmjestajiByCity = async (city: string, limit?: number) => {
+    isLoading.value = true;
+    error.value = null;
+
+    try {
+      const response = (await $getSmjestajiByCity(city, limit)) as Smjestaj[];
+      smjestaji.value = response;
+      availableSmjestaji.value = response;
+      isLoading.value = false;
+      return response;
+    } catch (err) {
+      console.error(`Error fetching smjestaji for city "${city}":`, err);
+      error.value = `Failed to load accommodation listings for ${city}`;
+      isLoading.value = false;
+      return [];
+    }
+  };
+
+  const formatTime = (timeString: string): string => {
+    if (!timeString) return "";
+
+    // If the timeString is already in the format you want (like "12:00")
+    if (/^\d{1,2}:\d{2}$/.test(timeString)) {
+      return timeString;
+    }
+
+    // If the timeString is in format "12:00:00"
+    if (/^\d{1,2}:\d{2}:\d{2}$/.test(timeString)) {
+      return timeString.substring(0, 5);
+    }
+
+    // If the timeString is a full date-time string
+    try {
+      const date = new Date(timeString);
+      if (!isNaN(date.getTime())) {
+        return (
+          date.getHours().toString().padStart(2, "0") +
+          ":" +
+          date.getMinutes().toString().padStart(2, "0")
+        );
+      }
+    } catch (e) {
+      console.error("Error parsing time:", e);
+    }
+
+    // If all else fails, return the original string
+    return timeString;
   };
 
   const convertToHRK = (priceEUR: number): number => {
@@ -481,6 +531,7 @@ export const useSmjestaji = () => {
     fetchSmjestajiByTip,
     fetchSmjestaj,
     fetchSmjestajBySlug,
+    fetchSmjestajiByCity,
 
     // Complete methods with relations
     fetchCompleteSmjestaji,
@@ -507,5 +558,6 @@ export const useSmjestaji = () => {
     getFullAddress,
     hasAmenity,
     getSadrzajIconUrl,
+    formatTime,
   };
 };

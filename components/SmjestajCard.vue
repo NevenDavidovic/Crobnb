@@ -146,7 +146,7 @@
         <div class="flex justify-between items-center mt-6">
           <!-- Button moved to the left -->
           <NuxtLink
-            :to="`/smjestaj/${smjestaj.slug || smjestaj.id}`"
+            :to="detailsLink"
             class="bg-primary-80 hover:bg-teal-700 text-white font-medium text-xs py-3 px-4 rounded-md transition"
           >
             Pogledaj detalje
@@ -176,6 +176,7 @@ import type {
 import type { SmjestajCardProps } from "~/types/pages/smjestaj-card";
 
 export default defineComponent({
+  // Props remain unchanged
   props: {
     smjestaj: {
       type: Object as PropType<SmjestajWithRelations>,
@@ -202,11 +203,35 @@ export default defineComponent({
   },
 
   setup(props: SmjestajCardProps) {
+    const route = useRoute();
     const isFavorite = ref(false);
 
     const toggleFavorite = () => {
       isFavorite.value = !isFavorite.value;
     };
+
+    // Get route query parameters
+    const detailsLink = computed(() => {
+      const baseUrl = `/smjestaj/${props.smjestaj.slug || props.smjestaj.id}`;
+
+      // Get checkin and checkout from route query params if they exist
+      const query = route.query;
+      const queryParams = new URLSearchParams();
+
+      // Add checkin parameter if it exists
+      if (query.checkin) {
+        queryParams.append("checkin", query.checkin as string);
+      }
+
+      // Add checkout parameter if it exists
+      if (query.checkout) {
+        queryParams.append("checkout", query.checkout as string);
+      }
+
+      // Convert queryParams to string and append if not empty
+      const queryString = queryParams.toString();
+      return queryString ? `${baseUrl}?${queryString}` : baseUrl;
+    });
 
     const amenities = computed(() => {
       if (
@@ -231,10 +256,12 @@ export default defineComponent({
 
       return result as any[];
     });
+
     return {
       isFavorite,
       toggleFavorite,
       amenities,
+      detailsLink,
     };
   },
 });
