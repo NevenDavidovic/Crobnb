@@ -12,13 +12,10 @@ export const useTouch = (modalRef: Ref<boolean>) => {
 
   const handleTouchEnd = () => {
     const slideDistance = touchMoveY.value - touchStartY.value;
-
-    // If the user slides down more than 50px, close the modal
     if (slideDistance > 50) {
       modalRef.value = false;
     }
 
-    // Reset values
     touchStartY.value = 0;
     touchMoveY.value = 0;
   };

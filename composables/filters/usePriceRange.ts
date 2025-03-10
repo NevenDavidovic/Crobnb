@@ -34,28 +34,22 @@ export const usePriceRange = (allSmjestaji: Ref<SmjestajWithRelations[]>) => {
     () => sliderMaxPercent.value - sliderMinPercent.value
   );
 
-  // Start dragging slider handle
   const startDrag = (type: "min" | "max", event: MouseEvent | TouchEvent) => {
     dragType.value = type;
 
-    // Mouse events
     document.addEventListener("mousemove", handleDrag);
     document.addEventListener("mouseup", stopDrag);
 
-    // Touch events
     document.addEventListener("touchmove", handleDrag);
     document.addEventListener("touchend", stopDrag);
     document.addEventListener("touchcancel", stopDrag);
 
-    // Prevent default to avoid page scrolling during touch drag
     event.preventDefault();
   };
 
-  // Handle drag movement
   const handleDrag = (event: MouseEvent | TouchEvent) => {
     if (!dragType.value) return;
 
-    // Get the clientX value from either mouse or touch event
     const clientX =
       "touches" in event ? event.touches[0].clientX : event.clientX;
 
@@ -76,15 +70,12 @@ export const usePriceRange = (allSmjestaji: Ref<SmjestajWithRelations[]>) => {
     }
   };
 
-  // Stop dragging
   const stopDrag = () => {
     dragType.value = null;
 
-    // Remove mouse events
     document.removeEventListener("mousemove", handleDrag);
     document.removeEventListener("mouseup", stopDrag);
 
-    // Remove touch events
     document.removeEventListener("touchmove", handleDrag);
     document.removeEventListener("touchend", stopDrag);
     document.removeEventListener("touchcancel", stopDrag);

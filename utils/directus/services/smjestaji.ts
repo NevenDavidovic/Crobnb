@@ -31,7 +31,7 @@ export const SmjestajiService = {
   },
 
   async getSmjestajiByCity(directus: Client, city: string, limit?: number) {
-    return await directus.request(
+    const smjestaji = await directus.request(
       readItems("smjestaj", {
         fields: [
           "*",
@@ -46,9 +46,39 @@ export const SmjestajiService = {
           },
         },
         sort: ["-date_created"],
-        limit: limit || -1, // -1 means no limit, return all results
+        limit: limit || -1,
       })
     );
+
+    // Step 2: If the tip_smjestaja relation isn't populating, we need to manually fetch and attach them
+    if (smjestaji.length > 0 && !smjestaji[0].tip_smjestaja) {
+      const tipoviIds = [
+        ...new Set(smjestaji.map((s) => s.tipovi_smjestaja_id)),
+      ].filter(Boolean);
+
+      if (tipoviIds.length > 0) {
+        const tipoviSmjestaja = await directus.request(
+          readItems("tipovi_smjestaja", {
+            fields: ["*", { ikona: ["*"] }],
+            filter: {
+              id: {
+                _in: tipoviIds,
+              },
+            },
+          })
+        );
+
+        return smjestaji.map((smjestaj) => ({
+          ...smjestaj,
+          tip_smjestaja:
+            tipoviSmjestaja.find(
+              (t) => t.id === smjestaj.tipovi_smjestaja_id
+            ) || null,
+        }));
+      }
+    }
+
+    return smjestaji;
   },
 
   async getSmjestaj(directus: Client, id: number) {

@@ -67,6 +67,7 @@ export const useSmjestaji = () => {
       smjestaji.value = response;
       availableSmjestaji.value = response;
       isLoading.value = false;
+      console.log("SmjestajMTF", response);
       return response;
     } catch (err) {
       console.error(`Error fetching smjestaji for city "${city}":`, err);

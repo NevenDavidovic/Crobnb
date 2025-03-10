@@ -58,11 +58,9 @@ export const useAdvancedFilters = (
       query: {},
     });
 
-    // Reset filteredSmjestaji to show all
     filteredSmjestaji.value = [...allSmjestaji.value];
   };
 
-  // Toggle star rating filter
   const toggleStarRating = (stars: number) => {
     const index = selectedStars.value.indexOf(stars);
     if (index === -1) {
@@ -72,7 +70,6 @@ export const useAdvancedFilters = (
     }
   };
 
-  // Get amenity ID by name
   const getAmenityIdByName = (name: string): number => {
     const amenity = sadrzaji.value.find(
       (s: { naziv: string }) => s.naziv.toLowerCase() === name.toLowerCase()
@@ -80,7 +77,6 @@ export const useAdvancedFilters = (
     return amenity ? amenity.id : -1;
   };
 
-  // Toggle amenity filter
   const toggleAmenity = (name: string) => {
     const amenityId = getAmenityIdByName(name);
     if (amenityId === -1) return;
@@ -93,7 +89,6 @@ export const useAdvancedFilters = (
     }
   };
 
-  // Toggle Apartman type
   const toggleApartmanType = () => {
     const apartmanType = tipovi.value.find(
       (t: { naziv: string }) => t.naziv === "Apartman"
@@ -110,17 +105,14 @@ export const useAdvancedFilters = (
   const applyFilters = () => {
     let results = [...allSmjestaji.value];
 
-    // First apply URL filters
     const route = useRoute();
 
-    // Handle location filter - skip filtering if location is "sve"
     if (route.query.location && route.query.location !== "sve") {
       results = results.filter(
         (item) => item.regija && item.regija.slug === route.query.location
       );
     }
 
-    // Handle type filter - skip filtering if type is "sve"
     if (route.query.type && route.query.type !== "sve") {
       results = results.filter(
         (item) =>
@@ -162,34 +154,27 @@ export const useAdvancedFilters = (
       const checkoutDate = parseDate(checkoutStr);
 
       if (checkinDate && checkoutDate) {
-        // Set time to beginning of day for consistent comparison
         checkinDate.setHours(0, 0, 0, 0);
         checkoutDate.setHours(0, 0, 0, 0);
 
         results = results.filter((item) => {
-          // If the accommodation has no reservations, it's available
           if (!item.rezervacije || item.rezervacije.length === 0) {
             return true;
           }
 
-          // Check each reservation for overlap
           for (const reservation of item.rezervacije) {
             const reservationStart = new Date(reservation.datum_od);
             const reservationEnd = new Date(reservation.datum_do);
 
-            // Set time to beginning of day for consistent comparison
             reservationStart.setHours(0, 0, 0, 0);
             reservationEnd.setHours(0, 0, 0, 0);
 
-            // Create a date for the day before checkout (the last night of stay)
             const lastNight = new Date(checkoutDate);
             lastNight.setDate(lastNight.getDate() - 1);
 
-            // Create a date for the day before reservation end
             const reservationLastNight = new Date(reservationEnd);
             reservationLastNight.setDate(reservationLastNight.getDate() - 1);
 
-            // Check for overlap
             if (
               checkinDate <= reservationLastNight &&
               lastNight >= reservationStart
@@ -198,16 +183,13 @@ export const useAdvancedFilters = (
             }
           }
 
-          // If no overlap with any reservation, the accommodation is available
           return true;
         });
       }
     }
 
-    // Apply star rating filter
     if (selectedStars.value.length > 0) {
       results = results.filter((item) => {
-        // Convert to number to ensure consistent comparison
         const stars = Number(item.broj_zvjezdica || 0);
         return selectedStars.value.includes(stars);
       });
