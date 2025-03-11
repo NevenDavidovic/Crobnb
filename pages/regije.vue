@@ -13,7 +13,7 @@
     </div>
 
     <div v-else>
-      <div class="space-y-16 md:rounded-lg">
+      <div class="space-y-16 md:rounded-lg felx flex-col md:gap-[88px]">
         <div
           v-for="(regija, index) in regije"
           :key="regija.id"
@@ -46,12 +46,12 @@
             <h2 class="text-[32px] text-gray-100 font-bold mb-6">
               {{ regija.naziv }}
             </h2>
-            <p class="text-gray-700 mb-6 leading-relaxed">
+            <p class="text-gray-80 text-base mb-6 leading-relaxed">
               {{ regija.kratki_opis }}
             </p>
             <NuxtLink
               :to="`/regije/${regija.slug}`"
-              class="text-primary-80 flex items-center gap-1 hover:text-primary-dark transition-colors font-medium"
+              class="text-primary-80 flex items-center gap-1 hover:text-primary-dark transition-colors font-medium text-base"
             >
               Vidi detalje
               <svg

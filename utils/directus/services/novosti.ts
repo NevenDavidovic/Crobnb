@@ -25,7 +25,7 @@ export const NovostiService = {
       readItems("novosti", {
         fields: ["*", { hero_slika: ["*"] }, { kategorija_novosti: ["*"] }],
         sort: ["-date_created"],
-        limit: limit || 10,
+        limit: limit || 200,
       })
     );
   },

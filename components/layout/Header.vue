@@ -22,7 +22,9 @@
       </nav>
 
       <div class="flex items-center space-x-4">
-        <button class="text-gray-600 hover:text-red-500 transition-colors">
+        <button
+          class="text-gray-600 hover:text-red-500 transition-colors md:block hidden"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-6 w-6"
@@ -42,7 +44,9 @@
         <div class="hidden md:block">
           <HeaderLanguageSelector />
         </div>
-        <NuxtLink to="/auth/prijava" class="pr-2"> Prijava </NuxtLink>
+        <NuxtLink to="/auth/prijava" class="pr-2 hidden md:block">
+          Prijava
+        </NuxtLink>
 
         <button class="md:hidden text-gray-600" @click="toggleMobileMenu">
           <svg
@@ -77,7 +81,7 @@
         >
           {{ item.label }}
         </NuxtLink>
-        <NuxtLink to="/prijava"> Prijava </NuxtLink>
+        <NuxtLink to="/prijava" class="text-center"> Prijava </NuxtLink>
 
         <div class="md:hidden mt-4 flex items-center justify-center">
           <HeaderLanguageSelector />
@@ -92,8 +96,8 @@ export default defineComponent({
   setup() {
     const navItems = [
       { label: "Tipovi smještaja", path: "#" },
-      { label: "Regije", path: "#" },
-      { label: "Novosti", path: "#" },
+      { label: "Regije", path: "/regije" },
+      { label: "Novosti", path: "/novosti-index" },
     ];
 
     const mobileNavItems = [...navItems, { label: "Favoriti", path: "#" }];
