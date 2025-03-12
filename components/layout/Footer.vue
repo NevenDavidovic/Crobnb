@@ -187,14 +187,14 @@ export default defineComponent({
     const accommodationTypes = computed(() => {
       return tipovi.value.map((tip: TipSmjestaja) => ({
         label: tip.naziv,
-        link: `/tipovi-smjestaja/${tip.slug}`,
+        link: `/smjestaji?location=sve&type=${tip.slug}`,
       }));
     });
 
     const regions = computed(() => {
       return regije.value.map((regija: Regija) => ({
         label: regija.naziv,
-        link: `/regije/${regija.slug}`,
+        link: `/regija/${regija.slug}`,
       }));
     });
 

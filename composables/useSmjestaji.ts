@@ -1,4 +1,3 @@
-// composables/useSmjestaji.ts
 import { ref } from "vue";
 import type {
   Smjestaj,

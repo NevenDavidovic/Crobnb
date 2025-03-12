@@ -55,7 +55,7 @@ export default defineComponent({
     item: {
       type: Object as PropType<DetailItem>,
       required: true,
-      validator: (obj: any): boolean => {
+      validator: (obj: PropType<DetailItem>): boolean => {
         return (
           "imageUrl" in obj &&
           "name" in obj &&
@@ -67,7 +67,6 @@ export default defineComponent({
     },
   },
   setup() {
-    // Import formatting functions from the composable
     const { formatPrice, formatPriceHRK } = useSmjestaji();
 
     return {

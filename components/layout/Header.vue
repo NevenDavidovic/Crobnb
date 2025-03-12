@@ -95,7 +95,7 @@
 export default defineComponent({
   setup() {
     const navItems = [
-      { label: "Tipovi smještaja", path: "#" },
+      { label: "Tipovi smještaja", path: "/tipovi-smjestaja" },
       { label: "Regije", path: "/regije" },
       { label: "Novosti", path: "/novosti-index" },
     ];

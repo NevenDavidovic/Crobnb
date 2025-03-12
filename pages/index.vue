@@ -39,7 +39,7 @@
         >
           <h1 class="text-2xl font-bold">Novosti</h1>
           <NuxtLink
-            to="#"
+            to="/novosti-index"
             class="text-blue-600 hover:text-blue-800 flex items-center"
           >
             Vidi sve novosti

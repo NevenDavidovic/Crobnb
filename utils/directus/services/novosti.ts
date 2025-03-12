@@ -1,4 +1,4 @@
-import { readItems, readItem } from "@directus/sdk";
+import { readItems, readItem, aggregate } from "@directus/sdk";
 import type {
   DirectusClient,
   RestClient,
@@ -15,27 +15,78 @@ type Client = DirectusClient<Schema> &
  */
 export const NovostiService = {
   /**
+   * Get the total count of novosti items
+   * @param directus Directus client instance
+   * @returns Promise with count of novosti items
+   */
+  async getNovostiCount(directus: Client): Promise<number> {
+    try {
+      const result = await directus.request(
+        aggregate("novosti", {
+          aggregate: {
+            count: ["id"],
+          },
+        })
+      );
+
+      // Extract the count from the result and convert to number
+      const count = result?.[0]?.count?.id;
+      return typeof count === "string" ? parseInt(count, 10) : count || 0;
+    } catch (error) {
+      console.error("Error getting novosti count:", error);
+      return 0;
+    }
+  },
+
+  async getNovostiByKategorijaCount(
+    directus: Client,
+    kategorijaId: number
+  ): Promise<number> {
+    try {
+      const result = await directus.request(
+        aggregate("novosti", {
+          aggregate: {
+            count: ["id"],
+          },
+          filter: {
+            kategorija_novosti_id: {
+              _eq: kategorijaId,
+            },
+          },
+        })
+      );
+
+      // Extract the count from the result and convert to number
+      const count = result?.[0]?.count?.id;
+      return typeof count === "string" ? parseInt(count, 10) : count || 0;
+    } catch (error) {
+      console.error(
+        `Error getting novosti count for category ${kategorijaId}:`,
+        error
+      );
+      return 0;
+    }
+  },
+
+  /**
    * Get all news articles
    * @param directus Directus client instance
    * @param limit Maximum number of news to return
    * @returns Promise with news articles
    */
   async getNovosti(directus: Client, limit?: number) {
+    // If limit is not provided, get the total count
+    const actualLimit = limit || (await this.getNovostiCount(directus));
+
     return await directus.request(
       readItems("novosti", {
         fields: ["*", { hero_slika: ["*"] }, { kategorija_novosti: ["*"] }],
         sort: ["-date_created"],
-        limit: limit || 200,
+        limit: actualLimit,
       })
     );
   },
 
-  /**
-   * Get a single news article by ID
-   * @param directus Directus client instance
-   * @param id News article ID
-   * @returns Promise with news article
-   */
   async getNovost(directus: Client, id: number) {
     return await directus.request(
       readItem("novosti", id, {
@@ -44,18 +95,15 @@ export const NovostiService = {
     );
   },
 
-  /**
-   * Get news articles by category
-   * @param directus Directus client instance
-   * @param kategorijaId Category ID
-   * @param limit Maximum number of news to return
-   * @returns Promise with news articles
-   */
   async getNovostiByKategorija(
     directus: Client,
     kategorijaId: number,
     limit?: number
   ) {
+    // If limit is not provided, get the count of items in this category
+    const actualLimit =
+      limit || (await this.getNovostiByKategorijaCount(directus, kategorijaId));
+
     return await directus.request(
       readItems("novosti", {
         fields: ["*", { hero_slika: ["*"] }, { kategorija_novosti: ["*"] }],
@@ -65,17 +113,11 @@ export const NovostiService = {
           },
         },
         sort: ["-date_created"],
-        limit: limit || 10,
+        limit: actualLimit,
       })
     );
   },
 
-  /**
-   * Get a single news article by slug
-   * @param directus Directus client instance
-   * @param slug News article slug
-   * @returns Promise with news article or null
-   */
   async getNovostBySlug(directus: Client, slug: string) {
     return await directus
       .request(
@@ -94,11 +136,6 @@ export const NovostiService = {
       );
   },
 
-  /**
-   * Get all news categories
-   * @param directus Directus client instance
-   * @returns Promise with news categories
-   */
   async getKategorijeNovosti(directus: Client) {
     return await directus.request(
       readItems("kategorija_novosti", {
