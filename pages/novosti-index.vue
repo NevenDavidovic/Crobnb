@@ -217,8 +217,7 @@ export default defineComponent({
       );
     });
 
-    // Initialize pagination with the filtered novosti
-    const ITEMS_PER_PAGE = 9; // 3x3 grid
+    const ITEMS_PER_PAGE = 9;
     const {
       currentPage,
       totalPages,
@@ -238,17 +237,14 @@ export default defineComponent({
         await fetchNovostiByKategorija(categoryId);
       }
 
-      // Reset to first page when changing category
       goToPage(1);
     };
 
-    // Fetch all news and categories when component mounts
     onMounted(async () => {
       await fetchKategorijeNovosti();
       await fetchNovosti();
     });
 
-    // Use head for SEO
     useHead({
       title: "Novosti | Otkrij Hrvatsku",
       meta: [

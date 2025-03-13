@@ -41,7 +41,6 @@
         <span class="font-medium">Filtriraj po</span>
       </button>
 
-      <!-- Sort Button -->
       <button
         class="flex items-center gap-3 justify-center px-4 py-3 border border-gray-200 rounded-lg text-gray-600 bg-white w-full hover:bg-gray-50"
       >
@@ -125,17 +124,14 @@
         :class="{ block: isFilterVisible, 'hidden lg:block': !isFilterVisible }"
         class="max-w-[380px] w-full"
       >
-        <!-- Mobile full-screen overlay for screens below 1024px -->
         <div
           class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           @click="closeFilter"
         ></div>
 
-        <!-- Filter container - full screen on mobile, normal on desktop -->
         <div
           class="fixed inset-0 z-50 lg:static lg:z-auto overflow-y-auto bg-white lg:rounded-lg lg:border lg:border-gray-5 lg:p-4 lg:max-w-[384px] lg:h-fit w-full"
         >
-          <!-- Header with close button for mobile -->
           <div class="sticky top-0 bg-white z-10 px-4 py-4 lg:px-0">
             <div class="flex justify-between items-center pb-4 border-b">
               <h3 class="font-normal text-gray-100 text-[20px] mb-4">
@@ -172,7 +168,6 @@
             </div>
           </div>
 
-          <!-- Filter content with padding on mobile -->
           <div class="px-4 lg:px-0">
             <div class="mb-6 mt-4 pb-4 border-b">
               <p class="text-gray-100 text-base mb-2">Raspon cijena (EUR)</p>
@@ -345,7 +340,6 @@
               </div>
             </div>
 
-            <!-- Apply button with bottom padding on mobile -->
             <div class="pb-6">
               <button
                 @click="applyFilters"
@@ -430,7 +424,6 @@ import { useSmjestaji } from "~/composables/useSmjestaji";
 import type { SmjestajWithRelations } from "~/types/directus/index";
 import { useFilter } from "~/composables/filters/useFilters";
 
-// Import new composables
 import { useSorting } from "~/composables/filters/useSorting";
 import { useTouch } from "~/composables/filters/useTouch";
 import { usePriceRange } from "~/composables/filters/usePriceRange";
@@ -440,11 +433,9 @@ export default defineComponent({
   setup() {
     const route = useRoute();
 
-    // Main data arrays
     const allSmjestaji = ref<SmjestajWithRelations[]>([]);
     const filteredSmjestaji = ref<SmjestajWithRelations[]>([]);
 
-    // Use existing composables
     const {
       tipovi,
       isLoading: tipoviLoading,
@@ -475,7 +466,6 @@ export default defineComponent({
 
     const { onSearch, urlParams } = useFilter();
 
-    // Use new composables
     const {
       showSortDropdown,
       sortBy,

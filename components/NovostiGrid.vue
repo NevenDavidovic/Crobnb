@@ -1,5 +1,5 @@
 <template>
-  <div class="novosti-section">
+  <div class="mb-4">
     <div v-if="isLoading" class="flex justify-center">
       <div class="text-gray-500">Loading news...</div>
     </div>
@@ -12,10 +12,10 @@
       <p class="text-gray-100">No news articles found.</p>
     </div>
 
-    <div v-else class="carousel-wrapper relative">
+    <div v-else class="relative px-10 lg:px-10 md:px-10 sm:px-0">
       <button
         @click="prevSlide"
-        class="nav-arrow nav-prev"
+        class="absolute top-[45%] -translate-y-1/2 z-10 flex items-center justify-center w-10 h-10 text-primary-80 rounded-full border-none cursor-pointer transition-all duration-200 ease-in-out hover:bg-[#f8fafc] hover:shadow-md left-0"
         v-show="showDesktopControls"
         type="button"
       >
@@ -56,7 +56,7 @@
               spaceBetween: 30,
             },
           }"
-          class="novosti-carousel px-0"
+          class="px-0 pb-[10px]"
         >
           <swiper-slide
             v-for="novost in novosti"
@@ -73,12 +73,12 @@
           </swiper-slide>
         </swiper-container>
 
-        <div class="fixed-pagination flex justify-center mt-4 space-x-2">
+        <div class="hidden sm:flex justify-center mt-[15px] space-x-2">
           <button
             v-for="i in 3"
             :key="i - 1"
-            class="pagination-dot"
-            :class="{ active: activeDot === i - 1 }"
+            class="w-[10px] h-[10px] rounded-full bg-[#cccccc] border-none p-0 cursor-pointer transition-colors duration-300"
+            :class="{ 'bg-primary-80': activeDot === i - 1 }"
             @click="goToGroup(i - 1)"
             type="button"
           ></button>
@@ -87,7 +87,7 @@
 
       <button
         @click="nextSlide"
-        class="nav-arrow nav-next"
+        class="absolute top-[45%] -translate-y-1/2 z-10 flex items-center justify-center w-10 h-10 text-primary-80 rounded-full border-none cursor-pointer transition-all duration-200 ease-in-out hover:bg-[#f8fafc] hover:shadow-md right-0"
         v-show="showDesktopControls"
         type="button"
       >
@@ -112,18 +112,7 @@
 
 <script lang="ts">
 import type { Novost } from "~/types/directus/index";
-
-interface SwiperInstance {
-  slides: {
-    length: number;
-    [key: string]: any;
-  };
-  activeIndex: number;
-  slideTo: (index: number, speed?: number, runCallbacks?: boolean) => void;
-  slideNext: (speed?: number, runCallbacks?: boolean) => void;
-  slidePrev: (speed?: number, runCallbacks?: boolean) => void;
-  [key: string]: any;
-}
+import type { SwiperInstance } from "~/types/pages/swiper-interface";
 
 export default defineComponent({
   props: {
@@ -262,79 +251,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style>
-.novosti-section {
-  margin-bottom: 2rem;
-}
-
-.carousel-wrapper {
-  position: relative;
-  padding: 0 40px;
-}
-
-.nav-arrow {
-  position: absolute;
-  top: 45%;
-  transform: translateY(-50%);
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  color: #337589;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.nav-arrow:hover {
-  background-color: #f8fafc;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.nav-prev {
-  left: 0;
-}
-
-.nav-next {
-  right: 0;
-}
-
-.novosti-carousel {
-  padding-bottom: 10px;
-}
-
-.fixed-pagination {
-  margin-top: 15px;
-}
-
-.pagination-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: #cccccc;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.pagination-dot.active {
-  background-color: #337589;
-}
-
-@media (max-width: 639px) {
-  .fixed-pagination {
-    display: none !important;
-  }
-}
-
-@media (max-width: 1023px) {
-  .carousel-wrapper {
-    padding: 0;
-  }
-}
-</style>

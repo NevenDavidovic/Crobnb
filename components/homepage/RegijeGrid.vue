@@ -12,7 +12,6 @@
   </div>
 
   <div v-else>
-    <!-- Mobile view with Swiper -->
     <div class="block md:hidden">
       <ClientOnly>
         <swiper-container
@@ -27,9 +26,13 @@
               spaceBetween: 20,
             },
           }"
-          class="regions-carousel lg:px-4"
+          class="pb-[20px] lg:px-4"
         >
-          <swiper-slide v-for="regija in regije" :key="regija.id" class="pb-4">
+          <swiper-slide
+            v-for="regija in regije"
+            :key="regija.id"
+            class="pb-4 h-auto md:max-w-[100%] max-w-[85%]"
+          >
             <NuxtLink
               :to="`/regije/${regija.slug || regija.id}`"
               class="block relative group"
@@ -92,7 +95,6 @@
       </ClientOnly>
     </div>
 
-    <!-- Desktop view with grid -->
     <div class="hidden md:grid md:grid-cols-3 lg:grid-cols-4 gap-4">
       <NuxtLink
         v-for="regija in regije"
@@ -189,21 +191,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style>
-/* Mobile carousel styling */
-.regions-carousel {
-  padding-bottom: 20px;
-}
-
-swiper-slide {
-  height: auto;
-}
-
-/* This makes sure the slides look good on mobile */
-@media (max-width: 767px) {
-  swiper-slide {
-    width: 85% !important;
-  }
-}
-</style>

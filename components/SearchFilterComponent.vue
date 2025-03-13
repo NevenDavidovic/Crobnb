@@ -514,7 +514,6 @@ export default defineComponent({
       emit: (event: "search", filters: SearchFilters) => void;
     }
   ) {
-    // Helper function to parse dates from DD.MM.YYYY. format
     const parseDate = (dateStr: string): Date => {
       if (!dateStr) return new Date();
 
@@ -528,7 +527,6 @@ export default defineComponent({
       return new Date();
     };
 
-    // Initialize with URL parameters if available
     const selectedLocation = ref<string>(
       props.initialLocation || "sredisnja-dalmacija"
     );
@@ -538,7 +536,6 @@ export default defineComponent({
     const adultCount = ref<number>(props.initialAdults || 2);
     const childrenCount = ref<number>(props.initialChildren || 0);
 
-    // Initialize date picker with URL parameters if available
     const datePickerRange = ref<DateRange>({
       start: props.initialCheckin
         ? parseDate(props.initialCheckin)

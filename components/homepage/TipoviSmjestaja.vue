@@ -1,20 +1,16 @@
 <template>
-  <!-- Loading state -->
   <div v-if="isLoading" class="flex justify-center py-8">
     <div class="text-gray-500">Loading accommodation types...</div>
   </div>
 
-  <!-- Error state -->
   <div v-else-if="error" class="bg-red-50 p-4 rounded-lg text-red-600 mb-6">
     {{ error }}
   </div>
 
-  <!-- Empty state -->
   <div v-else-if="tipovi.length === 0" class="text-center py-8">
     <p class="text-gray-600">No accommodation types found.</p>
   </div>
 
-  <!-- Display grid of types - using a 5-column grid for desktop -->
   <div
     v-else
     class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
@@ -28,7 +24,6 @@
       <div
         class="border rounded-lg p-6 flex flex-col items-center justify-center hover:shadow-md transition-shadow text-center"
       >
-        <!-- Icon -->
         <div class="text-teal-700 mb-2">
           <img
             v-if="getIconUrl(tip) !== null"
@@ -36,7 +31,7 @@
             :alt="tip.naziv"
             class="w-16 h-16 object-contain mx-auto"
           />
-          <!-- Fallback icon if no image is available -->
+
           <div v-else class="w-16 h-16 flex items-center justify-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -56,10 +51,8 @@
         </div>
 
         <div class="flex gap-4 items-center justify-center content-center">
-          <!-- Name -->
           <div class="text-center">{{ tip.naziv }}</div>
 
-          <!-- Arrow icon -->
           <div class="flex items-center text-gray-400">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -103,15 +96,6 @@ export default defineComponent({
       type: Function as PropType<(tip: TipSmjestaja) => string | null>,
       required: true,
     },
-  },
-
-  setup() {
-    // No additional setup needed since we're just using props
-    // If you need additional reactive data or functions, you'd add them here
-
-    return {
-      // Any additional properties or methods would be returned here
-    };
   },
 });
 </script>

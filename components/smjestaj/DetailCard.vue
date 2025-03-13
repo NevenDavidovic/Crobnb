@@ -2,7 +2,6 @@
   <div
     class="bg-white rounded-lg w-[279px] overflow-hidden border border-gray-5"
   >
-    <!-- Card Image -->
     <div class="relative w-full rounded-lg overflow-hidden">
       <img
         :src="item.imageUrl"
@@ -11,14 +10,11 @@
       />
     </div>
 
-    <!-- Card Details -->
     <div class="p-4 flex flex-col gap-2">
-      <!-- Item Type -->
       <div class="text-gray-500 text-xs uppercase tracking-wide">
         {{ item.type }}
       </div>
       <div class="flex flex-col gap-1">
-        <!-- Star Rating -->
         <div class="flex">
           <span
             v-for="i in item.rating"
@@ -28,10 +24,9 @@
           >
         </div>
 
-        <!-- Item Name -->
         <h3 class="text-[20px] font-bold text-gray-800">{{ item.name }}</h3>
       </div>
-      <!-- Price Information -->
+
       <div class="mt-2 flex flex-col">
         <div class="text-gray-500 text-xs">od</div>
         <div class="text-gray-100 font-bold text-base">

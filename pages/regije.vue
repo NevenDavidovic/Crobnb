@@ -81,7 +81,6 @@ import type { Regija } from "~/types/directus/index";
 
 export default defineComponent({
   setup() {
-    // Get the regije composable
     const { regije, isLoading, error, fetchRegije, getImageUrl } = useRegije();
 
     const getSafeImageUrl = (regija: Regija): string | undefined => {
@@ -89,12 +88,10 @@ export default defineComponent({
       return url === null ? undefined : url;
     };
 
-    // Fetch regions when component mounts
     onMounted(async () => {
       await fetchRegije();
     });
 
-    // Use head for SEO
     useHead({
       title: "Regije Hrvatske | Otkrij Hrvatsku",
       meta: [
@@ -106,7 +103,6 @@ export default defineComponent({
       ],
     });
 
-    // Return everything needed in the template
     return {
       regije,
       isLoading,

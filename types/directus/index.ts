@@ -8,3 +8,4 @@ export * from "./exports/rezervacije";
 export * from "./exports/slike_smjestaj";
 export * from "./exports/all_data_smjestaj_interface";
 export * from "./exports/sadrzaj-clone";
+export * from "./exports/users";

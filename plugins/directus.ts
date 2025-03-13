@@ -5,6 +5,8 @@ import { SmjestajiService } from "~/utils/directus/services/smjestaji";
 import { RegijeService } from "~/utils/directus/services/regije";
 import { NovostiService } from "~/utils/directus/services/novosti";
 import { RezervacijeService } from "~/utils/directus/services/rezervacije";
+import { AuthService } from "~/utils/directus/services/auth"; // Import AuthService
+import { createUser, registerUser } from "@directus/sdk";
 import type { DirectusFile } from "~/types/directus";
 import type { SearchFilters } from "~/types/pages/search-filter";
 
@@ -31,6 +33,29 @@ export default defineNuxtPlugin(() => {
   return {
     provide: {
       directus,
+
+      // Auth methods
+      registerUser: (userData: {
+        email: string;
+        password: string;
+        first_name?: string;
+        last_name?: string;
+        telefon?: string;
+      }) => AuthService.registerUser(directus, userData),
+
+      // Add SDK functions directly
+      sdkRegisterUser: registerUser,
+      sdkCreateUser: createUser,
+
+      loginUser: (credentials: { email: string; password: string }) =>
+        AuthService.loginUser(directus, credentials),
+
+      logoutUser: () => AuthService.logoutUser(directus),
+
+      refreshToken: (refreshToken: string) =>
+        AuthService.refreshToken(directus, refreshToken),
+
+      // Existing methods
       getSmjestajSadrzajiRelations: () =>
         SmjestajiService.getSmjestajSadrzajiRelations(directus),
       getTipoviSmjestaja: () => SmjestajService.getTipoviSmjestaja(directus),

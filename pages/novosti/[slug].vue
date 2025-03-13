@@ -1,24 +1,17 @@
 <template>
   <div class="mt-10 md:mt-14 py-6">
-    <!-- Loading state -->
     <div v-if="isLoading" class="flex justify-center items-center py-20">
       <div
         class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"
       ></div>
     </div>
 
-    <!-- Error state -->
     <div v-else-if="error" class="text-center py-10 text-red-500">
       {{ error }}
     </div>
 
-    <!-- Content when loaded -->
     <div v-else-if="currentNovost" class="max-w-1200 mx-auto px-4">
-      <!-- Article header with image section -->
       <div class="mb-10">
-        <!-- Title -->
-
-        <!-- Short description and image side by side -->
         <div class="flex flex-col md:flex-row gap-6">
           <div class="flex flex-col md:w-1/2">
             <div class="flex items-center text-primary-80 mb-6">
@@ -44,7 +37,6 @@
               {{ currentNovost.naslov }}
             </h1>
 
-            <!-- Category and date on same row -->
             <div
               class="flex items-center text-sm text-gray-500 uppercase tracking-wider mb-6"
             >
@@ -86,16 +78,14 @@
         </div>
       </div>
 
-      <!-- Main content with max-width: 800px -->
       <div class="max-w-[800px] mx-auto">
-        <!-- Content sections -->
-        <div class="prose max-w-none text-gray-700">
+        <!-- Using Tailwind typography plugin classes for prose -->
+        <div class="prose prose-lg max-w-none text-gray-700">
           <div v-html="currentNovost.sadrzaj"></div>
         </div>
       </div>
     </div>
 
-    <!-- Related news section -->
     <div class="bg-primary-5 py-8">
       <div class="bg-primary-5">
         <div
@@ -106,10 +96,10 @@
             Više iz kategorije
           </h2>
 
-          <div class="carousel-wrapper relative">
+          <div class="relative px-10 md:px-10 lg:px-10">
             <button
               @click="prevSlide"
-              class="nav-arrow nav-prev"
+              class="absolute left-0 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-10 h-10 text-primary-80 rounded-full hover:bg-gray-100 hover:shadow-md transition-all duration-200"
               v-show="showDesktopControls"
               type="button"
             >
@@ -146,7 +136,7 @@
                     spaceBetween: 24,
                   },
                 }"
-                class="related-carousel px-0"
+                class="px-0"
               >
                 <swiper-slide
                   v-for="novost in relatedNovosti.slice(0, 4)"
@@ -163,12 +153,12 @@
                 </swiper-slide>
               </swiper-container>
 
-              <div class="fixed-pagination flex justify-center mt-4 space-x-2">
+              <div class="flex justify-center mt-4 space-x-2">
                 <button
                   v-for="i in Math.ceil(Math.min(relatedNovosti.length, 4) / 2)"
                   :key="i - 1"
-                  class="pagination-dot"
-                  :class="{ active: activeDot === i - 1 }"
+                  class="w-2.5 h-2.5 rounded-full bg-gray-300 transition-colors duration-300"
+                  :class="{ 'bg-primary-80': activeDot === i - 1 }"
                   @click="goToGroup(i - 1)"
                   type="button"
                 ></button>
@@ -177,7 +167,7 @@
 
             <button
               @click="nextSlide"
-              class="nav-arrow nav-next"
+              class="absolute right-0 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-10 h-10 text-primary-80 rounded-full hover:bg-gray-100 hover:shadow-md transition-all duration-200"
               v-show="showDesktopControls"
               type="button"
             >
@@ -226,7 +216,6 @@ export default defineComponent({
     const route = useRoute();
     const slug = computed(() => route.params.slug as string);
 
-    // Use the novosti composable
     const {
       currentNovost,
       novosti,
@@ -238,7 +227,6 @@ export default defineComponent({
       formatDate,
     } = useNovosti();
 
-    // Fetch the novost by slug when component mounts or slug changes
     watch(
       slug,
       async (newSlug: string) => {
@@ -249,7 +237,6 @@ export default defineComponent({
       { immediate: true }
     );
 
-    // Fetch related novosti when current novost changes
     const relatedNovosti = ref<Novost[]>([]);
 
     watch(
@@ -259,7 +246,7 @@ export default defineComponent({
           await fetchNovostiByKategorija(
             currentNovost.value.kategorija_novosti_id
           );
-          // Filter out the current novost and limit to 4 items
+
           relatedNovosti.value = novosti.value
             .filter(
               (item: { id: number }) => item.id !== currentNovost.value?.id
@@ -270,7 +257,6 @@ export default defineComponent({
       { immediate: true }
     );
 
-    // Set page title and meta
     watch(currentNovost, () => {
       if (currentNovost.value) {
         useHead({
@@ -408,72 +394,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style>
-/* Tailwind prose styles for rich text content */
-.prose {
-  font-size: 1.125rem;
-  line-height: 1.75;
-}
-
-.prose > *:first-child {
-  margin-top: 0;
-}
-
-.prose p {
-  margin-top: 1.25em;
-  margin-bottom: 1.25em;
-}
-
-.prose img {
-  border-radius: 0.375rem;
-  margin-top: 2em;
-  margin-bottom: 2em;
-}
-
-.prose h2 {
-  font-weight: 700;
-  font-size: 1.5em;
-  margin-top: 2em;
-  margin-bottom: 1em;
-  line-height: 1.3333333;
-}
-
-.prose h3 {
-  font-weight: 600;
-  font-size: 1.25em;
-  margin-top: 1.6em;
-  margin-bottom: 0.6em;
-  line-height: 1.6;
-}
-
-.prose ul {
-  margin-top: 1.25em;
-  margin-bottom: 1.25em;
-  padding-left: 1.625em;
-}
-
-.prose li {
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-}
-
-.prose a {
-  color: #2563eb;
-  text-decoration: underline;
-  font-weight: 500;
-}
-
-.prose a:hover {
-  color: #1d4ed8;
-}
-
-.prose blockquote {
-  font-style: italic;
-  border-left-width: 4px;
-  border-left-color: #e5e7eb;
-  padding-left: 1em;
-  margin-left: 0;
-  margin-right: 0;
-}
-</style>

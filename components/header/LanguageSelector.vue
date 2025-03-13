@@ -1,5 +1,4 @@
 <template>
-  <!-- Template remains unchanged -->
   <div class="relative" ref="dropdownElement">
     <div @click="toggleDropdown" class="flex items-center cursor-pointer">
       <div
@@ -63,7 +62,6 @@ export default defineComponent({
   name: "HeaderLanguageSelector",
 
   setup() {
-    // Reactive state
     const languages: Language[] = [
       { code: "hr", name: "Hrvatski", label: "HRV" },
       { code: "en", name: "English", label: "ENG" },
@@ -73,7 +71,6 @@ export default defineComponent({
     const selectedLanguage = ref<Language>(languages[0]);
     const dropdownElement = ref<HTMLElement | null>(null);
 
-    // Methods
     const getFlagSrc = (code: string) => `/images/${code}-flag.svg`;
 
     const toggleDropdown = () => {
@@ -85,7 +82,6 @@ export default defineComponent({
       isOpen.value = false;
     };
 
-    // Event handlers
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       if (dropdownElement.value && !dropdownElement.value.contains(target)) {
@@ -93,7 +89,6 @@ export default defineComponent({
       }
     };
 
-    // Watchers
     watch(isOpen, (newValue: boolean) => {
       if (newValue) {
         window.addEventListener("click", handleClickOutside);
@@ -102,12 +97,10 @@ export default defineComponent({
       }
     });
 
-    // Lifecycle hooks
     onUnmounted(() => {
       window.removeEventListener("click", handleClickOutside);
     });
 
-    // Expose to template
     return {
       languages,
       isOpen,

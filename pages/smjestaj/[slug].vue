@@ -66,17 +66,14 @@
             </button>
           </div>
           <div>
-            <!-- Mobile Carousel (shown only on mobile) -->
             <div class="block md:hidden mb-20 relative">
               <div class="relative overflow-hidden">
-                <!-- Main Carousel Container -->
                 <div
                   class="flex transition-transform duration-300 ease-in-out"
                   :style="`transform: translateX(-${
                     currentMobileSlide * 100
                   }%)`"
                 >
-                  <!-- All Images in Carousel -->
                   <div
                     v-for="(slika, index) in getGalleryImages()"
                     :key="index"
@@ -91,7 +88,6 @@
                       @click="openGallery(index)"
                     />
 
-                    <!-- Show indicator for more photos on last visible slide -->
                     <div
                       v-if="index === 3 && getTotalImagesCount() > 4"
                       class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-md cursor-pointer"
@@ -104,7 +100,6 @@
                   </div>
                 </div>
 
-                <!-- Navigation Arrows -->
                 <button
                   v-if="currentMobileSlide > 0"
                   @click="prevMobileSlide"
@@ -147,12 +142,11 @@
                 </button>
               </div>
             </div>
-            <!-- Accommodation Type -->
+
             <div class="uppercase text-gray-80 text-base mb-2">
               {{ currentCompleteSmjestaj.tip_smjestaja?.naziv || "" }}
             </div>
 
-            <!-- Accommodation Name and Rating -->
             <div class="flex justify-between items-start mb-4">
               <h1
                 class="text-4xl font-bold text-gray-800 flex md:flex-row flex-col-reverse gap-2"
@@ -170,7 +164,6 @@
               </h1>
             </div>
 
-            <!-- Address -->
             <div
               class="flex items-center items-end justify-between text-primary-80 mb-6 underline"
             >
@@ -277,8 +270,6 @@
           </div>
         </div>
 
-        <!-- Image Modal -->
-        <!-- Image Modal -->
         <Teleport to="body">
           <Transition name="fade">
             <div
@@ -375,11 +366,9 @@
         </Teleport>
 
         <div class="flex lg:flex-row flex-col-reverse gap-20">
-          <!-- Details Section -->
           <div class="max-w-[660px] w-full">
             <h2 class="text-[32px] font-bold mb-4">Detalji</h2>
 
-            <!-- Use details_opis if available -->
             <div
               class="prose max-w-none mb-6 text-[20px] text-gray-80"
               v-if="currentCompleteSmjestaj.details_opis"
@@ -411,10 +400,7 @@
               </div>
             </div>
 
-            <!-- Room Amenities -->
-
             <div class="flex gap-4 mb-8">
-              <!-- Max Guests -->
               <div
                 class="border rounded-lg p-4 flex flex-col items-center justify-center max-w-[140px] w-full"
               >
@@ -457,7 +443,6 @@
                 </div>
               </div>
 
-              <!-- Beds -->
               <div
                 class="border rounded-lg p-4 flex flex-col items-center justify-center max-w-[140px] w-full"
               >
@@ -500,7 +485,6 @@
                 </div>
               </div>
 
-              <!-- Bathrooms -->
               <div
                 class="border rounded-lg p-4 flex flex-col items-center justify-center max-w-[140px] w-full"
               >
@@ -550,7 +534,6 @@
               :key="sadrzaj.id"
               class="flex items-center"
             >
-              <!-- First condition -->
               <div
                 v-if="
                   getSadrzajIconUrl &&
@@ -564,14 +547,12 @@
                 />
               </div>
 
-              <!-- Second condition -->
               <div v-else-if="sadrzaj.icon && typeof sadrzaj.icon === 'string'">
                 <span class="material-icons mr-3 text-2xl text-gray-40">
                   {{ sadrzaj.icon }}
                 </span>
               </div>
 
-              <!-- Fallback -->
               <div v-else>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

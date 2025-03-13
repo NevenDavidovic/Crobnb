@@ -21,7 +21,9 @@
     "nuxt-swiper": "^2.0.0",
     "v-calendar": "^3.1.2",
     "vue": "latest",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "vue-tel-input": "^9.3.0",
+    "vue-toastification": "^2.0.0-rc.5"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.13.1",

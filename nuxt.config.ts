@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     cssPath: "~/assets/css/main.css",
     configPath: "tailwind.config.js",
   },
+
   runtimeConfig: {
     public: {
       directusUrl: process.env.DIRECTUS_URL || "http://localhost:8055",
@@ -24,5 +25,10 @@ export default defineNuxtConfig({
         },
       ],
     },
+  },
+
+  plugins: ["~/plugins/vue-tel-input.ts", "~/plugins/toast.ts"],
+  build: {
+    transpile: ["vue-tel-input"],
   },
 });

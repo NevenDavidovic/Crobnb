@@ -93,7 +93,29 @@
               </div>
 
               <!-- Mobile: Swiper -->
-              <div class="md:hidden relative carousel-wrapper">
+              <div class="md:hidden relative md:px-10 sm:px-0">
+                <button
+                  @click="prevSlide"
+                  class="absolute top-[45%] -translate-y-1/2 z-10 flex items-center justify-center w-10 h-10 text-primary-80 rounded-full border-none cursor-pointer transition-all duration-200 ease-in-out hover:bg-[#f8fafc] hover:shadow-md left-0"
+                  v-show="showDesktopControls"
+                  type="button"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    class="w-6 h-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </button>
+
                 <ClientOnly>
                   <swiper-container
                     ref="swiperRef"
@@ -126,18 +148,40 @@
                   </swiper-container>
 
                   <div
-                    class="fixed-pagination flex justify-center mt-4 space-x-2"
+                    class="hidden sm:flex justify-center mt-[15px] space-x-2"
                   >
                     <button
                       v-for="i in 3"
                       :key="i - 1"
-                      class="pagination-dot"
-                      :class="{ active: activeDot === i - 1 }"
+                      class="w-[10px] h-[10px] rounded-full bg-[#cccccc] border-none p-0 cursor-pointer transition-colors duration-300"
+                      :class="{ 'bg-primary-80': activeDot === i - 1 }"
                       @click="goToGroup(i - 1)"
                       type="button"
                     ></button>
                   </div>
                 </ClientOnly>
+
+                <button
+                  @click="nextSlide"
+                  class="absolute top-[45%] -translate-y-1/2 z-10 flex items-center justify-center w-10 h-10 text-primary-80 rounded-full border-none cursor-pointer transition-all duration-200 ease-in-out hover:bg-[#f8fafc] hover:shadow-md right-0"
+                  v-show="showDesktopControls"
+                  type="button"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    class="w-6 h-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
               </div>
             </template>
           </div>
@@ -151,18 +195,7 @@
 import { useTipoviSmjestaja } from "~/composables/useTipoviSmjestaja";
 import { useSmjestaji } from "~/composables/useSmjestaji";
 import type { TipSmjestaja, Smjestaj } from "~/types/directus/index";
-
-interface SwiperInstance {
-  slides: {
-    length: number;
-    [key: string]: any;
-  };
-  activeIndex: number;
-  slideTo: (index: number, speed?: number, runCallbacks?: boolean) => void;
-  slideNext: (speed?: number, runCallbacks?: boolean) => void;
-  slidePrev: (speed?: number, runCallbacks?: boolean) => void;
-  [key: string]: any;
-}
+import type { SwiperInstance } from "~/types/pages/swiper-interface";
 
 export default defineComponent({
   setup() {
@@ -174,7 +207,6 @@ export default defineComponent({
       typeof window !== "undefined" ? window.innerWidth : 1024
     );
 
-    // Use the tipovi_smjestaja composable
     const {
       tipovi,
       isLoading: isTipoviLoading,
@@ -183,7 +215,6 @@ export default defineComponent({
       getIconUrl,
     } = useTipoviSmjestaja();
 
-    // Use the smjestaji composable
     const {
       smjestaji: allSmjestaji,
       isLoading: isSmjestajiLoading,
@@ -192,7 +223,6 @@ export default defineComponent({
       getThumbnailUrl,
     } = useSmjestaji();
 
-    // Store smjestaji grouped by type
     const tipSmjestaji = ref<Record<number, Smjestaj[]>>({});
 
     // Helper to get swiper instance
@@ -213,7 +243,6 @@ export default defineComponent({
       activeDot.value = Math.min(Math.floor(currentIndex / slidesPerGroup), 2);
     };
 
-    // Computed properties
     const isLoading = computed(
       () => isTipoviLoading.value || isSmjestajiLoading.value
     );
@@ -224,7 +253,6 @@ export default defineComponent({
       return windowWidth.value >= 1024;
     });
 
-    // Swiper navigation methods
     const goToGroup = (groupIndex: number): void => {
       const swiper = getSwiperInstance();
       if (!swiper) return;
@@ -255,11 +283,9 @@ export default defineComponent({
       }
     };
 
-    // Fetch all accommodation types
     const fetchData = async () => {
       await fetchTipovi();
 
-      // For each type, fetch accommodations
       if (tipovi.value && tipovi.value.length > 0) {
         for (const tip of tipovi.value) {
           console.log(tip);
@@ -268,13 +294,10 @@ export default defineComponent({
       }
     };
 
-    // Fetch limited number of accommodations by type
     const fetchSmjestajiByTypeLimit = async (tipId: number, limit: number) => {
       try {
-        // Use the existing method in your composable
         await fetchSmjestajiByTip(tipId, limit);
 
-        // Store results in our grouped object
         if (allSmjestaji.value && allSmjestaji.value.length > 0) {
           tipSmjestaji.value[tipId] = allSmjestaji.value.slice(0, limit);
         } else {
@@ -286,7 +309,6 @@ export default defineComponent({
       }
     };
 
-    // Navigation methods
     const goToDetail = (smjestaj: Smjestaj) => {
       router.push(`/smjestaj/${smjestaj.slug || smjestaj.id}`);
     };
@@ -295,7 +317,6 @@ export default defineComponent({
       router.push(`/tipovi-smjestaja/${tip.slug || tip.id}`);
     };
 
-    // Event handling
     onMounted(() => {
       fetchData();
 
@@ -361,71 +382,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style>
-.carousel-wrapper {
-  position: relative;
-  padding: 0 40px;
-}
-
-.nav-arrow {
-  position: absolute;
-  top: 45%;
-  transform: translateY(-50%);
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  color: var(--primary-80, #3b82f6);
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.nav-arrow:hover {
-  background-color: #f8fafc;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.nav-prev {
-  left: 0;
-}
-
-.nav-next {
-  right: 0;
-}
-
-.fixed-pagination {
-  margin-top: 15px;
-}
-
-.pagination-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: #cccccc;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.pagination-dot.active {
-  background-color: var(--primary-80, #3b82f6);
-}
-
-@media (max-width: 639px) {
-  .fixed-pagination {
-    display: none !important;
-  }
-}
-
-@media (max-width: 1023px) {
-  .carousel-wrapper {
-    padding: 0;
-  }
-}
-</style>

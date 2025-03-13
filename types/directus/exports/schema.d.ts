@@ -6,6 +6,7 @@ import type { Novost, KategorijaNovosti } from "./news";
 import type { Smjestaj, Sadrzaj, SmjestajSadrzaj } from "./smjestaj";
 import type { Rezervacija } from "./rezervacije";
 import type { SlikaSmjestaj } from "./slike_smjestaj";
+import type { DirectusUser } from "./users";
 import type {
   SmjestajWithRelations,
   SingleSmjestajResponse,
@@ -29,6 +30,7 @@ export interface Schema {
   rezervacije: Rezervacija[];
   slike_smjestaj: SlikaSmjestaj[];
   sadrzaj: SadrzajActual[];
+  directus_users: DirectusUser[];
 
   // Response types
   smjestaj_with_relations: SmjestajWithRelations;

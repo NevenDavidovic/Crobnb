@@ -27,10 +27,8 @@
         />
       </div>
 
-      <!-- Pagination controls -->
       <div v-if="totalPages > 1" class="flex justify-center items-center py-8">
         <nav class="flex items-center gap-1">
-          <!-- Previous page button -->
           <button
             @click="prevPage"
             :disabled="currentPage === 1"
@@ -56,7 +54,6 @@
             </svg>
           </button>
 
-          <!-- Page numbers -->
           <div v-for="(page, index) in displayedPages" :key="index">
             <button
               v-if="page !== '...'"
@@ -73,7 +70,6 @@
             <span v-else class="px-2 text-gray-500">...</span>
           </div>
 
-          <!-- Next page button -->
           <button
             @click="nextPage"
             :disabled="currentPage === totalPages"
@@ -110,8 +106,8 @@ import type {
   Sadrzaj,
   SmjestajWithRelations,
 } from "~/types/directus/index";
-import { usePagination } from "~/composables/pagination/usePagination";
 
+import { usePagination } from "~/composables/pagination/usePagination";
 import type { SmjestajGridProps } from "~/types/pages/smjestaj-grid";
 
 export default defineComponent({
@@ -153,10 +149,8 @@ export default defineComponent({
   },
 
   setup(props: SmjestajGridProps) {
-    // Create reactive reference to props.smjestaji
     const smjestajiRef = computed(() => props.smjestaji);
 
-    // Use pagination composable
     const {
       currentPage,
       totalPages,
