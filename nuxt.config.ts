@@ -13,7 +13,9 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      directusUrl: process.env.DIRECTUS_URL || "http://localhost:8055",
+      directusUrl:
+        process.env.NUXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055",
+      directusUserRoleId: process.env.NUXT_PUBLIC_DIRECTUS_USER_ROLE_ID,
     },
   },
   app: {

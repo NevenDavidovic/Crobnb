@@ -1,6 +1,4 @@
 <template>
-  <!-- Price and Booking Section -->
-
   <div
     class="bg-white rounded-lg shadow-sm border border-gray-5 py-10 px-5 max-w-full lg:max-w-[470px] h-fit w-full flex flex-col gap-[24px]"
   >
@@ -59,7 +57,6 @@
           {{ dateRange }}
         </span>
 
-        <!-- Dropdown indicator -->
         <div
           class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
         >
@@ -78,7 +75,6 @@
         </div>
       </div>
 
-      <!-- Calendar dropdown -->
       <div
         v-if="showCalendar"
         class="absolute mt-1 bg-white border border-gray-40 rounded-lg shadow-lg z-50 !w-fit"
@@ -108,7 +104,6 @@
       </div>
     </div>
 
-    <!-- Price Breakdown -->
     <div class="mb-6 flex flex-col gap-6">
       <div class="flex justify-between mb-2">
         <div>Apartman</div>
@@ -147,7 +142,6 @@
       </div>
     </div>
 
-    <!-- Book Button -->
     <button
       class="w-full bg-primary-80 hover:bg-primary-100 text-white font-medium py-3 px-4 rounded transition"
       @click="$emit('send-inquiry')"
@@ -195,21 +189,19 @@ export default defineComponent({
     const router = useRouter();
     const showCalendar = ref(false);
 
-    // Helper function to parse dates from DD.MM.YYYY. format
     const parseDate = (dateStr: string): Date => {
       if (!dateStr) return new Date();
 
       const parts = dateStr.split(".");
       if (parts.length >= 3) {
         const day = parseInt(parts[0]);
-        const month = parseInt(parts[1]) - 1; // JS months are 0-indexed
+        const month = parseInt(parts[1]) - 1;
         const year = parseInt(parts[2]);
         return new Date(year, month, day);
       }
       return new Date();
     };
 
-    // Format date to DD.MM.YYYY. format
     const formatLocalDate = (date: Date): string => {
       const day = date.getDate().toString().padStart(2, "0");
       const month = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -217,13 +209,10 @@ export default defineComponent({
       return `${day}.${month}.${year}.`;
     };
 
-    // Initialize date picker with URL parameters or props
     const initializeDates = () => {
-      // Try to get from URL first
       const checkinParam = route.query.checkin as string;
       const checkoutParam = route.query.checkout as string;
 
-      // Set default dates from selectedDates props or create new dates
       const today = props.selectedDates?.checkin || new Date();
       const tomorrow =
         props.selectedDates?.checkout ||
@@ -237,7 +226,6 @@ export default defineComponent({
 
     const datePickerRange = ref<DateRange>(initializeDates());
 
-    // Computed property for displaying the date range
     const dateRange = computed((): string => {
       if (datePickerRange.value?.start && datePickerRange.value?.end) {
         const start = formatLocalDate(datePickerRange.value.start);
@@ -247,13 +235,11 @@ export default defineComponent({
       return "Odaberite datume";
     });
 
-    // Toggle calendar dropdown
     const toggleCalendar = (event: MouseEvent): void => {
       event.stopPropagation();
       showCalendar.value = !showCalendar.value;
     };
 
-    // Confirm date selection and update URL
     const confirmDateSelection = (): void => {
       showCalendar.value = false;
 
@@ -261,17 +247,14 @@ export default defineComponent({
         const checkinFormatted = formatLocalDate(datePickerRange.value.start);
         const checkoutFormatted = formatLocalDate(datePickerRange.value.end);
 
-        // Update URL with new dates
         const query = { ...route.query };
         query.checkin = checkinFormatted;
         query.checkout = checkoutFormatted;
 
-        // Replace URL without navigating
         router.replace({ query });
       }
     };
 
-    // Close calendar when clicking outside
     onMounted(() => {
       document.addEventListener("click", () => {
         showCalendar.value = false;
@@ -284,7 +267,6 @@ export default defineComponent({
       });
     });
 
-    // Watch for route changes to update the date picker
     watch(
       () => route.query,
       (newQuery: Record<string, any>) => {
