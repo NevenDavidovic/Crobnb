@@ -1,8 +1,5 @@
 import { useCookie } from "#app";
-import type {
-  DirectusUser,
-  AuthResponse,
-} from "~/types/directus/exports/users";
+import type { DirectusUser } from "~/types/directus/exports/users";
 
 export const useAuth = () => {
   const { $registerUser } = useNuxtApp();
