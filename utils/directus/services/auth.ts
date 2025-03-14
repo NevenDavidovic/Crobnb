@@ -1,9 +1,8 @@
-import { createUser } from "@directus/sdk";
+import { createUser, readMe } from "@directus/sdk";
 import type {
   DirectusClient,
   RestClient,
   AuthenticationClient,
-  AuthenticationMode,
 } from "@directus/sdk";
 
 import type { Schema } from "~/types/directus/exports/schema";
@@ -35,12 +34,63 @@ export const AuthService = {
       };
 
       // Create a user with the SDK's createUser function
-      // This will ensure the role is included
       const result = await directus.request(createUser(userPayload));
 
       return result;
     } catch (error) {
       console.error("Registration failed:", error);
+      throw error;
+    }
+  },
+
+  async getCurrentUser(directus: Client) {
+    try {
+      // Koristi readMe funkciju iz SDK-a
+      const result = await directus.request(
+        readMe({
+          fields: ["*"], // Dohvati sva polja korisnika
+        })
+      );
+      return result;
+    } catch (error) {
+      console.error("Failed to get current user:", error);
+      throw error;
+    }
+  },
+
+  async loginUser(
+    directus: Client,
+    credentials: { email: string; password: string }
+  ) {
+    try {
+      // Osnovna login metoda bez opcija
+      const result = await directus.login(
+        credentials.email,
+        credentials.password
+      );
+      return result;
+    } catch (error) {
+      console.error("Login failed:", error);
+      throw error;
+    }
+  },
+
+  async logoutUser(directus: Client) {
+    try {
+      // Osnovna logout metoda bez opcija
+      return await directus.logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+      throw error;
+    }
+  },
+
+  async refreshToken(directus: Client) {
+    try {
+      // Osnovna refresh metoda bez opcija
+      return await directus.refresh();
+    } catch (error) {
+      console.error("Token refresh failed:", error);
       throw error;
     }
   },

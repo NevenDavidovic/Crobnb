@@ -1,5 +1,5 @@
 // ~/types/pages/directus-user-response.ts
-export interface DirectusUser {
+export interface DirectusUserResponse {
   id: string;
   first_name: string | null;
   last_name: string | null;
@@ -12,6 +12,7 @@ export interface DirectusUser {
   avatar:
     | {
         id: string;
+        // ostala polja datoteke ako su ti potrebna
       }
     | string
     | null;
@@ -27,6 +28,7 @@ export interface DirectusUser {
     | {
         id: string;
         name: string;
+        // ostala polja uloge ako su ti potrebna
       }
     | string
     | null;
@@ -37,13 +39,6 @@ export interface DirectusUser {
   external_identifier: string | null;
   auth_data: Record<string, any> | null;
   email_notifications: boolean | null;
-
+  // Dodatna polja koja možda imaš u svom sustavu
   telefon?: string | null;
-}
-
-export interface AuthResponse {
-  access_token: string;
-  expires: number;
-  refresh_token?: string;
-  user?: DirectusUser;
 }

@@ -44,8 +44,8 @@
         <div class="hidden md:block">
           <HeaderLanguageSelector />
         </div>
-        <NuxtLink to="/auth/prijava" class="pr-2 hidden md:block">
-          Prijava
+        <NuxtLink :to="authLink.path" class="pr-2 hidden md:block">
+          {{ authLink.label }}
         </NuxtLink>
 
         <button class="md:hidden text-gray-600" @click="toggleMobileMenu">
@@ -81,7 +81,13 @@
         >
           {{ item.label }}
         </NuxtLink>
-        <NuxtLink to="/prijava" class="text-center"> Prijava </NuxtLink>
+        <NuxtLink
+          :to="authLink.path"
+          class="block py-2 text-gray-700 hover:text-teal-600 transition-colors text-center"
+          @click="mobileMenuOpen = false"
+        >
+          {{ authLink.label }}
+        </NuxtLink>
 
         <div class="md:hidden mt-4 flex items-center justify-center">
           <HeaderLanguageSelector />
@@ -92,15 +98,32 @@
 </template>
 
 <script lang="ts">
+import { useAuthStore } from "~/stores/authStore";
+
+interface NavItem {
+  label: string;
+  path: string;
+}
+
+interface AuthLink {
+  label: string;
+  path: string;
+}
+
 export default defineComponent({
   setup() {
-    const navItems = [
+    const authStore = useAuthStore();
+
+    const navItems: NavItem[] = [
       { label: "Tipovi smještaja", path: "/tipovi-smjestaja" },
       { label: "Regije", path: "/regije" },
       { label: "Novosti", path: "/novosti-index" },
     ];
 
-    const mobileNavItems = [...navItems, { label: "Favoriti", path: "#" }];
+    const mobileNavItems: NavItem[] = [
+      ...navItems,
+      { label: "Favoriti", path: "#" },
+    ];
 
     const mobileMenuOpen = ref(false);
 
@@ -108,11 +131,19 @@ export default defineComponent({
       mobileMenuOpen.value = !mobileMenuOpen.value;
     };
 
+    // Računamo koji link za prijavu/profil prikazati
+    const authLink = computed<AuthLink>(() => {
+      return authStore.isAuthenticated
+        ? { label: "Profil", path: "/profil" }
+        : { label: "Prijava", path: "/auth/prijava" };
+    });
+
     return {
       navItems,
       mobileNavItems,
       mobileMenuOpen,
       toggleMobileMenu,
+      authLink,
     };
   },
 });

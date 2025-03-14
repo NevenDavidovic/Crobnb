@@ -68,6 +68,11 @@
           </div>
         </div>
 
+        <!-- Error message -->
+        <div v-if="authStore.error" class="text-red-500 mb-4">
+          {{ authStore.error }}
+        </div>
+
         <!-- Forgot Password Link -->
         <div class="flex justify-end mb-6">
           <NuxtLink
@@ -82,8 +87,9 @@
         <button
           type="submit"
           class="w-full max-w-[230px] mx-auto py-3 bg-primary-80 px-20 text-white rounded hover:bg-primary-90 transition duration-300"
+          :disabled="authStore.isLoading"
         >
-          Prijavi se
+          {{ authStore.isLoading ? "Učitavanje..." : "Prijavi se" }}
         </button>
 
         <!-- Registration Link -->
@@ -103,31 +109,40 @@
   </div>
 </template>
 
-<script lang="ts">
-export default defineComponent({
-  setup() {
-    const email = ref("");
-    const password = ref("");
-    const showPassword = ref(false);
+<script setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "~/stores/authStore";
 
-    const togglePassword = () => {
-      showPassword.value = !showPassword.value;
-    };
+const authStore = useAuthStore();
+const router = useRouter();
 
-    const handleSubmit = () => {
-      console.log("Form submitted with:", {
-        email: email.value,
-        password: password.value,
-      });
-    };
+const email = ref("");
+const password = ref("");
+const showPassword = ref(false);
 
-    return {
-      email,
-      password,
-      showPassword,
-      togglePassword,
-      handleSubmit,
-    };
-  },
-});
+const togglePassword = () => {
+  showPassword.value = !showPassword.value;
+};
+
+const handleSubmit = async () => {
+  if (!email.value || !password.value) {
+    return;
+  }
+
+  const success = await authStore.login(email.value, password.value);
+
+  if (success) {
+    // Koristi toast notifikaciju ako je dostupna
+    try {
+      const { $toast } = useNuxtApp();
+      $toast.success("Uspješna prijava!");
+    } catch (err) {
+      console.log("Toast nije dostupan", err);
+    }
+
+    // Preusmjeri korisnika na početnu stranicu ili dashboard
+    router.push("/profil");
+  }
+};
 </script>

@@ -200,8 +200,6 @@ export const useRegistrationForm = () => {
   );
 
   const handleSubmit = async () => {
-    console.log("Function started");
-    // Validate all fields first
     validateField("ime");
     validateField("prezime");
     validateField("email");
@@ -210,7 +208,6 @@ export const useRegistrationForm = () => {
     validateField("potvrdiLozinku");
     console.log("START");
 
-    // If there are any errors or form is invalid, don't submit
     if (!isFormValid.value) {
       console.log("Form is invalid, stopping submission");
       return null;
@@ -219,7 +216,6 @@ export const useRegistrationForm = () => {
     console.log("Form is valid, proceeding with submission");
 
     try {
-      // Map the form data to the structure expected by registerUser
       const userData = {
         email: formData.email,
         password: formData.lozinka,
@@ -228,40 +224,53 @@ export const useRegistrationForm = () => {
         telefon: formData.telefon || undefined,
       };
 
-      console.log("Preparing user data for registration:", {
-        ...userData,
-        password: "********", // Mask password in logs
-      });
+      // Dohvati referencu na error iz useAuth
+      const { error: authError } = useAuth();
 
-      // Use the registerUser function from useAuth which handles all fields
-      // This function is already imported at the top from useAuth
-      const response = await registerUser(userData);
+      // Use the registerUser function from useAuth
+      const success = await registerUser(userData);
 
-      console.log("Registration complete, response:", !!response);
+      // Check if registration was successful
+      if (success) {
+        // Set registration success flag
+        registrationSuccess.value = true;
 
-      // Set registration success flag
-      registrationSuccess.value = true;
+        // Get the toast function and show success message
+        const { $toast } = useNuxtApp();
 
-      // Get the toast function and show success message
-      const { $toast } = useNuxtApp();
+        try {
+          $toast.success(
+            "Uspješna registracija! Provjerite svoj email za potvrdu računa."
+          );
+        } catch (toastError) {
+          console.error("Toast error:", toastError);
+          alert(
+            "Uspješna registracija! Provjerite svoj email za potvrdu računa."
+          );
+        }
 
-      try {
-        $toast.success(
-          "Uspješna registracija! Provjerite svoj email za potvrdu računa."
-        );
-      } catch (toastError) {
-        console.error("Toast error:", toastError);
-        alert(
-          "Uspješna registracija! Provjerite svoj email za potvrdu računa."
-        );
+        setTimeout(() => {
+          router.push("/auth/prijava");
+        }, 3000);
+
+        return true;
+      } else {
+        if (authError.value) {
+          const { $toast } = useNuxtApp();
+          $toast.error(authError.value);
+
+          if (authError.value.includes("email")) {
+            errors.email = authError.value;
+          }
+        } else {
+          // Generic error
+          const { $toast } = useNuxtApp();
+          $toast.error(
+            "Došlo je do greške prilikom registracije. Pokušajte ponovno."
+          );
+        }
+        return false;
       }
-
-      // Redirect after a short delay
-      setTimeout(() => {
-        router.push("/auth/prijava");
-      }, 3000);
-
-      return true; // Return a value indicating success
     } catch (err: any) {
       console.error("Registration submission error:", err);
 
@@ -281,7 +290,7 @@ export const useRegistrationForm = () => {
         alert("Došlo je do greške prilikom registracije. Pokušajte ponovno.");
       }
 
-      return null;
+      return false;
     }
   };
 
