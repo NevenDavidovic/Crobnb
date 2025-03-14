@@ -46,10 +46,9 @@ export const AuthService = {
 
   async getCurrentUser(directus: Client) {
     try {
-      // Koristi readMe funkciju iz SDK-a
       const result = await directus.request(
         readMe({
-          fields: ["*"], // Dohvati sva polja korisnika
+          fields: ["*"],
         })
       );
       return result;
