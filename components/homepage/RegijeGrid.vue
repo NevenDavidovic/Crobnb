@@ -104,7 +104,7 @@
       >
         <div class="relative rounded-lg overflow-hidden aspect-[4/3]">
           <img
-            v-if="getImageUrl(regija) !== null"
+            v-if="getImageUrl(regija)"
             :src="getImageUrl(regija) || undefined"
             :alt="regija.naziv"
             class="w-full h-full object-cover"

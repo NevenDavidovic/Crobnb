@@ -83,7 +83,10 @@
         </div>
 
         <div class="mb-4">
-          <label for="telefon" class="block mb-2 text-gray-700 font-bold"
+          <label
+            for="telefon"
+            class="block mb-2 text-gray-700 font-bold"
+            required
             >Telefon</label
           >
           <vue-tel-input

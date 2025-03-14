@@ -18,7 +18,7 @@
     <NuxtLink
       v-for="tip in tipovi"
       :key="tip.id"
-      :to="`/ponuda-smjestaja/${tip.slug || tip.id}`"
+      :to="`/smjestaji/?location=sve&type=${tip.slug}`"
       class="block"
     >
       <div
