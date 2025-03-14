@@ -58,11 +58,12 @@ export const useAuthStore = defineStore("auth", () => {
     } catch (err) {
       console.error("Logout error:", err);
     } finally {
-      // Clear state regardless of API success
       user.value = null;
       isAuthenticated.value = false;
       accessToken.value = null;
       refreshTokenCookie.value = null;
+      const router = useRouter();
+      router.push("/");
     }
   };
 
