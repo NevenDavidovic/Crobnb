@@ -46,9 +46,10 @@ export default defineNuxtPlugin(() => {
       loginUser: (credentials: { email: string; password: string }) =>
         AuthService.loginUser(directus, credentials),
 
-      logoutUser: () => AuthService.logoutUser(directus),
-
-      refreshToken: () => AuthService.refreshToken(directus),
+      logoutUser: (refreshToken?: string) =>
+        AuthService.logoutUser(directus, refreshToken),
+      refreshToken: (refreshToken?: string) =>
+        AuthService.refreshToken(directus, refreshToken),
 
       getCurrentUser: () => AuthService.getCurrentUser(directus),
 

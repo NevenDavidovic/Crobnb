@@ -4,6 +4,7 @@ import type {
   RestClient,
   AuthenticationClient,
 } from "@directus/sdk";
+import { logout, refresh } from "@directus/sdk";
 
 import type { Schema } from "~/types/directus/exports/schema";
 
@@ -63,10 +64,11 @@ export const AuthService = {
     credentials: { email: string; password: string }
   ) {
     try {
-      // Osnovna login metoda bez opcija
+      // Explicitly set authentication mode to 'json'
       const result = await directus.login(
         credentials.email,
-        credentials.password
+        credentials.password,
+        { mode: "json" }
       );
       return result;
     } catch (error) {
@@ -75,20 +77,31 @@ export const AuthService = {
     }
   },
 
-  async logoutUser(directus: Client) {
+  async logoutUser(directus: Client, refreshToken?: string) {
     try {
-      // Osnovna logout metoda bez opcija
-      return await directus.logout();
+      if (refreshToken) {
+        // Use the request method with logout operation
+        return await directus.request(logout(refreshToken, "json"));
+      } else {
+        console.error("No refresh token provided for logout");
+        // Return a resolved promise to prevent further errors
+        return Promise.resolve();
+      }
     } catch (error) {
       console.error("Logout failed:", error);
       throw error;
     }
   },
 
-  async refreshToken(directus: Client) {
+  async refreshToken(directus: Client, refreshToken?: string) {
     try {
-      // Osnovna refresh metoda bez opcija
-      return await directus.refresh();
+      if (refreshToken) {
+        // If refresh token is provided explicitly
+        return await directus.request(refresh("json", refreshToken));
+      } else {
+        // Otherwise use the standard refresh which will use cookies if available
+        return await directus.refresh();
+      }
     } catch (error) {
       console.error("Token refresh failed:", error);
       throw error;

@@ -1,4 +1,3 @@
-// stores/authStore.ts
 import { defineStore } from "pinia";
 import { useCookie } from "#app";
 import type { DirectusUserResponse } from "~/types/pages/directus-user-response";
@@ -22,18 +21,13 @@ export const useAuthStore = defineStore("auth", () => {
       const response = await $loginUser({ email, password });
 
       if (response && response.access_token) {
-        // Store tokens in cookies
         accessToken.value = response.access_token;
         if (response.refresh_token) {
           refreshTokenCookie.value = response.refresh_token;
         }
 
-        // Set authentication state
         isAuthenticated.value = true;
-
-        // Fetch user data
         await fetchCurrentUser();
-
         return true;
       }
       return false;
@@ -50,20 +44,28 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  const logout = async () => {
+  const logout = async (redirect: boolean = true) => {
     try {
-      if (isAuthenticated.value) {
-        await $logoutUser();
+      if (isAuthenticated.value && refreshTokenCookie.value) {
+        try {
+          await $logoutUser(refreshTokenCookie.value);
+        } catch (apiError) {
+          logout();
+        }
       }
     } catch (err) {
       console.error("Logout error:", err);
     } finally {
+      // Clean up local state
       user.value = null;
       isAuthenticated.value = false;
       accessToken.value = null;
       refreshTokenCookie.value = null;
-      const router = useRouter();
-      router.push("/");
+
+      if (redirect) {
+        const router = useRouter();
+        router.push("/");
+      }
     }
   };
 
@@ -72,7 +74,7 @@ export const useAuthStore = defineStore("auth", () => {
       const userData = await $getCurrentUser();
       user.value = userData as DirectusUserResponse;
       return true;
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Error fetching current user:", err);
       return false;
     }
@@ -81,10 +83,10 @@ export const useAuthStore = defineStore("auth", () => {
   const refreshAuthToken = async () => {
     try {
       if (!refreshTokenCookie.value) {
-        throw new Error("Nema refresh tokena");
+        throw new Error("No refresh token available");
       }
 
-      const response = await $refreshToken();
+      const response = await $refreshToken(refreshTokenCookie.value);
 
       if (response && response.access_token) {
         accessToken.value = response.access_token;
@@ -102,29 +104,64 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   const checkAuth = async () => {
+    // If no access token, definitely not authenticated
     if (!accessToken.value) {
       return false;
     }
 
-    if (isAuthenticated.value && !user.value) {
-      // Imamo token ali nemamo podatke o korisniku
-      await fetchCurrentUser();
+    // If we have a token but isAuthenticated is false, validate the token
+    if (!isAuthenticated.value) {
+      isAuthenticated.value = true; // Optimistically set to true
+
+      // Try to fetch user data to validate token
+      const success = await fetchCurrentUser();
+
+      if (!success) {
+        isAuthenticated.value = false;
+
+        // Try to refresh if we have a refresh token
+        if (refreshTokenCookie.value) {
+          const refreshed = await refreshAuthToken();
+          if (!refreshed) {
+            return false;
+          }
+
+          // After refresh, try to get user data again
+          const retrySuccess = await fetchCurrentUser();
+          isAuthenticated.value = retrySuccess;
+          return retrySuccess;
+        }
+
+        return false;
+      }
+    }
+    // We have a token, we're marked as authenticated, but we don't have user data
+    else if (!user.value) {
+      const success = await fetchCurrentUser();
+      if (!success) {
+        // Try refresh as a last resort
+        if (refreshTokenCookie.value) {
+          const refreshed = await refreshAuthToken();
+          if (refreshed) {
+            const retrySuccess = await fetchCurrentUser();
+            return retrySuccess;
+          }
+        }
+
+        isAuthenticated.value = false;
+        return false;
+      }
     }
 
     return isAuthenticated.value;
   };
 
-  // Provjeri autentikaciju pri inicijalizaciji
-  const initAuth = () => {
+  // Initialize authentication state
+  onMounted(() => {
     if (accessToken.value) {
       isAuthenticated.value = true;
-      fetchCurrentUser(); // Dohvati podatke o korisniku ako token postoji
+      fetchCurrentUser();
     }
-  };
-
-  // Pozovi inicijalizaciju pri montiranju
-  onMounted(() => {
-    initAuth();
   });
 
   return {
