@@ -51,6 +51,7 @@ export const AuthService = {
           fields: ["*"],
         })
       );
+
       return result;
     } catch (error) {
       console.error("Failed to get current user:", error);
