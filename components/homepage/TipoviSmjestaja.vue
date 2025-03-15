@@ -18,7 +18,7 @@
     <NuxtLink
       v-for="tip in tipovi"
       :key="tip.id"
-      :to="`/smjestaji/?location=sve&type=${tip.slug}`"
+      :to="`/smjestaji/?location=sve&type=${tip.slug}&checkin=${todayFormatted}&checkout=${tomorrowFormatted}`"
       class="block"
     >
       <div
@@ -96,6 +96,28 @@ export default defineComponent({
       type: Function as PropType<(tip: TipSmjestaja) => string | null>,
       required: true,
     },
+  },
+
+  setup() {
+    const today = new Date();
+
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+
+    const formatDate = (date: Date): string => {
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}.${month}.${year}.`;
+    };
+
+    const todayFormatted = formatDate(today);
+    const tomorrowFormatted = formatDate(tomorrow);
+
+    return {
+      todayFormatted,
+      tomorrowFormatted,
+    };
   },
 });
 </script>

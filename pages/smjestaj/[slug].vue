@@ -196,7 +196,7 @@
               </div>
 
               <button
-                class="flex items-center md:block hidden text-primary-100 hover:text-primary-80"
+                class="flex items-center md:flex hidden text-primary-100 hover:text-primary-80"
                 @click="toggleFavorite"
               >
                 <span class="mr-2">
@@ -522,6 +522,7 @@
             :format-price-h-r-k="formatPriceHRK"
             :selected-dates="selectedDates"
             :format-date="formatDate"
+            @send-inquiry="handleSendInquiry"
           />
         </div>
 
@@ -678,6 +679,47 @@
           </div>
         </ClientOnly>
 
+        <!-- Rest of your component HTML -->
+
+        <!-- Login Modal with Tailwind CSS -->
+        <Teleport to="body">
+          <div
+            v-if="showLoginModal"
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            @click="closeLoginModal"
+          >
+            <div
+              class="bg-white rounded-lg shadow-lg w-full max-w-md mx-4 overflow-hidden max-h-[440px] max-w-[574px] relative"
+              @click.stop
+            >
+              <div class="flex justify-end items-center p-4 absolute right-0">
+                <button
+                  @click="closeLoginModal"
+                  class="text-gray-400 hover:text-gray-500 focus:outline-none"
+                >
+                  <svg
+                    class="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="px-4">
+                <PrijavaCard :redirect-url="inquiryLink" />
+              </div>
+            </div>
+          </div>
+        </Teleport>
+
         <button
           @click="nextSlide"
           class="nav-arrow nav-next"
@@ -710,8 +752,12 @@ import { useAccommodationDetail } from "~/composables/detailPage/useAccomodation
 export default defineComponent({
   setup() {
     const accommodationDetail = useAccommodationDetail();
+    const authStore = useAuthStore();
 
-    // Add and remove event listeners
+    const closeLoginModal = () => {
+      accommodationDetail.showLoginModal.value = false;
+    };
+
     onMounted(() => {
       window.addEventListener("keydown", accommodationDetail.handleKeydown);
       accommodationDetail.setupAccommodation();
@@ -735,12 +781,12 @@ export default defineComponent({
     });
 
     return {
-      ...accommodationDetail,
+      ...accommodationDetail, // This now includes showLoginModal and handleSendInquiry
+      closeLoginModal,
     };
   },
 });
 </script>
-
 <style>
 .carousel-wrapper {
   position: relative;

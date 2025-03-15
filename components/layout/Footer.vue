@@ -185,9 +185,26 @@ export default defineComponent({
     });
 
     const accommodationTypes = computed(() => {
+      // Get today's date
+      const today = new Date();
+      // Get tomorrow's date
+      const tomorrow = new Date();
+      tomorrow.setDate(today.getDate() + 1);
+
+      // Format dates as DD.MM.YYYY.
+      const formatDate = (date: Date) => {
+        const day = date.getDate().toString().padStart(2, "0");
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}.${month}.${year}.`;
+      };
+
+      const todayFormatted = formatDate(today);
+      const tomorrowFormatted = formatDate(tomorrow);
+
       return tipovi.value.map((tip: TipSmjestaja) => ({
         label: tip.naziv,
-        link: `/smjestaji?location=sve&type=${tip.slug}`,
+        link: `/smjestaji?location=sve&type=${tip.slug}&checkin=${todayFormatted}&checkout=${tomorrowFormatted}`,
       }));
     });
 

@@ -607,6 +607,10 @@ export default defineComponent({
     };
 
     const confirmGuestSelection = (): void => {
+      if (adultCount.value < 1) {
+        alert("Morate unijeti bar jednog odraslog člana");
+        return;
+      }
       showGuestsDropdown.value = false;
     };
 

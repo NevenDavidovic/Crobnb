@@ -17,12 +17,10 @@ export function useAccommodationDetail() {
   const route = useRoute();
   const router = useRouter();
 
-  // Get the slug parameter from the URL
   const slug = computed(() => route.params.slug as string);
   const isFavorite = ref(false);
 
   const {
-    currentSmjestaj,
     currentCompleteSmjestaj,
     isLoading,
     error,
@@ -49,7 +47,67 @@ export function useAccommodationDetail() {
     router.push("/smjestaji");
   };
 
-  // Swiper related refs
+  const authStore = useAuthStore();
+  const showLoginModal = ref(false);
+  const inquiryLink = ref("");
+
+  const handleSendInquiry = () => {
+    if (!authStore.isAuthenticated) {
+      // Generate the link but don't navigate yet
+      const slugValue = currentCompleteSmjestaj.value?.slug;
+      if (!slugValue) {
+        console.error("No slug available for accommodation");
+        return;
+      }
+
+      const formatDateForUrl = (date: Date): string => {
+        const day = date.getDate().toString().padStart(2, "0");
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}.${month}.${year}.`;
+      };
+
+      const checkin =
+        (route.query.checkin as string) ||
+        formatDateForUrl(selectedDates.value.checkin);
+      const checkout =
+        (route.query.checkout as string) ||
+        formatDateForUrl(selectedDates.value.checkout);
+      const adults = (route.query.adults as string) || "2";
+      const children = (route.query.children as string) || "0";
+
+      inquiryLink.value = `/upit/${slugValue}?checkin=${checkin}&checkout=${checkout}&adults=${adults}&children=${children}`;
+
+      showLoginModal.value = true;
+    } else {
+      const slugValue = currentCompleteSmjestaj.value?.slug;
+      if (!slugValue) {
+        console.error("No slug available for accommodation");
+        return;
+      }
+
+      const formatDateForUrl = (date: Date): string => {
+        const day = date.getDate().toString().padStart(2, "0");
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}.${month}.${year}.`;
+      };
+
+      const checkin =
+        (route.query.checkin as string) ||
+        formatDateForUrl(selectedDates.value.checkin);
+      const checkout =
+        (route.query.checkout as string) ||
+        formatDateForUrl(selectedDates.value.checkout);
+      const adults = (route.query.adults as string) || "2";
+      const children = (route.query.children as string) || "0";
+
+      const link = `/upit/${slugValue}?checkin=${checkin}&checkout=${checkout}&adults=${adults}&children=${children}`;
+
+      router.push(link);
+    }
+  };
+
   const swiperRef = ref(null);
   const activeDot = ref(0);
   const windowWidth = ref(
@@ -347,7 +405,7 @@ export function useAccommodationDetail() {
 
   return {
     // State
-    currentSmjestaj,
+
     currentCompleteSmjestaj,
     isLoading,
     error,
@@ -393,11 +451,14 @@ export function useAccommodationDetail() {
     updateActiveDot,
     fetchCityAccommodations,
     handleKeydown,
+    handleSendInquiry,
 
     // Setup methods
     setupAccommodation,
     setupWindowResizeListener,
     watchSlugChanges,
     watchSwiperChanges,
+    showLoginModal,
+    inquiryLink,
   };
 }

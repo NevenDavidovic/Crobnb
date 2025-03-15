@@ -13,7 +13,6 @@ type Client = DirectusClient<Schema> &
   AuthenticationClient<Schema>;
 
 export const SmjestajiService = {
-  // Keep all your existing methods
   async getSmjestaji(directus: Client, limit?: number) {
     return await directus.request(
       readItems("smjestaj", {
@@ -50,7 +49,6 @@ export const SmjestajiService = {
       })
     );
 
-    // Step 2: If the tip_smjestaja relation isn't populating, we need to manually fetch and attach them
     if (smjestaji.length > 0 && !smjestaji[0].tip_smjestaja) {
       const tipoviIds = [
         ...new Set(smjestaji.map((s) => s.tipovi_smjestaja_id)),
@@ -186,18 +184,14 @@ export const SmjestajiService = {
     );
   },
 
-  // New methods to get complete accommodation data with all relationships
   async getCompleteSmjestaji(
     directus: Client,
     limit?: number
   ): Promise<SmjestajWithRelations[]> {
-    // First get basic accommodation data
     const smjestaji = await this.getSmjestaji(directus, limit);
 
-    // For each accommodation, fetch the additional related data
     const enhancedSmjestaji = await Promise.all(
       smjestaji.map(async (smjestaj) => {
-        // Get rezervacije (reservations)
         const rezervacije = await directus.request(
           readItems("rezervacije", {
             fields: ["*"],
@@ -210,8 +204,6 @@ export const SmjestajiService = {
           })
         );
 
-        // Get smjestaj_sadrzaji (amenities through junction table) with complete sadrzaj info
-        // Add limit: -1 to ensure all items are returned
         const smjestajSadrzaji = await directus.request(
           readItems("smjestaj_sadrzaji", {
             fields: ["*", { sadrzaj: ["*", { icon: ["*"] }] }],
@@ -220,17 +212,15 @@ export const SmjestajiService = {
                 _eq: smjestaj.id,
               },
             },
-            limit: -1, // This ensures all items are returned
+            limit: -1,
           })
         );
 
-        // Add this after the query
         console.log(
           `Sadrzaji for smjestaj ${smjestaj.id}:`,
           JSON.stringify(smjestajSadrzaji, null, 2)
         );
 
-        // Manually fetch regija if it's not already included
         let regija = smjestaj.regija;
         if (!regija && smjestaj.regija_id) {
           regija = await directus.request(
@@ -240,7 +230,6 @@ export const SmjestajiService = {
           );
         }
 
-        // Manually fetch tip_smjestaja if it's not already included
         let tipSmjestaja = smjestaj.tip_smjestaja;
         if (!tipSmjestaja && smjestaj.tipovi_smjestaja_id) {
           tipSmjestaja = await directus.request(
@@ -250,17 +239,14 @@ export const SmjestajiService = {
           );
         }
 
-        // Check for missing sadrzaj in smjestaj_sadrzaji
         for (let i = 0; i < smjestajSadrzaji.length; i++) {
           if (!smjestajSadrzaji[i].sadrzaj && smjestajSadrzaji[i].sadrzaj_id) {
-            // Fetch the missing sadrzaj
             const sadrzaj = await directus.request(
               readItem("sadrzaji", smjestajSadrzaji[i].sadrzaj_id, {
                 fields: ["*", { icon: ["*"] }],
               })
             );
 
-            // Update the object with the fetched sadrzaj
             smjestajSadrzaji[i] = {
               ...smjestajSadrzaji[i],
               sadrzaj: sadrzaj,
@@ -268,7 +254,6 @@ export const SmjestajiService = {
           }
         }
 
-        // Combine all data into SmjestajWithRelations format
         return {
           ...smjestaj,
           regija: regija,
@@ -287,10 +272,8 @@ export const SmjestajiService = {
     directus: Client,
     id: number
   ): Promise<SmjestajWithRelations> {
-    // Get basic accommodation data
     const smjestaj = await this.getSmjestaj(directus, id);
 
-    // Get slike_smjestaj (images)
     const slike = await directus.request(
       readItems("slike_smjestaj", {
         fields: ["*", { slika: ["*"] }],
@@ -302,7 +285,6 @@ export const SmjestajiService = {
       })
     );
 
-    // Get rezervacije (reservations)
     const rezervacije = await directus.request(
       readItems("rezervacije", {
         fields: ["*"],
@@ -315,7 +297,6 @@ export const SmjestajiService = {
       })
     );
 
-    // Get smjestaj_sadrzaji (amenities through junction table)
     const smjestajSadrzaji = await directus.request(
       readItems("smjestaj_sadrzaji", {
         fields: ["*", { sadrzaj: ["*", { icon: ["*"] }] }],
@@ -327,7 +308,6 @@ export const SmjestajiService = {
       })
     );
 
-    // Combine all data into SmjestajWithRelations format
     return {
       ...smjestaj,
       smjestaj_sadrzaji: smjestajSadrzaji,
@@ -340,14 +320,12 @@ export const SmjestajiService = {
     directus: Client,
     slug: string
   ): Promise<SmjestajWithRelations | null> {
-    // Get basic accommodation data by slug
     const smjestaj = await this.getSmjestajBySlug(directus, slug);
 
     if (!smjestaj) {
       return null;
     }
 
-    // Get slike_smjestaj (images)
     const slike = await directus.request(
       readItems("slike_smjestaj", {
         fields: ["*", { slika: ["*"] }],
@@ -356,11 +334,10 @@ export const SmjestajiService = {
             _eq: smjestaj.id,
           },
         },
-        limit: -1, // Ensure all images are returned
+        limit: -1,
       })
     );
 
-    // Get rezervacije (reservations)
     const rezervacije = await directus.request(
       readItems("rezervacije", {
         fields: ["*"],
@@ -373,7 +350,6 @@ export const SmjestajiService = {
       })
     );
 
-    // Get smjestaj_sadrzaji (amenities through junction table)
     const smjestajSadrzaji = await directus.request(
       readItems("smjestaj_sadrzaji", {
         fields: ["*", { sadrzaj: ["*", { icon: ["*"] }] }],
@@ -382,11 +358,10 @@ export const SmjestajiService = {
             _eq: smjestaj.id,
           },
         },
-        limit: -1, // Ensure all amenities are returned
+        limit: -1,
       })
     );
 
-    // Manually fetch regija if it's not already included
     let regija = smjestaj.regija;
     if (!regija && smjestaj.regija_id) {
       regija = await directus.request(
@@ -396,7 +371,6 @@ export const SmjestajiService = {
       );
     }
 
-    // Manually fetch tip_smjestaja if it's not already included
     let tipSmjestaja = smjestaj.tip_smjestaja;
     if (!tipSmjestaja && smjestaj.tipovi_smjestaja_id) {
       tipSmjestaja = await directus.request(
@@ -406,17 +380,14 @@ export const SmjestajiService = {
       );
     }
 
-    // Check for missing sadrzaj in smjestaj_sadrzaji
     for (let i = 0; i < smjestajSadrzaji.length; i++) {
       if (!smjestajSadrzaji[i].sadrzaj && smjestajSadrzaji[i].sadrzaj_id) {
-        // Fetch the missing sadrzaj
         const sadrzaj = await directus.request(
           readItem("sadrzaji", smjestajSadrzaji[i].sadrzaj_id, {
             fields: ["*", { icon: ["*"] }],
           })
         );
 
-        // Update the object with the fetched sadrzaj
         smjestajSadrzaji[i] = {
           ...smjestajSadrzaji[i],
           sadrzaj: sadrzaj,
@@ -424,7 +395,6 @@ export const SmjestajiService = {
       }
     }
 
-    // Combine all data into SmjestajWithRelations format
     return {
       ...smjestaj,
       regija: regija,
@@ -435,7 +405,6 @@ export const SmjestajiService = {
     } as SmjestajWithRelations;
   },
 
-  // Helper methods for specific tables
   async getSlikeSmjestaja(directus: Client, smjestajId: number) {
     return await directus.request(
       readItems("slike_smjestaj", {
@@ -476,19 +445,18 @@ export const SmjestajiService = {
             _eq: smjestajId,
           },
           _or: [
-            // Check if a reservation starts during the requested period
             {
               datum_od: {
                 _between: [datumOd, datumDo],
               },
             },
-            // Check if a reservation ends during the requested period
+
             {
               datum_do: {
                 _between: [datumOd, datumDo],
               },
             },
-            // Check if a reservation completely spans the requested period
+
             {
               _and: [
                 {
@@ -508,7 +476,6 @@ export const SmjestajiService = {
       })
     );
 
-    // If no conflicting reservations found, the accommodation is available
     return response.length === 0;
   },
 };

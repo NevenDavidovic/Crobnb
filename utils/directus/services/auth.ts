@@ -64,7 +64,6 @@ export const AuthService = {
     credentials: { email: string; password: string }
   ) {
     try {
-      // Explicitly set authentication mode to 'json'
       const result = await directus.login(
         credentials.email,
         credentials.password,
@@ -80,11 +79,10 @@ export const AuthService = {
   async logoutUser(directus: Client, refreshToken?: string) {
     try {
       if (refreshToken) {
-        // Use the request method with logout operation
         return await directus.request(logout(refreshToken, "json"));
       } else {
         console.error("No refresh token provided for logout");
-        // Return a resolved promise to prevent further errors
+
         return Promise.resolve();
       }
     } catch (error) {
@@ -96,10 +94,8 @@ export const AuthService = {
   async refreshToken(directus: Client, refreshToken?: string) {
     try {
       if (refreshToken) {
-        // If refresh token is provided explicitly
         return await directus.request(refresh("json", refreshToken));
       } else {
-        // Otherwise use the standard refresh which will use cookies if available
         return await directus.refresh();
       }
     } catch (error) {

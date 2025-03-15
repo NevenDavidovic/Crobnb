@@ -6,7 +6,6 @@ import { getFileUrl } from "./utils";
 import { SmjestajiService } from "./services/smjestaji";
 import { RezervacijeService } from "./services/rezervacije";
 
-// Export all services and utilities for easier imports
 export {
   createDirectusClient,
   SmjestajService,

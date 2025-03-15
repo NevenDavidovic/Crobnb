@@ -10,15 +10,7 @@ type Client = DirectusClient<Schema> &
   RestClient<Schema> &
   AuthenticationClient<Schema>;
 
-/**
- * Service for handling News (Novosti) related requests
- */
 export const NovostiService = {
-  /**
-   * Get the total count of novosti items
-   * @param directus Directus client instance
-   * @returns Promise with count of novosti items
-   */
   async getNovostiCount(directus: Client): Promise<number> {
     try {
       const result = await directus.request(
@@ -29,7 +21,6 @@ export const NovostiService = {
         })
       );
 
-      // Extract the count from the result and convert to number
       const count = result?.[0]?.count?.id;
       return typeof count === "string" ? parseInt(count, 10) : count || 0;
     } catch (error) {
@@ -56,7 +47,6 @@ export const NovostiService = {
         })
       );
 
-      // Extract the count from the result and convert to number
       const count = result?.[0]?.count?.id;
       return typeof count === "string" ? parseInt(count, 10) : count || 0;
     } catch (error) {
@@ -68,12 +58,6 @@ export const NovostiService = {
     }
   },
 
-  /**
-   * Get all news articles
-   * @param directus Directus client instance
-   * @param limit Maximum number of news to return
-   * @returns Promise with news articles
-   */
   async getNovosti(directus: Client, limit?: number) {
     // If limit is not provided, get the total count
     const actualLimit = limit || (await this.getNovostiCount(directus));
@@ -100,7 +84,6 @@ export const NovostiService = {
     kategorijaId: number,
     limit?: number
   ) {
-    // If limit is not provided, get the count of items in this category
     const actualLimit =
       limit || (await this.getNovostiByKategorijaCount(directus, kategorijaId));
 

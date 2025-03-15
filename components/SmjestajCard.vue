@@ -213,6 +213,18 @@ export default defineComponent({
         queryParams.append("checkout", query.checkout as string);
       }
 
+      if (query.adults) {
+        queryParams.append("adults", query.adults as string);
+      } else {
+        queryParams.append("adults", "2");
+      }
+
+      if (query.children) {
+        queryParams.append("children", query.children as string);
+      } else {
+        queryParams.append("children", "0");
+      }
+
       const queryString = queryParams.toString();
       return queryString ? `${baseUrl}?${queryString}` : baseUrl;
     });

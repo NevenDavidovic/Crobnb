@@ -30,7 +30,10 @@
             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
           />
         </svg>
-        <span>{{ smjestaj.max_broj_gostiju || 2 }} osobe</span>
+        <span>
+          {{ smjestaj.max_broj_gostiju || 2 }}
+          {{ (smjestaj.max_broj_gostiju || 2) === 1 ? "osoba" : "osobe" }}
+        </span>
       </div>
     </div>
 
@@ -158,6 +161,7 @@ import type { SmjestajDetailsProps } from "~/types/pages/smjestaj-detail";
 
 export default defineComponent({
   name: "SmjestajDetails",
+  emits: ["send-inquiry"],
   props: {
     smjestaj: {
       type: Object as PropType<SmjestajWithRelations>,

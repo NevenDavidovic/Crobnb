@@ -1,7 +1,6 @@
 <template>
   <div class="flex justify-center items-start min-h-screen pt-16 bg-white">
     <div class="w-full max-w-md p-6 rounded shadow-sm">
-      <!-- Key icon in a light blue circle -->
       <div class="flex justify-center mb-4">
         <div
           class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center"
@@ -23,18 +22,15 @@
         </div>
       </div>
 
-      <!-- Title -->
       <h1 class="text-2xl font-semibold text-center mb-2">
         Zaboravljena lozinka?
       </h1>
 
-      <!-- Description -->
       <p class="text-center text-gray-600 mb-8">
         Upiši email i poslat ćemo ti link za resetiranje lozinke.
       </p>
 
       <form @submit.prevent="handleSubmit" class="flex flex-col">
-        <!-- Email Field -->
         <div class="mb-8">
           <label for="email" class="block mb-2 text-gray-700">Email</label>
           <input
@@ -47,7 +43,6 @@
           />
         </div>
 
-        <!-- Submit Button -->
         <button
           type="submit"
           class="w-full py-3 max-w-[230px] mx-auto bg-primary-80 text-white rounded hover:bg-primary-90 transition duration-300"

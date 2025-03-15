@@ -16,14 +16,11 @@ export const useAuth = () => {
     telefon: "",
   });
 
-  const router = useRouter();
   const config = useRuntimeConfig();
 
-  // Check if user is already authenticated
   const authToken = useCookie("directus_auth_token");
   if (authToken.value) {
     isAuthenticated.value = true;
-    // In a real app, you might want to verify the token and fetch user data
   }
 
   const registerUser = async (userData: {

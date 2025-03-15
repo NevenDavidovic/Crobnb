@@ -1,4 +1,3 @@
-// utils/directus/client.ts
 import { createDirectus, rest, authentication } from "@directus/sdk";
 import type { Schema } from "~/types/directus/exports/schema";
 import { useCookie } from "#app";
