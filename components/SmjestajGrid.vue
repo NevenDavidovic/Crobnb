@@ -15,7 +15,6 @@
     </div>
 
     <div v-else>
-      <!-- Grid layout - changes based on useMobileLayout flag -->
       <div
         :class="[
           useMobileLayout
@@ -174,7 +173,6 @@ export default defineComponent({
       displayedPages,
     } = usePagination(smjestajiRef, props.itemsPerPage);
 
-    // Reset to first page when filters change
     watch(
       () => props.smjestaji,
       () => {

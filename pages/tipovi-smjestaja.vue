@@ -192,8 +192,6 @@
 </template>
 
 <script lang="ts">
-import { useTipoviSmjestaja } from "~/composables/useTipoviSmjestaja";
-import { useSmjestaji } from "~/composables/useSmjestaji";
 import type { TipSmjestaja, Smjestaj } from "~/types/directus/index";
 import type { SwiperInstance } from "~/types/pages/swiper-interface";
 

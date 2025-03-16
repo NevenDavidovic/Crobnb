@@ -195,18 +195,7 @@
 
 <script lang="ts">
 import type { Novost } from "~/types/directus/index";
-interface SwiperInstance {
-  slides: {
-    length: number;
-    [key: string]: any;
-  };
-  activeIndex: number;
-  slideTo: (index: number, speed?: number, runCallbacks?: boolean) => void;
-  slideNext: (speed?: number, runCallbacks?: boolean) => void;
-  slidePrev: (speed?: number, runCallbacks?: boolean) => void;
-  [key: string]: any;
-}
-
+import type { SwiperInstance } from "~/types/pages/swiper-interface";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";

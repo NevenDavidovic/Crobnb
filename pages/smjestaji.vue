@@ -418,16 +418,7 @@
 </template>
 
 <script lang="ts">
-import { useTipoviSmjestaja } from "~/composables/useTipoviSmjestaja";
-import { useRegije } from "~/composables/useRegije";
-import { useSmjestaji } from "~/composables/useSmjestaji";
 import type { SmjestajWithRelations } from "~/types/directus/index";
-import { useFilter } from "~/composables/filters/useFilters";
-
-import { useSorting } from "~/composables/filters/useSorting";
-import { useTouch } from "~/composables/filters/useTouch";
-import { usePriceRange } from "~/composables/filters/usePriceRange";
-import { useAdvancedFilters } from "~/composables/filters/useAdvancedFilters";
 
 export default defineComponent({
   setup() {

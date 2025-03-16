@@ -1,18 +1,14 @@
 <template>
   <div>
-    <!-- Loading state -->
     <div v-if="isLoading" class="text-center py-16">
       <p class="text-xl">Učitavanje regije...</p>
     </div>
 
-    <!-- Error state -->
     <div v-else-if="error" class="text-center py-16">
       <p class="text-xl text-red-500">{{ error }}</p>
     </div>
 
-    <!-- Content when data is loaded -->
     <div v-else-if="currentRegija">
-      <!-- Hero banner with image as background and title (full width) -->
       <div
         class="relative h-80 w-full bg-cover bg-center"
         :style="{ backgroundImage: `url('${getHeroImage() || ''}')` }"
@@ -21,7 +17,6 @@
           class="absolute inset-0 bg-gradient-to-b from-black/20 to-black/60"
         ></div>
 
-        <!-- Hero content constrained to max-w-1200 -->
         <div class="absolute inset-0 flex items-end">
           <div class="container mx-auto max-w-1200 px-4 pb-8">
             <div class="flex items-center text-white mb-2">
@@ -48,11 +43,9 @@
         </div>
       </div>
 
-      <!-- Main content constrained to max-w-1200 -->
       <div class="container mx-auto max-w-1200 py-12 px-4">
         <h2 class="text-2xl font-bold mb-8">O regiji</h2>
 
-        <!-- Main region information -->
         <div class="mb-12">
           <h3 class="text-xl font-semibold mb-4">{{ currentRegija.naziv }}</h3>
           <div class="flex flex-col md:flex-row gap-8">
@@ -75,7 +68,6 @@
             :use-mobile-layout="true"
           />
 
-          <!-- Show more button if needed -->
           <div
             v-if="smjestaji.length && hasMoreSmjestaji"
             class="mt-8 flex justify-center"
@@ -92,7 +84,6 @@
           </div>
         </div>
 
-        <!-- Other regions section -->
         <div class="mt-20 mb-12">
           <h3 class="text-xl font-semibold mb-6">Ostale regije Hrvatske</h3>
           <HomepageRegijeGrid
@@ -108,8 +99,6 @@
 </template>
 
 <script lang="ts">
-import { useRegije } from "~/composables/useRegije";
-import { useSmjestaji } from "~/composables/useSmjestaji";
 import type { SmjestajWithRelations, Regija } from "~/types/directus/index";
 
 export default defineComponent({
@@ -119,7 +108,6 @@ export default defineComponent({
     const route = useRoute();
     const slug = computed(() => route.params.slug as string);
 
-    // Get region data using the composable
     const regijeComposable = useRegije();
     const {
       regije,
@@ -131,7 +119,6 @@ export default defineComponent({
       getImageUrl,
     } = regijeComposable;
 
-    // Get accommodations data using the composable
     const smjestajiComposable = useSmjestaji();
     const {
       smjestaji,
@@ -141,32 +128,27 @@ export default defineComponent({
       fetchSmjestajiByRegija,
     } = smjestajiComposable;
 
-    // Create a typed version of the smjestaji array to avoid TypeScript errors
     const typedSmjestaji = computed<SmjestajWithRelations[]>(
       () => smjestaji.value as unknown as SmjestajWithRelations[]
     );
 
-    // Compute other regions (all regions except the current one)
     const otherRegions = computed<Regija[]>(() => {
       return regije.value.filter(
         (regija: { id: number }) => regija.id !== currentRegija.value?.id
       );
     });
 
-    // Pagination for accommodations
     const currentPage = ref(1);
     const itemsPerPage = 10;
     const hasMoreSmjestaji = ref(false);
 
-    // Function to get a hero image (either the region image or a default)
     const getHeroImage = () => {
       if (currentRegija.value?.slika) {
         return getImageUrl(currentRegija.value);
       }
-      return "/images/default-region-hero.jpg"; // Fallback image
+      return "/images/default-region-hero.jpg";
     };
 
-    // Function to load more accommodations
     const loadMoreSmjestaji = async () => {
       if (currentRegija.value?.id) {
         currentPage.value++;
@@ -177,23 +159,18 @@ export default defineComponent({
       }
     };
 
-    // Using the existing utility functions from useSmjestaji
     const { formatPrice, formatPriceHRK, getThumbnailUrl, getSadrzajIconUrl } =
       smjestajiComposable;
 
-    // Fetch the region data when the component mounts
     onMounted(async () => {
-      // Fetch all regions to be able to display other regions
       await fetchRegije();
 
       if (slug.value) {
         await fetchRegijaBySlug(slug.value);
 
-        // After region is loaded, fetch accommodations in that region
         if (currentRegija.value?.id) {
           await fetchSmjestajiByRegija(currentRegija.value.id, itemsPerPage);
 
-          // Check if there might be more items to load
           hasMoreSmjestaji.value = smjestaji.value.length >= itemsPerPage;
         }
       }

@@ -15,10 +15,9 @@
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-8 w-8"
-            :class="isFavorite ? 'text-red-500' : 'text-teal-700'"
-            fill="none"
+            :fill="isFavorite ? '#337589' : 'none'"
             viewBox="0 0 24 24"
-            stroke="currentColor"
+            stroke="#337589"
             stroke-width="2"
           >
             <path
@@ -69,10 +68,9 @@
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-8 w-8"
-            :class="isFavorite ? 'text-red-500' : 'text-teal-700'"
-            fill="none"
+            :fill="isFavorite ? '#337589' : 'none'"
             viewBox="0 0 24 24"
-            stroke="currentColor"
+            stroke="#337589"
             stroke-width="2"
           >
             <path
@@ -224,11 +222,8 @@ export default defineComponent({
 
   setup(props: SmjestajCardProps & { useMobileLayout?: boolean }) {
     const route = useRoute();
-    const isFavorite = ref(false);
 
-    const toggleFavorite = () => {
-      isFavorite.value = !isFavorite.value;
-    };
+    const { toggleFavorite, isFavorite } = useAccommodationDetail();
 
     const detailsLink = computed(() => {
       const baseUrl = `/smjestaj/${props.smjestaj.slug || props.smjestaj.id}`;

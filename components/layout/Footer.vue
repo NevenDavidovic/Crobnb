@@ -185,13 +185,11 @@ export default defineComponent({
     });
 
     const accommodationTypes = computed(() => {
-      // Get today's date
       const today = new Date();
-      // Get tomorrow's date
+
       const tomorrow = new Date();
       tomorrow.setDate(today.getDate() + 1);
 
-      // Format dates as DD.MM.YYYY.
       const formatDate = (date: Date) => {
         const day = date.getDate().toString().padStart(2, "0");
         const month = (date.getMonth() + 1).toString().padStart(2, "0");

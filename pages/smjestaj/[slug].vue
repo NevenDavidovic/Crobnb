@@ -747,12 +747,9 @@
 </template>
 
 <script lang="ts">
-import { useAccommodationDetail } from "~/composables/detailPage/useAccomodation";
-
 export default defineComponent({
   setup() {
     const accommodationDetail = useAccommodationDetail();
-    const authStore = useAuthStore();
 
     const closeLoginModal = () => {
       accommodationDetail.showLoginModal.value = false;

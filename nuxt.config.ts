@@ -2,6 +2,12 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
   modules: ["@nuxtjs/tailwindcss", "@pinia/nuxt", "nuxt-swiper"],
+  imports: {
+    dirs: [
+      "composables",
+      "composables/**", // This tells Nuxt to scan all subdirectories
+    ],
+  },
   typescript: {
     strict: true,
     typeCheck: true,

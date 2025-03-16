@@ -109,8 +109,6 @@
 </template>
 
 <script lang="ts">
-import { useAuthStore } from "~/stores/authStore";
-
 interface NavItem {
   label: string;
   path: string;

@@ -238,16 +238,9 @@
 </template>
 
 <script lang="ts">
-import { useResetPassword } from "~/composables/passwordReset/useResetPassword";
-
-definePageMeta({
-  middleware: ["auth"],
-});
-
 export default defineComponent({
   setup() {
     const authStore = useAuthStore();
-    const user = computed(() => authStore.user);
 
     const {
       token,
@@ -370,7 +363,6 @@ export default defineComponent({
       validatePassword,
       validateConfirmPassword,
       isFormValid,
-      user,
     };
   },
 });

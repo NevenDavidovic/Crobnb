@@ -3,7 +3,6 @@
     <div class="w-full max-w-md p-6 rounded shadow-sm">
       <h1 class="text-2xl font-semibold text-center mb-6">Registracija</h1>
 
-      <!-- Success message -->
       <div
         v-if="registrationSuccess"
         class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6"
@@ -335,13 +334,9 @@
 
 <script lang="ts">
 import "~/assets/css/vue-tel-input.css";
-// In your plugin
-
-import { useRegistrationForm } from "~/composables/auth/validation";
 
 export default defineComponent({
   setup() {
-    // Use the composable to manage form state and validation
     const {
       formData,
       errors,
@@ -358,7 +353,6 @@ export default defineComponent({
       validatePhone,
     } = useRegistrationForm();
 
-    // Return all the values needed by the template
     return {
       formData,
       errors,

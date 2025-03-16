@@ -239,9 +239,6 @@
 </template>
 
 <script lang="ts">
-import { useAuthStore } from "~/stores/authStore";
-import { useSmjestaji } from "~/composables/useSmjestaji";
-import { useUpiti } from "~/composables/useUpiti";
 import type { FormData } from "~/types/pages/form-data";
 import type { UpitFormData } from "~/types/directus/exports/upit";
 
@@ -354,14 +351,12 @@ export default defineComponent({
           korisnik_id: "",
         };
 
-        // Add korisnik_id if user is authenticated
         if (authStore.isAuthenticated && authStore.user) {
           upitData.korisnik_id = authStore.user.id;
         }
 
         console.log("Slanje upita:", upitData);
 
-        // Submit the form using the composable
         const result = await submitUpit(upitData);
 
         if (result.success) {
@@ -379,7 +374,6 @@ export default defineComponent({
       }
     };
 
-    // Prefill form with user data if logged in
     const prefillUserData = (): void => {
       if (authStore.isAuthenticated && authStore.user) {
         form.value = {

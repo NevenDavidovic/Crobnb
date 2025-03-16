@@ -4,7 +4,6 @@
       <h1 class="text-2xl font-semibold text-center mb-6">Prijava</h1>
 
       <form @submit.prevent="handleSubmit" class="flex flex-col">
-        <!-- Email Field -->
         <div class="mb-6">
           <label for="email" class="block mb-2 text-gray-700">Email</label>
           <input
@@ -17,7 +16,6 @@
           />
         </div>
 
-        <!-- Password Field -->
         <div class="mb-4">
           <label for="password" class="block mb-2 text-gray-700">Lozinka</label>
           <div class="relative">
@@ -68,12 +66,10 @@
           </div>
         </div>
 
-        <!-- Error message -->
         <div v-if="authStore.error" class="text-red-500 mb-4">
           {{ authStore.error }}
         </div>
 
-        <!-- Forgot Password Link -->
         <div class="flex justify-end mb-6">
           <NuxtLink
             to="/auth/zaboravljena-lozinka"
@@ -83,7 +79,6 @@
           </NuxtLink>
         </div>
 
-        <!-- Submit Button -->
         <button
           type="submit"
           class="w-full max-w-[230px] mx-auto py-3 bg-primary-80 px-20 text-white rounded hover:bg-primary-90 transition duration-300"
@@ -92,7 +87,6 @@
           {{ authStore.isLoading ? "Učitavanje..." : "Prijavi se" }}
         </button>
 
-        <!-- Registration Link -->
         <div class="mt-4 text-center">
           <p>
             Nemaš korisnički račun?
@@ -110,20 +104,8 @@
 </template>
 
 <script lang="ts">
-import { useAuthStore } from "~/stores/authStore";
-
-// Interface for props
-interface PrijavaCardProps {
-  redirectUrl?: string;
-}
-
-// Interface for toast
-interface Toast {
-  success: (message: string, options?: any) => any;
-  error: (message: string, options?: any) => any;
-  info: (message: string, options?: any) => any;
-  warning: (message: string, options?: any) => any;
-}
+import type { PrijavaCardProps } from "~/types/pages/prijava-card-props";
+import type { Toast } from "~/types/pages/toast";
 
 export default defineComponent({
   props: {

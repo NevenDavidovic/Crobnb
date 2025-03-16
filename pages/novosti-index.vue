@@ -188,7 +188,6 @@
 </template>
 
 <script lang="ts">
-import { usePagination } from "~/composables/pagination/usePagination";
 import type { Novost } from "~/types/directus/index";
 
 export default defineComponent({

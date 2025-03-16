@@ -30,7 +30,6 @@
         Upiši email i poslat ćemo ti link za resetiranje lozinke.
       </p>
 
-      <!-- Success or error message -->
       <div
         v-if="isSuccess"
         class="mb-6 p-4 rounded text-center bg-green-50 text-green-700"
@@ -73,7 +72,6 @@
         </button>
       </form>
 
-      <!-- Show back to login button when successful -->
       <div v-if="isSuccess" class="text-center mt-4">
         <NuxtLink
           to="/auth/prijava"
@@ -87,8 +85,6 @@
 </template>
 
 <script lang="ts">
-import { usePasswordReset } from "~/composables/passwordReset/usePasswordReset";
-
 export default defineComponent({
   setup() {
     const { email, isSubmitting, message, isSuccess, error, requestReset } =

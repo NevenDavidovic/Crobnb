@@ -37,7 +37,7 @@ export function useResetPassword() {
 
       // Redirect to login after a short delay
       setTimeout(() => {
-        router.push("/login");
+        router.push("/auth/prijava");
       }, 3000);
     } catch (err: any) {
       // Handle errors

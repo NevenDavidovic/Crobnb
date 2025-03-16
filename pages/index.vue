@@ -75,11 +75,6 @@
 </template>
 
 <script lang="ts">
-import { useTipoviSmjestaja } from "~/composables/useTipoviSmjestaja";
-import { useRegije } from "~/composables/useRegije";
-import { useNovosti } from "~/composables/useNovosti";
-import { useFilter } from "~/composables/filters/useFilters";
-
 export default defineComponent({
   setup() {
     const {
