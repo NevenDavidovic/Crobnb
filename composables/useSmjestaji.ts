@@ -164,14 +164,19 @@ export const useSmjestaji = () => {
       const response = (await $getSmjestajiByRegija(
         regijaId,
         limit
-      )) as Smjestaj[];
-      console.log(`Smjestaji for region ${regijaId}:`, response.length);
+      )) as SmjestajWithRelations[];
+
+      completeSmjestaji.value = response;
+      // Also update the regular smjestaji array for compatibility
       smjestaji.value = response;
-      availableSmjestaji.value = response;
       isLoading.value = false;
     } catch (err) {
-      console.error(`Error fetching smjestaji by regija ${regijaId}:`, err);
-      error.value = "Failed to load accommodation listings for this region";
+      console.error(
+        `Error fetching complete smjestaji by regija ${regijaId}:`,
+        err
+      );
+      error.value =
+        "Failed to load complete accommodation listings for this region";
       isLoading.value = false;
     }
   };

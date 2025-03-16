@@ -12,7 +12,8 @@ import type {
   SingleSmjestajResponse,
   MultipleSmjestajResponse,
 } from "./all_data_smjestaj_interface";
-import type { SadrzajActual } from "./sadrzaj-clone";
+import type { SadrzajActual } from "./sadrzaj_clone";
+import type { SmjestajCardData } from "../../pages/smjestaj_by_regija";
 
 /**
  * Define the schema for Directus collections

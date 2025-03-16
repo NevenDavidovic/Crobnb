@@ -97,15 +97,15 @@ export const SmjestajiService = {
     directus: Client,
     regijaId: number,
     limit?: number
-  ) {
-    return await directus.request(
+  ): Promise<SmjestajWithRelations[]> {
+    // Get basic smjestaji filtered by region first
+    const smjestaji = await directus.request(
       readItems("smjestaj", {
         fields: [
           "*",
           { thumbnail: ["*"] },
           { regija: ["*", { slika: ["*"] }] },
           { tip_smjestaja: ["*", { ikona: ["*"] }] },
-          { sadrzaji: ["*", { sadrzaj: ["*", { icon: ["*"] }] }] },
         ],
         filter: {
           regija_id: {
@@ -113,9 +113,75 @@ export const SmjestajiService = {
           },
         },
         sort: ["-date_created"],
-        limit: limit || 10,
+        limit: limit || 20,
       })
     );
+
+    // Then enhance with all related data
+    const enhancedSmjestaji = await Promise.all(
+      smjestaji.map(async (smjestaj) => {
+        const rezervacije = await directus.request(
+          readItems("rezervacije", {
+            fields: ["*"],
+            filter: {
+              smjestaj_id: {
+                _eq: smjestaj.id,
+              },
+            },
+            sort: ["datum_od"],
+          })
+        );
+
+        const smjestajSadrzaji = await directus.request(
+          readItems("smjestaj_sadrzaji", {
+            fields: ["*", { sadrzaj: ["*", { icon: ["*"] }] }],
+            filter: {
+              smjestaj_id: {
+                _eq: smjestaj.id,
+              },
+            },
+            limit: -1,
+          })
+        );
+
+        const slikeSmjestaj = await directus.request(
+          readItems("slike_smjestaj", {
+            fields: ["*", { slika: ["*"] }],
+            filter: {
+              smjestaj_id: {
+                _eq: smjestaj.id,
+              },
+            },
+            limit: -1,
+          })
+        );
+
+        // Ensure each sadrzaj is fully populated
+        for (let i = 0; i < smjestajSadrzaji.length; i++) {
+          if (!smjestajSadrzaji[i].sadrzaj && smjestajSadrzaji[i].sadrzaj_id) {
+            const sadrzaj = await directus.request(
+              readItem("sadrzaji", smjestajSadrzaji[i].sadrzaj_id, {
+                fields: ["*", { icon: ["*"] }],
+              })
+            );
+
+            smjestajSadrzaji[i] = {
+              ...smjestajSadrzaji[i],
+              sadrzaj: sadrzaj,
+            };
+          }
+        }
+
+        return {
+          ...smjestaj,
+          smjestaj_sadrzaji: smjestajSadrzaji,
+          slike_smjestaj: slikeSmjestaj,
+          rezervacije: rezervacije,
+        } as SmjestajWithRelations;
+      })
+    );
+
+    return enhancedSmjestaji;
   },
 
   async getSmjestajiByTip(directus: Client, tipId: number, limit?: number) {

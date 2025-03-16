@@ -15,7 +15,15 @@
     </div>
 
     <div v-else>
-      <div class="space-y-6 mb-8">
+      <!-- Grid layout - changes based on useMobileLayout flag -->
+      <div
+        :class="[
+          useMobileLayout
+            ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+            : 'space-y-6',
+        ]"
+        class="mb-8"
+      >
         <SmjestajCard
           v-for="smjestaj in paginatedItems"
           :key="smjestaj.id"
@@ -24,6 +32,7 @@
           :format-price="formatPrice"
           :format-price-h-r-k="formatPriceHRK"
           :get-sadrzaj-icon-url="getSadrzajIconUrl"
+          :use-mobile-layout="useMobileLayout"
         />
       </div>
 
@@ -146,9 +155,13 @@ export default defineComponent({
       type: Number,
       default: 10,
     },
+    useMobileLayout: {
+      type: Boolean,
+      default: false,
+    },
   },
 
-  setup(props: SmjestajGridProps) {
+  setup(props: SmjestajGridProps & { useMobileLayout?: boolean }) {
     const smjestajiRef = computed(() => props.smjestaji);
 
     const {

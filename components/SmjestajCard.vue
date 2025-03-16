@@ -2,10 +2,14 @@
   <div
     class="border border-gray-5 rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-300 p-6 max-w-[800px] mx-auto w-full"
   >
-    <div class="flex flex-col md:flex-row relative gap-8">
-      <div class="w-full md:w-1/3 relative">
+    <div
+      class="flex relative gap-8"
+      :class="[useMobileLayout ? 'flex-col' : 'flex-col md:flex-row']"
+    >
+      <div class="w-full relative" :class="[useMobileLayout ? '' : 'md:w-1/3']">
         <button
-          class="absolute top-3 right-3 p-2 block md:hidden rounded-3xl bg-white"
+          class="absolute top-3 right-3 p-2 rounded-3xl bg-white"
+          :class="[useMobileLayout ? '' : 'block md:hidden']"
           @click="toggleFavorite"
         >
           <svg
@@ -28,11 +32,13 @@
           v-if="getThumbnailUrl(smjestaj) !== null"
           :src="getThumbnailUrl(smjestaj) || undefined"
           :alt="smjestaj.naziv"
-          class="w-full h-64 md:h-full object-cover rounded-md"
+          class="w-full h-64 object-cover rounded-md"
+          :class="[useMobileLayout ? '' : 'md:h-full']"
         />
         <div
           v-else
-          class="w-full h-64 md:h-full bg-gray-200 flex items-center justify-center rounded-md"
+          class="w-full h-64 bg-gray-200 flex items-center justify-center rounded-md"
+          :class="[useMobileLayout ? '' : 'md:h-full']"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -51,8 +57,12 @@
         </div>
       </div>
 
-      <div class="w-full md:w-2/3 flex flex-col justify-between relative">
+      <div
+        class="w-full flex flex-col justify-between relative"
+        :class="[useMobileLayout ? '' : 'md:w-2/3']"
+      >
         <button
+          v-if="!useMobileLayout"
           class="absolute top-0 right-0 p-2 hidden md:block"
           @click="toggleFavorite"
         >
@@ -103,7 +113,11 @@
             {{ smjestaj.grad }}, {{ smjestaj.regija?.naziv || "Hrvatska" }}
           </p>
 
-          <div v-if="amenities.length > 0" class="flex flex-wrap gap-3 mb-8">
+          <div
+            v-if="amenities.length > 0"
+            class="flex flex-wrap gap-3 mb-0"
+            :class="[useMobileLayout ? '' : 'md:mb-8']"
+          >
             <div
               v-for="sadrzaj in amenities"
               :key="sadrzaj.id"
@@ -135,19 +149,32 @@
           </div>
         </div>
 
-        <div class="flex justify-between items-center mt-6">
+        <div
+          class="flex gap-3 items-center mt-6"
+          :class="[
+            useMobileLayout
+              ? 'flex-col-reverse'
+              : 'flex-col-reverse md:flex-row md:justify-between md:gap-0',
+          ]"
+        >
           <NuxtLink
             :to="detailsLink"
-            class="bg-primary-80 hover:bg-teal-700 text-white font-medium text-xs py-3 px-4 rounded-md transition"
+            class="bg-primary-80 hover:bg-teal-700 text-white font-medium text-center text-xs py-3 px-4 rounded-md transition"
+            :class="[useMobileLayout ? 'w-full' : 'w-full md:max-w-[155px]']"
           >
             Pogledaj detalje
           </NuxtLink>
 
-          <div class="text-right">
-            <div class="text-base font-bold text-gray-100">
+          <div
+            class="w-full mb-6"
+            :class="[
+              useMobileLayout ? 'text-left' : 'text-left md:text-right md:mb-0',
+            ]"
+          >
+            <div class="text-[22px] font-bold text-gray-100">
               {{ formatPrice(smjestaj.cijena_nocenja) }}
             </div>
-            <div class="text-xs text-gray-60">
+            <div class="text-sm text-gray-60">
               {{ formatPriceHRK(smjestaj.cijena_nocenja) }}
             </div>
           </div>
@@ -189,9 +216,13 @@ export default defineComponent({
       type: Function as PropType<(sadrzaj: Sadrzaj) => string | null>,
       default: null,
     },
+    useMobileLayout: {
+      type: Boolean,
+      default: false,
+    },
   },
 
-  setup(props: SmjestajCardProps) {
+  setup(props: SmjestajCardProps & { useMobileLayout?: boolean }) {
     const route = useRoute();
     const isFavorite = ref(false);
 

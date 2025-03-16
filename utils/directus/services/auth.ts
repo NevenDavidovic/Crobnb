@@ -120,14 +120,12 @@ export const AuthService = {
       const config = useRuntimeConfig();
       const appBaseUrl = config.public.appUrl || "http://localhost:3000";
 
-      // If no custom resetUrl is provided, construct one from the base URL
       const finalResetUrl = resetUrl || `${appBaseUrl}/reset-password`;
 
       return await directus.request(passwordRequest(email, finalResetUrl));
     } catch (error: any) {
       console.error("Password reset request failed:", error);
 
-      // Enhanced error handling remains the same
       if (error.message && typeof error.message === "string") {
         if (
           error.message.includes("authorized recipients") ||
