@@ -8,31 +8,20 @@ export const useRezervacije = () => {
     $checkSmjestajAvailability,
   } = useNuxtApp();
 
-  // Reactive state
   const rezervacije = ref<Rezervacija[]>([]);
   const availableSmjestaji = ref<Smjestaj[]>([]);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
-  /**
-   * Normalize date string
-   * @param dateString Date string to normalize
-   * @returns Normalized date string
-   */
   const normalizeDate = (dateString: string): string => {
     return dateString ? dateString.replace(/\.$/, "") : "";
   };
 
-  /**
-   * Fetch reservations based on filters
-   * @param filters Partial search filters
-   */
   const fetchRezervacije = async (filters?: Partial<SearchFilters>) => {
     isLoading.value = true;
     error.value = null;
 
     try {
-      // Normalize date filters if present
       if (filters?.checkin) filters.checkin = normalizeDate(filters.checkin);
       if (filters?.checkout) filters.checkout = normalizeDate(filters.checkout);
 
@@ -41,47 +30,35 @@ export const useRezervacije = () => {
     } catch (err) {
       console.error("Error fetching rezervacije:", err);
       error.value = "Failed to load reservations";
-      // Rethrow to allow caller to handle the error
+
       throw err;
     } finally {
       isLoading.value = false;
     }
   };
 
-  /**
-   * Find available accommodations based on search filters
-   * @param filters Search filters
-   */
   const fetchAvailableSmjestaji = async (filters: SearchFilters) => {
     isLoading.value = true;
     error.value = null;
 
     try {
-      // Normalize date filters
       filters.checkin = normalizeDate(filters.checkin);
       filters.checkout = normalizeDate(filters.checkout);
 
       const response = await $getAvailableSmjestaji(filters);
       availableSmjestaji.value = response;
 
-      // Log the number of available accommodations
       console.log(`Found ${response.length} available accommodations`);
     } catch (err) {
       console.error("Error fetching available smjestaji:", err);
       error.value = "Failed to load available accommodations";
-      // Rethrow to allow caller to handle the error
+
       throw err;
     } finally {
       isLoading.value = false;
     }
   };
 
-  /**
-   * Check availability of a specific accommodation
-   * @param smjestajId Accommodation ID
-   * @param checkin Check-in date
-   * @param checkout Check-out date
-   */
   const checkSmjestajAvailability = async (
     smjestajId: number,
     checkin: string,
@@ -91,7 +68,6 @@ export const useRezervacije = () => {
     error.value = null;
 
     try {
-      // Normalize dates
       const normalizedCheckin = normalizeDate(checkin);
       const normalizedCheckout = normalizeDate(checkout);
 
@@ -109,11 +85,6 @@ export const useRezervacije = () => {
     }
   };
 
-  /**
-   * Parse URL query parameters to SearchFilters
-   * @param route Current route
-   * @returns Parsed search filters
-   */
   const parseUrlParams = (route: any): SearchFilters => {
     const query = route.query;
 
@@ -147,13 +118,11 @@ export const useRezervacije = () => {
   };
 
   return {
-    // Reactive state
     rezervacije,
     availableSmjestaji,
     isLoading,
     error,
 
-    // Methods
     fetchRezervacije,
     fetchAvailableSmjestaji,
     checkSmjestajAvailability,

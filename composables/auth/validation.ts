@@ -223,18 +223,13 @@ export const useRegistrationForm = () => {
         telefon: formData.telefon || undefined,
       };
 
-      // Dohvati referencu na error iz useAuth
       const { error: authError } = useAuth();
 
-      // Use the registerUser function from useAuth
       const success = await registerUser(userData);
 
-      // Check if registration was successful
       if (success) {
-        // Set registration success flag
         registrationSuccess.value = true;
 
-        // Get the toast function and show success message
         const { $toast } = useNuxtApp();
 
         try {
@@ -262,7 +257,6 @@ export const useRegistrationForm = () => {
             errors.email = authError.value;
           }
         } else {
-          // Generic error
           const { $toast } = useNuxtApp();
           $toast.error(
             "Došlo je do greške prilikom registracije. Pokušajte ponovno."
@@ -273,13 +267,11 @@ export const useRegistrationForm = () => {
     } catch (err: any) {
       console.error("Registration submission error:", err);
 
-      // Log detailed error information
       if (err.errors && Array.isArray(err.errors)) {
         console.error("API validation errors:", err.errors);
       }
 
       try {
-        // Show error notification
         const { $toast } = useNuxtApp();
         $toast.error(
           "Došlo je do greške prilikom registracije. Pokušajte ponovno."
@@ -295,7 +287,7 @@ export const useRegistrationForm = () => {
 
   onMounted(() => {
     phoneValid.value = true;
-    // Skip validation on mount
+
     checkFormValidity();
   });
 

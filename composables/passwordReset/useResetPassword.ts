@@ -14,7 +14,6 @@ export function useResetPassword() {
   const resetPassword = async () => {
     if (!password.value || !token.value) return;
 
-    // Validate password confirmation
     if (password.value !== confirmPassword.value) {
       error.value = "Lozinke se ne podudaraju.";
       return;
@@ -27,20 +26,16 @@ export function useResetPassword() {
     try {
       await $resetPassword(token.value, password.value);
 
-      // If no error, show success message
       isSuccess.value = true;
       message.value = "Tvoja lozinka je uspješno resetirana.";
 
-      // Clear form fields
       password.value = "";
       confirmPassword.value = "";
 
-      // Redirect to login after a short delay
       setTimeout(() => {
         router.push("/auth/prijava");
       }, 3000);
     } catch (err: any) {
-      // Handle errors
       isSuccess.value = false;
 
       if (err.errors && Array.isArray(err.errors)) {

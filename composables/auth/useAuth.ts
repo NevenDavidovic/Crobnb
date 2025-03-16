@@ -37,10 +37,8 @@ export const useAuth = () => {
     try {
       console.log("Starting user registration process");
 
-      // Get role ID from runtime config
       const roleId = config.public.directusUserRoleId as string;
 
-      // Create a complete user payload including the role
       const userPayload = {
         email: userData.email,
         password: userData.password,
@@ -50,21 +48,16 @@ export const useAuth = () => {
         role: roleId,
       };
 
-      // Use the existing registerUser function from your plugin
       await $registerUser(userPayload);
 
-      // Ako smo došli do ovdje bez greške, registracija je uspjela
       registrationSuccess.value = true;
       isLoading.value = false;
-      return true; // Vraćamo true jer je registracija uspjela
+      return true;
     } catch (err: any) {
-      // Obrada grešaka ostaje ista
       console.error("Registration error:", err);
 
-      // Ostatak koda za obradu grešaka...
-
       isLoading.value = false;
-      return false; // Vraćamo false jer je došlo do greške
+      return false;
     }
   };
 

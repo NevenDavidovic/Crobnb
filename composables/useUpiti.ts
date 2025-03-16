@@ -20,7 +20,6 @@ export const useUpiti = () => {
       console.error("Error submitting inquiry:", err);
       error.value = err?.message || "Failed to submit inquiry";
       isSubmitting.value = false;
-      // Convert null to undefined for the return type
       return { success: false, error: error.value || undefined };
     }
   };

@@ -79,17 +79,14 @@ export const useSmjestaji = () => {
   const formatTime = (timeString: string): string => {
     if (!timeString) return "";
 
-    // If the timeString is already in the format you want (like "12:00")
     if (/^\d{1,2}:\d{2}$/.test(timeString)) {
       return timeString;
     }
 
-    // If the timeString is in format "12:00:00"
     if (/^\d{1,2}:\d{2}:\d{2}$/.test(timeString)) {
       return timeString.substring(0, 5);
     }
 
-    // If the timeString is a full date-time string
     try {
       const date = new Date(timeString);
       if (!isNaN(date.getTime())) {
@@ -103,12 +100,10 @@ export const useSmjestaji = () => {
       console.error("Error parsing time:", e);
     }
 
-    // If all else fails, return the original string
     return timeString;
   };
 
   const convertToHRK = (priceEUR: number): number => {
-    // Fixed conversion rate (Euro to Croatian Kuna)
     const conversionRate = 7.5345;
     const result = priceEUR * conversionRate;
     return result;
@@ -119,7 +114,6 @@ export const useSmjestaji = () => {
     return `${priceHRK.toFixed(2)} HRK`;
   };
 
-  // Basic accommodation methods
   const fetchSmjestaji = async (limit?: number) => {
     isLoading.value = true;
     error.value = null;
@@ -136,7 +130,6 @@ export const useSmjestaji = () => {
     }
   };
 
-  // Complete accommodation data including all relations
   const fetchCompleteSmjestaji = async (limit?: number) => {
     isLoading.value = true;
     error.value = null;
@@ -146,7 +139,7 @@ export const useSmjestaji = () => {
         limit
       )) as SmjestajWithRelations[];
       completeSmjestaji.value = response;
-      // Also update basic smjestaji for compatibility
+
       smjestaji.value = response;
       isLoading.value = false;
     } catch (err) {
@@ -167,7 +160,7 @@ export const useSmjestaji = () => {
       )) as SmjestajWithRelations[];
 
       completeSmjestaji.value = response;
-      // Also update the regular smjestaji array for compatibility
+
       smjestaji.value = response;
       isLoading.value = false;
     } catch (err) {
@@ -213,7 +206,6 @@ export const useSmjestaji = () => {
     }
   };
 
-  // Complete accommodation with all relations
   const fetchCompleteSmjestaj = async (id: number) => {
     isLoading.value = true;
     error.value = null;
@@ -223,7 +215,6 @@ export const useSmjestaji = () => {
         id
       )) as SmjestajWithRelations;
       currentCompleteSmjestaj.value = response;
-      // Also update basic currentSmjestaj for compatibility
       currentSmjestaj.value = response;
       isLoading.value = false;
     } catch (err) {
@@ -306,8 +297,6 @@ export const useSmjestaji = () => {
       const relations =
         (await $getSmjestajSadrzajiRelations()) as SmjestajSadrzaj[];
       sadrzajRelations.value = relations;
-
-      // Update existing smjestaji objects with their related sadrzaji
       const relationsBySmjestajId: Record<number, SmjestajSadrzaj[]> = {};
       relations.forEach((relation: SmjestajSadrzaj) => {
         if (!relationsBySmjestajId[relation.smjestaj_id]) {
@@ -411,7 +400,6 @@ export const useSmjestaji = () => {
     try {
       const response = await $getAvailableSmjestaji(filters);
       availableSmjestaji.value = response;
-      // Also update the main smjestaji ref to show only available accommodations
       smjestaji.value = response;
       isLoading.value = false;
     } catch (err) {
@@ -506,7 +494,6 @@ export const useSmjestaji = () => {
   };
 
   return {
-    // State
     smjestaji,
     completeSmjestaji,
     availableSmjestaji,
@@ -520,7 +507,6 @@ export const useSmjestaji = () => {
     error,
     isSmjestajAvailable,
 
-    // Basic methods
     fetchSmjestaji,
     fetchSmjestajiByRegija,
     fetchSmjestajiByTip,
@@ -528,23 +514,19 @@ export const useSmjestaji = () => {
     fetchSmjestajBySlug,
     fetchSmjestajiByCity,
 
-    // Complete methods with relations
     fetchCompleteSmjestaji,
     fetchCompleteSmjestaj,
     fetchCompleteSmjestajBySlug,
 
-    // Specific relation methods
     fetchSmjestajSadrzajiRelations,
     fetchSadrzaji,
     fetchSlikeSmjestaja,
     fetchRezervacijeSmjestaja,
     provjeriDostupnost,
 
-    // Availability methods
     fetchAvailableSmjestaji,
     checkSmjestajAvailability,
 
-    // Utility methods
     parseSearchParams,
     formatPrice,
     formatPriceHRK,

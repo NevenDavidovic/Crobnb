@@ -1,4 +1,3 @@
-import { useSmjestaji } from "~/composables/useSmjestaji";
 import type { Sadrzaj, Smjestaj } from "~/types/directus/index";
 import type { SwiperInstance } from "~/types/pages/swiper-interface";
 
@@ -126,7 +125,7 @@ export function useAccommodationDetail() {
 
   const getSwiperInstance = (): SwiperInstance | null => {
     if (!swiperRef.value) return null;
-    return (swiperRef.value as any)?.swiper || null;
+    return (swiperRef.value as SwiperInstance)?.swiper || null;
   };
 
   const updateActiveDot = () => {
@@ -335,7 +334,7 @@ export function useAccommodationDetail() {
       nextTick(() => {
         if (!swiperRef.value) return;
 
-        const swiperEl = swiperRef.value as any;
+        const swiperEl = swiperRef.value as SwiperInstance;
         if (!swiperEl) return;
 
         if (swiperEl.initialize) {

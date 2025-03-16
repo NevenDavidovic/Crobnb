@@ -38,7 +38,6 @@ export const useAdvancedFilters = (
     isFilterVisible.value = true;
   };
 
-  // Reset all filters
   const resetFilters = () => {
     selectedRegion.value = null;
     selectedType.value = null;
@@ -50,7 +49,6 @@ export const useAdvancedFilters = (
     adults.value = 2;
     children.value = 0;
 
-    // Reset currentPriceMin to 0
     updatePriceRange();
 
     navigateTo({
