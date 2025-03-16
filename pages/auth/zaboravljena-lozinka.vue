@@ -30,7 +30,26 @@
         Upiši email i poslat ćemo ti link za resetiranje lozinke.
       </p>
 
-      <form @submit.prevent="handleSubmit" class="flex flex-col">
+      <!-- Success or error message -->
+      <div
+        v-if="isSuccess"
+        class="mb-6 p-4 rounded text-center bg-green-50 text-green-700"
+      >
+        {{ message }}
+      </div>
+
+      <div
+        v-if="error && !isSuccess"
+        class="mb-6 p-4 rounded text-center bg-red-50 text-red-700"
+      >
+        {{ error }}
+      </div>
+
+      <form
+        v-if="!isSuccess"
+        @submit.prevent="requestReset"
+        class="flex flex-col"
+      >
         <div class="mb-8">
           <label for="email" class="block mb-2 text-gray-700">Email</label>
           <input
@@ -40,32 +59,48 @@
             placeholder="Upiši email"
             class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-80"
             required
+            :disabled="isSubmitting"
           />
         </div>
 
         <button
           type="submit"
           class="w-full py-3 max-w-[230px] mx-auto bg-primary-80 text-white rounded hover:bg-primary-90 transition duration-300"
+          :disabled="isSubmitting"
         >
-          Pošalji
+          <span v-if="isSubmitting">Slanje...</span>
+          <span v-else>Pošalji</span>
         </button>
       </form>
+
+      <!-- Show back to login button when successful -->
+      <div v-if="isSuccess" class="text-center mt-4">
+        <NuxtLink
+          to="/auth/prijava"
+          class="px-6 py-2 bg-primary-80 text-white rounded hover:bg-primary-90 transition duration-300"
+        >
+          Natrag na prijavu
+        </NuxtLink>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import { usePasswordReset } from "~/composables/passwordReset/usePasswordReset";
+
 export default defineComponent({
   setup() {
-    const email = ref("");
-
-    const handleSubmit = () => {
-      console.log("Password reset requested for:", email.value);
-    };
+    const { email, isSubmitting, message, isSuccess, error, requestReset } =
+      usePasswordReset();
 
     return {
       email,
-      handleSubmit,
+      isSubmitting,
+      message,
+      isSuccess,
+      error,
+      requestReset,
     };
   },
 });

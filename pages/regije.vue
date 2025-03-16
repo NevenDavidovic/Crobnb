@@ -50,7 +50,7 @@
               {{ regija.kratki_opis }}
             </p>
             <NuxtLink
-              :to="`/regije/${regija.slug}`"
+              :to="`/regija/${regija.slug}`"
               class="text-primary-80 flex items-center gap-1 hover:text-primary-dark transition-colors font-medium text-base"
             >
               Vidi detalje

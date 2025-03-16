@@ -1,3 +1,23 @@
+<script lang="ts">
+import { useAuthStore } from "@/stores/authStore";
+
+export default defineComponent({
+  setup() {
+    const authStore = useAuthStore();
+    const user = computed(() => authStore.user);
+
+    const goToSmjestaji = () => {
+      return navigateTo("/smjestaji");
+    };
+
+    return {
+      user,
+      goToSmjestaji,
+    };
+  },
+});
+</script>
+
 <template>
   <div
     class="flex items-start justify-start min-h-screen bg-white px-4 pt-16 max-w-[650px] mx-auto"
@@ -47,11 +67,10 @@
 
       <button
         class="bg-primary-80 text-white px-4 py-3 rounded-md hover:bg-teal-700 transition-colors"
+        @click="goToSmjestaji()"
       >
         Istrazi jos smjestaja
       </button>
     </div>
   </div>
 </template>
-
-<script lang="ts"></script>

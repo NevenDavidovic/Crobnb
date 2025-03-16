@@ -87,14 +87,13 @@
             for="telefon"
             class="block mb-2 text-gray-700 font-bold"
             required
-            >Telefon</label
+            >Telefon*</label
           >
           <vue-tel-input
             v-model="formData.telefon"
             :valid-characters-only="false"
             :auto-format="true"
             :mode="'international'"
-            @validate="validatePhone"
             :input-options="{
               placeholder: 'Unesite broj telefona',
               id: 'telefon',

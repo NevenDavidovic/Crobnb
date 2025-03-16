@@ -67,7 +67,6 @@ export const useRegistrationForm = () => {
       return;
     }
 
-    // Use the validation result from vue-tel-input
     phoneValid.value = validationResult.isValid;
 
     if (formData.telefon && !phoneValid.value) {

@@ -8,14 +8,13 @@ import { RezervacijeService } from "~/utils/directus/services/rezervacije";
 import { AuthService } from "~/utils/directus/services/auth";
 import { UpitiService } from "~/utils/directus/services/upiti";
 import { createUser, registerUser, readMe } from "@directus/sdk";
-import type { DirectusFile } from "~/types/directus";
+import type { DirectusFile } from "~/types/directus/index";
 import type { SearchFilters } from "~/types/pages/search-filter";
 import type { UpitFormData } from "~/types/directus/exports/upit";
 
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig();
   const directusUrl = config.public.directusUrl;
-
   const directus = createDirectusClient(directusUrl);
 
   const getFileUrl = (fileId: string | DirectusFile | null): string | null => {
@@ -36,7 +35,6 @@ export default defineNuxtPlugin(() => {
     provide: {
       directus,
 
-      // Add the UpitiService function
       createUpit: (upitData: UpitFormData) =>
         UpitiService.createUpit(directus, upitData),
 
@@ -54,8 +52,15 @@ export default defineNuxtPlugin(() => {
 
       logoutUser: (refreshToken?: string) =>
         AuthService.logoutUser(directus, refreshToken),
+
       refreshToken: (refreshToken?: string) =>
         AuthService.refreshToken(directus, refreshToken),
+
+      resetPassword: (token: string, password: string) =>
+        AuthService.resetPassword(directus, token, password),
+
+      requestPasswordReset: (email: string, resetUrl?: string) =>
+        AuthService.requestPasswordReset(directus, email, resetUrl),
 
       getCurrentUser: () => AuthService.getCurrentUser(directus),
 
@@ -65,43 +70,60 @@ export default defineNuxtPlugin(() => {
 
       getSmjestajSadrzajiRelations: () =>
         SmjestajiService.getSmjestajSadrzajiRelations(directus),
+
       getTipoviSmjestaja: () => SmjestajService.getTipoviSmjestaja(directus),
+
       getTipSmjestaja: (id: number) =>
         SmjestajService.getTipSmjestaja(directus, id),
+
       getTipSmjestajaBySlug: (slug: string) =>
         SmjestajService.getTipSmjestajaBySlug(directus, slug),
 
       getRegije: () => RegijeService.getRegije(directus),
+
       getRegija: (id: number) => RegijeService.getRegija(directus, id),
+
       getRegijaBySlug: (slug: string) =>
         RegijeService.getRegijaBySlug(directus, slug),
 
       getNovosti: (limit?: number) =>
         NovostiService.getNovosti(directus, limit),
+
       getNovost: (id: number) => NovostiService.getNovost(directus, id),
+
       getNovostiByKategorija: (kategorijaId: number, limit?: number) =>
         NovostiService.getNovostiByKategorija(directus, kategorijaId, limit),
+
       getNovostBySlug: (slug: string) =>
         NovostiService.getNovostBySlug(directus, slug),
+
       getKategorijeNovosti: () => NovostiService.getKategorijeNovosti(directus),
 
       getSmjestaji: (limit?: number) =>
         SmjestajiService.getSmjestaji(directus, limit),
+
       getSmjestajiByCity: (city: string, limit?: number) =>
         SmjestajiService.getSmjestajiByCity(directus, city, limit),
+
       getSmjestaj: (id: number) => SmjestajiService.getSmjestaj(directus, id),
+
       getSmjestajiByRegija: (regijaId: number, limit?: number) =>
         SmjestajiService.getSmjestajiByRegija(directus, regijaId, limit),
+
       getSmjestajiByTip: (tipId: number, limit?: number) =>
         SmjestajiService.getSmjestajiByTip(directus, tipId, limit),
+
       getSmjestajBySlug: (slug: string) =>
         SmjestajiService.getSmjestajBySlug(directus, slug),
+
       getSadrzaji: () => SmjestajiService.getSadrzaji(directus),
 
       getRezervacije: (filters?: Partial<SearchFilters>) =>
         RezervacijeService.getRezervacije(directus, filters),
+
       getAvailableSmjestaji: (filters: SearchFilters) =>
         RezervacijeService.getAvailableSmjestaji(directus, filters),
+
       checkSmjestajAvailability: (
         smjestajId: number,
         checkin: string,
@@ -119,12 +141,16 @@ export default defineNuxtPlugin(() => {
 
       getCompleteSmjestaj: (id: number) =>
         SmjestajiService.getCompleteSmjestaj(directus, id),
+
       getCompleteSmjestajBySlug: (slug: string) =>
         SmjestajiService.getCompleteSmjestajBySlug(directus, slug),
+
       getSlikeSmjestaja: (smjestajId: number) =>
         SmjestajiService.getSlikeSmjestaja(directus, smjestajId),
+
       getRezervacijeSmjestaja: (smjestajId: number) =>
         SmjestajiService.getRezervacijeSmjestaja(directus, smjestajId),
+
       provjeriDostupnost: (
         smjestajId: number,
         datumOd: string,

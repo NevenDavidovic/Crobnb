@@ -34,7 +34,7 @@
             class="pb-4 h-auto md:max-w-[100%] max-w-[85%]"
           >
             <NuxtLink
-              :to="`/regije/${regija.slug || regija.id}`"
+              :to="`/regija/${regija.slug || regija.id}`"
               class="block relative group"
             >
               <div class="relative rounded-lg overflow-hidden aspect-[4/3]">
@@ -99,7 +99,7 @@
       <NuxtLink
         v-for="regija in regije"
         :key="regija.id"
-        :to="`/regije/${regija.slug || regija.id}`"
+        :to="`/regija/${regija.slug || regija.id}`"
         class="block relative group"
       >
         <div class="relative rounded-lg overflow-hidden aspect-[4/3]">

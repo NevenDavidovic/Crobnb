@@ -245,6 +245,10 @@ import { useUpiti } from "~/composables/useUpiti";
 import type { FormData } from "~/types/pages/form-data";
 import type { UpitFormData } from "~/types/directus/exports/upit";
 
+definePageMeta({
+  middleware: ["auth"],
+});
+
 export default defineComponent({
   name: "UpitPage",
 
@@ -261,6 +265,8 @@ export default defineComponent({
     const children = computed<number>(() => Number(route.query.children) || 0);
 
     const authStore = useAuthStore();
+
+    const user = computed(() => authStore.user);
 
     const smjestajiComposable = useSmjestaji();
     const {
@@ -359,20 +365,7 @@ export default defineComponent({
         const result = await submitUpit(upitData);
 
         if (result.success) {
-          // Show success message to user
-          alert(
-            "Vaš upit je uspješno poslan! Kontaktirat ćemo vas u najkraćem mogućem roku."
-          );
-
-          // Reset form
-          form.value = {
-            ime: "",
-            prezime: "",
-            email: "",
-            telefon: "",
-            drzava: "",
-            poruka: "",
-          };
+          navigateTo("/message/thank-you");
         } else {
           throw new Error(result.error || "Greška prilikom slanja upita");
         }
@@ -462,6 +455,7 @@ export default defineComponent({
       formatPriceHRK,
       getTotalPrice,
       getTotalPriceHRK,
+      user,
     };
   },
 });

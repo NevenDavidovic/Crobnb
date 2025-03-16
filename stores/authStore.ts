@@ -104,29 +104,24 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   const checkAuth = async () => {
-    // If no access token, definitely not authenticated
     if (!accessToken.value) {
       return false;
     }
 
-    // If we have a token but isAuthenticated is false, validate the token
     if (!isAuthenticated.value) {
-      isAuthenticated.value = true; // Optimistically set to true
+      isAuthenticated.value = true;
 
-      // Try to fetch user data to validate token
       const success = await fetchCurrentUser();
 
       if (!success) {
         isAuthenticated.value = false;
 
-        // Try to refresh if we have a refresh token
         if (refreshTokenCookie.value) {
           const refreshed = await refreshAuthToken();
           if (!refreshed) {
             return false;
           }
 
-          // After refresh, try to get user data again
           const retrySuccess = await fetchCurrentUser();
           isAuthenticated.value = retrySuccess;
           return retrySuccess;
@@ -134,12 +129,9 @@ export const useAuthStore = defineStore("auth", () => {
 
         return false;
       }
-    }
-    // We have a token, we're marked as authenticated, but we don't have user data
-    else if (!user.value) {
+    } else if (!user.value) {
       const success = await fetchCurrentUser();
       if (!success) {
-        // Try refresh as a last resort
         if (refreshTokenCookie.value) {
           const refreshed = await refreshAuthToken();
           if (refreshed) {
@@ -156,7 +148,6 @@ export const useAuthStore = defineStore("auth", () => {
     return isAuthenticated.value;
   };
 
-  // Initialize authentication state
   onMounted(() => {
     if (accessToken.value) {
       isAuthenticated.value = true;

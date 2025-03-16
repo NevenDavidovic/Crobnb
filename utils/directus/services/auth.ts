@@ -1,10 +1,16 @@
-import { createUser, readMe } from "@directus/sdk";
+import {
+  createUser,
+  readMe,
+  passwordRequest,
+  passwordReset,
+  logout,
+  refresh,
+} from "@directus/sdk";
 import type {
   DirectusClient,
   RestClient,
   AuthenticationClient,
 } from "@directus/sdk";
-import { logout, refresh } from "@directus/sdk";
 
 import type { Schema } from "~/types/directus/exports/schema";
 
@@ -100,6 +106,80 @@ export const AuthService = {
       }
     } catch (error) {
       console.error("Token refresh failed:", error);
+      throw error;
+    }
+  },
+
+  async requestPasswordReset(
+    directus: Client,
+    email: string,
+    resetUrl?: string
+  ) {
+    try {
+      // Use runtime config to get the base URL
+      const config = useRuntimeConfig();
+      const appBaseUrl = config.public.appUrl || "http://localhost:3000";
+
+      // If no custom resetUrl is provided, construct one from the base URL
+      const finalResetUrl = resetUrl || `${appBaseUrl}/reset-password`;
+
+      return await directus.request(passwordRequest(email, finalResetUrl));
+    } catch (error: any) {
+      console.error("Password reset request failed:", error);
+
+      // Enhanced error handling remains the same
+      if (error.message && typeof error.message === "string") {
+        if (
+          error.message.includes("authorized recipients") ||
+          (error.response?.data?.errors?.[0]?.message || "").includes(
+            "authorized recipients"
+          )
+        ) {
+          throw new Error(
+            "Email servis trenutno nije u mogućnosti poslati email na ovu adresu. Molimo kontaktirajte administratora."
+          );
+        }
+
+        if (
+          error.message.includes("user not found") ||
+          error.response?.status === 404
+        ) {
+          throw new Error("Korisnik s ovom email adresom nije pronađen.");
+        }
+      }
+
+      throw error;
+    }
+  },
+
+  async resetPassword(directus: Client, token: string, password: string) {
+    try {
+      return await directus.request(passwordReset(token, password));
+    } catch (error: any) {
+      console.error("Password reset failed:", error);
+
+      // Enhanced error handling
+      if (error.message && typeof error.message === "string") {
+        // Check for invalid token
+        if (
+          error.message.includes("token is invalid") ||
+          error.message.includes("token expired") ||
+          error.response?.status === 400
+        ) {
+          throw new Error(
+            "Token za resetiranje lozinke nije valjan ili je istekao. Molimo zatražite novi link za reset."
+          );
+        }
+
+        // Check for password policy
+        if (error.message.includes("password validation")) {
+          throw new Error(
+            "Lozinka ne zadovoljava sigurnosne uvjete. Koristite barem 8 znakova, uključujući velika i mala slova, brojeve i specijalne znakove."
+          );
+        }
+      }
+
+      // If we don't have a specific error to transform, just re-throw
       throw error;
     }
   },
