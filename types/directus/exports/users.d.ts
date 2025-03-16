@@ -1,4 +1,3 @@
-// ~/types/pages/directus-user-response.ts
 export interface DirectusUser {
   id: string;
   first_name: string | null;

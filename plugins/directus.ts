@@ -6,9 +6,11 @@ import { RegijeService } from "~/utils/directus/services/regije";
 import { NovostiService } from "~/utils/directus/services/novosti";
 import { RezervacijeService } from "~/utils/directus/services/rezervacije";
 import { AuthService } from "~/utils/directus/services/auth";
+import { UpitiService } from "~/utils/directus/services/upiti";
 import { createUser, registerUser, readMe } from "@directus/sdk";
 import type { DirectusFile } from "~/types/directus";
 import type { SearchFilters } from "~/types/pages/search-filter";
+import type { UpitFormData } from "~/types/directus/exports/upit";
 
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig();
@@ -33,6 +35,10 @@ export default defineNuxtPlugin(() => {
   return {
     provide: {
       directus,
+
+      // Add the UpitiService function
+      createUpit: (upitData: UpitFormData) =>
+        UpitiService.createUpit(directus, upitData),
 
       registerUser: (userData: {
         email: string;

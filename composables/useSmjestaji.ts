@@ -248,7 +248,6 @@ export const useSmjestaji = () => {
     }
   };
 
-  // Complete accommodation by slug with all relations
   const fetchCompleteSmjestajBySlug = async (slug: string) => {
     isLoading.value = true;
     error.value = null;
@@ -263,7 +262,7 @@ export const useSmjestaji = () => {
         currentSmjestaj.value = null;
       } else {
         currentCompleteSmjestaj.value = response;
-        // Also update basic currentSmjestaj for compatibility
+
         currentSmjestaj.value = response;
       }
       isLoading.value = false;
@@ -274,7 +273,6 @@ export const useSmjestaji = () => {
     }
   };
 
-  // Fetch amenities (sadrzaji)
   const fetchSadrzaji = async () => {
     isLoading.value = true;
     error.value = null;
@@ -290,7 +288,6 @@ export const useSmjestaji = () => {
     }
   };
 
-  // Fetch specific relations
   const fetchSmjestajSadrzajiRelations = async () => {
     isLoading.value = true;
     error.value = null;
@@ -351,7 +348,6 @@ export const useSmjestaji = () => {
     }
   };
 
-  // Fetch images for a specific accommodation
   const fetchSlikeSmjestaja = async (smjestajId: number) => {
     try {
       const slike = await $getSlikeSmjestaja(smjestajId);
@@ -366,7 +362,6 @@ export const useSmjestaji = () => {
     }
   };
 
-  // Fetch reservations for a specific accommodation
   const fetchRezervacijeSmjestaja = async (smjestajId: number) => {
     try {
       const rezervacijeData = await $getRezervacijeSmjestaja(smjestajId);
@@ -381,7 +376,6 @@ export const useSmjestaji = () => {
     }
   };
 
-  // Check availability for a specific accommodation in date range
   const provjeriDostupnost = async (
     smjestajId: number,
     datumOd: string,
@@ -405,7 +399,6 @@ export const useSmjestaji = () => {
     }
   };
 
-  // Fetch available accommodations based on filters
   const fetchAvailableSmjestaji = async (filters: SearchFilters) => {
     isLoading.value = true;
     error.value = null;
@@ -423,7 +416,6 @@ export const useSmjestaji = () => {
     }
   };
 
-  // Check detailed availability info for an accommodation
   const checkSmjestajAvailability = async (
     smjestajId: number,
     checkin: string,
@@ -454,7 +446,6 @@ export const useSmjestaji = () => {
     }
   };
 
-  // Utility functions for UI
   const getThumbnailUrl = (smjestaj: Smjestaj): string | null => {
     if (!smjestaj.thumbnail) return null;
     return $getFileUrl(smjestaj.thumbnail);
@@ -495,7 +486,6 @@ export const useSmjestaji = () => {
     return $getFileUrl(sadrzaj.icon);
   };
 
-  // Helper to parse URL search params for filtering
   const parseSearchParams = (): SearchFilters => {
     const route = useRoute();
     const params = route.query;

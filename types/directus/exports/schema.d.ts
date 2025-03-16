@@ -31,6 +31,7 @@ export interface Schema {
   slike_smjestaj: SlikaSmjestaj[];
   sadrzaj: SadrzajActual[];
   directus_users: DirectusUser[];
+  upiti_za_rezervaciju: UpitZaRezervaciju[];
 
   // Response types
   smjestaj_with_relations: SmjestajWithRelations;
