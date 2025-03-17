@@ -10,12 +10,12 @@
         <button
           class="absolute top-3 right-3 p-2 rounded-3xl bg-white"
           :class="[useMobileLayout ? '' : 'block md:hidden']"
-          @click="toggleFavorite"
+          @click="toggleFavorite(smjestaj.id)"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-8 w-8"
-            :fill="isFavorite ? '#337589' : 'none'"
+            :fill="isFavorite(smjestaj.id) ? '#337589' : 'none'"
             viewBox="0 0 24 24"
             stroke="#337589"
             stroke-width="2"
@@ -63,12 +63,12 @@
         <button
           v-if="!useMobileLayout"
           class="absolute top-0 right-0 p-2 hidden md:block"
-          @click="toggleFavorite"
+          @click="toggleFavorite(smjestaj.id)"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-8 w-8"
-            :fill="isFavorite ? '#337589' : 'none'"
+            :fill="isFavorite(smjestaj.id) ? '#337589' : 'none'"
             viewBox="0 0 24 24"
             stroke="#337589"
             stroke-width="2"
@@ -131,7 +131,6 @@
                 class="w-6 h-6 mr-2 object-contain text-lg text-gray-60"
                 alt=""
               />
-
               <span
                 v-else-if="sadrzaj.icon && typeof sadrzaj.icon === 'string'"
                 class="material-icons mr-2 text-lg text-gray-60"
@@ -187,6 +186,7 @@ import type {
   Smjestaj,
   Sadrzaj,
   SmjestajWithRelations,
+  Favoriti,
 } from "~/types/directus/index";
 import type { SmjestajCardProps } from "~/types/pages/smjestaj-card";
 
@@ -222,34 +222,48 @@ export default defineComponent({
 
   setup(props: SmjestajCardProps & { useMobileLayout?: boolean }) {
     const route = useRoute();
+    const { addFavorite, removeFavorite, isFavorite, favorites } =
+      useFavoriti();
 
-    const { toggleFavorite, isFavorite } = useAccommodationDetail();
+    const toggleFavorite = async (smjestajId: number) => {
+      try {
+        // Check if the user is authenticated (you may want to handle this)
+        const authStore = useAuthStore();
+        if (!authStore.user) {
+          navigateTo("/auth/prijava");
+          return;
+        }
+
+        if (isFavorite(smjestajId)) {
+          const favorite = favorites.value.find(
+            (fav: Favoriti) => fav.smjestaj_id === smjestajId
+          );
+
+          if (favorite) {
+            await removeFavorite(favorite.id);
+          } else {
+            console.warn(
+              `No favorite record found for smjestaj ID: ${smjestajId}`
+            );
+          }
+        } else {
+          await addFavorite(smjestajId);
+        }
+      } catch (err) {
+        console.error("Error toggling favorite:", err);
+      }
+    };
 
     const detailsLink = computed(() => {
       const baseUrl = `/smjestaj/${props.smjestaj.slug || props.smjestaj.id}`;
-
       const query = route.query;
       const queryParams = new URLSearchParams();
 
-      if (query.checkin) {
-        queryParams.append("checkin", query.checkin as string);
-      }
-
-      if (query.checkout) {
+      if (query.checkin) queryParams.append("checkin", query.checkin as string);
+      if (query.checkout)
         queryParams.append("checkout", query.checkout as string);
-      }
-
-      if (query.adults) {
-        queryParams.append("adults", query.adults as string);
-      } else {
-        queryParams.append("adults", "2");
-      }
-
-      if (query.children) {
-        queryParams.append("children", query.children as string);
-      } else {
-        queryParams.append("children", "0");
-      }
+      queryParams.append("adults", (query.adults as string) || "2");
+      queryParams.append("children", (query.children as string) || "0");
 
       const queryString = queryParams.toString();
       return queryString ? `${baseUrl}?${queryString}` : baseUrl;
@@ -262,25 +276,19 @@ export default defineComponent({
       ) {
         return [];
       }
-
-      const result = [];
-
-      for (const item of props.smjestaj.smjestaj_sadrzaji) {
-        if (
-          item.sadrzaj &&
-          typeof item.sadrzaj === "object" &&
-          "id" in item.sadrzaj &&
-          "naziv" in item.sadrzaj
-        ) {
-          result.push(item.sadrzaj);
-        }
-      }
-
-      return result as any[];
+      return props.smjestaj.smjestaj_sadrzaji
+        .filter(
+          (item) =>
+            item.sadrzaj &&
+            typeof item.sadrzaj === "object" &&
+            "id" in item.sadrzaj &&
+            "naziv" in item.sadrzaj
+        )
+        .map((item) => item.sadrzaj) as Sadrzaj[];
     });
 
     return {
-      isFavorite,
+      isFavorite, // Directly return the isFavorite function from useFavoriti
       toggleFavorite,
       amenities,
       detailsLink,

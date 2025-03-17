@@ -240,8 +240,6 @@
 <script lang="ts">
 export default defineComponent({
   setup() {
-    const authStore = useAuthStore();
-
     const {
       token,
       password,

@@ -11,3 +11,4 @@ export * from "./exports/sadrzaj_clone";
 export * from "./exports/users";
 export * from "./exports/upit";
 export * from "./exports/directus-error";
+export * from "./exports/favoriti";

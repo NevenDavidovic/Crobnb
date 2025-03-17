@@ -7,6 +7,7 @@ import type { Smjestaj, Sadrzaj, SmjestajSadrzaj } from "./smjestaj";
 import type { Rezervacija } from "./rezervacije";
 import type { SlikaSmjestaj } from "./slike_smjestaj";
 import type { DirectusUser } from "./users";
+import type { Favoriti } from "./favoriti";
 import type {
   SmjestajWithRelations,
   SingleSmjestajResponse,
@@ -15,12 +16,7 @@ import type {
 import type { SadrzajActual } from "./sadrzaj_clone";
 import type { SmjestajCardData } from "../../pages/smjestaj_by_regija";
 
-/**
- * Define the schema for Directus collections
- * This helps TypeScript understand the available collections and their types
- */
 export interface Schema {
-  // Define your collections here
   tipovi_smjestaja: TipSmjestaja[];
   regija: Regija[];
   novosti: Novost[];
@@ -33,13 +29,12 @@ export interface Schema {
   sadrzaj: SadrzajActual[];
   directus_users: DirectusUser[];
   upiti_za_rezervaciju: UpitZaRezervaciju[];
+  favoriti: Favoriti[];
 
-  // Response types
   smjestaj_with_relations: SmjestajWithRelations;
   smjestaj_single_response: SingleSmjestajResponse;
   smjestaj_multiple_response: MultipleSmjestajResponse;
 
-  // Single items
   tipovi_smjestaja_items: {
     tipovi_smjestaja: TipSmjestaja;
   };
@@ -65,11 +60,9 @@ export interface Schema {
     slike_smjestaj: SlikaSmjestaj;
   };
 
-  // Single item for SmjestajWithRelations
   smjestaj_with_relations_item: {
     smjestaj_with_relations: SmjestajWithRelations;
   };
 
-  // Files
   directus_files: DirectusFile;
 }

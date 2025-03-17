@@ -8,6 +8,7 @@ import { RezervacijeService } from "~/utils/directus/services/rezervacije";
 import { AuthService } from "~/utils/directus/services/auth";
 import { UpitiService } from "~/utils/directus/services/upiti";
 import { createUser, registerUser, readMe } from "@directus/sdk";
+import { FavoritiService } from "~/utils/directus/services/favoriti";
 import type { DirectusFile } from "~/types/directus/index";
 import type { SearchFilters } from "~/types/pages/search-filter";
 import type { UpitFormData } from "~/types/directus/exports/upit";
@@ -34,6 +35,15 @@ export default defineNuxtPlugin(() => {
   return {
     provide: {
       directus,
+
+      addFavorite: (userId: string, smjestajId: number) =>
+        FavoritiService.addFavorite(directus, userId, smjestajId),
+
+      getFavorites: (userId: string) =>
+        FavoritiService.getFavorites(directus, userId),
+
+      removeFavorite: (favoriteId: number) =>
+        FavoritiService.removeFavorite(directus, favoriteId),
 
       createUpit: (upitData: UpitFormData) =>
         UpitiService.createUpit(directus, upitData),

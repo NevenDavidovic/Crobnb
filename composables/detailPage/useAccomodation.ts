@@ -1,3 +1,9 @@
+// composable/useAccommodationDetail.ts
+import { ref, computed, watch, nextTick, onUnmounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useFavoriti } from "~/composables/useFavoriti"; // Import useFavoriti
+import { useSmjestaji } from "~/composables/useSmjestaji"; // Assuming this exists
+import { useAuthStore } from "~/stores/authStore"; // Adjust path as needed
 import type { Sadrzaj, Smjestaj } from "~/types/directus/index";
 import type { SwiperInstance } from "~/types/pages/swiper-interface";
 
@@ -6,7 +12,6 @@ export function useAccommodationDetail() {
   const router = useRouter();
 
   const slug = computed(() => route.params.slug as string);
-  const isFavorite = ref(false);
 
   const {
     currentCompleteSmjestaj,
@@ -21,6 +26,14 @@ export function useAccommodationDetail() {
     formatTime,
     getThumbnailUrl,
   } = useSmjestaji();
+
+  const { addFavorite, removeFavorite, isFavorite, favorites } = useFavoriti();
+
+  const isFavoriteSmjestaj = computed(() =>
+    currentCompleteSmjestaj.value
+      ? isFavorite(currentCompleteSmjestaj.value.id)
+      : false
+  );
 
   const citySmjestaji = ref<Smjestaj[]>([]);
   const loadingCitySmjestaji = ref(false);
@@ -41,7 +54,6 @@ export function useAccommodationDetail() {
 
   const handleSendInquiry = () => {
     if (!authStore.isAuthenticated) {
-      // Generate the link but don't navigate yet
       const slugValue = currentCompleteSmjestaj.value?.slug;
       if (!slugValue) {
         console.error("No slug available for accommodation");
@@ -65,7 +77,6 @@ export function useAccommodationDetail() {
       const children = (route.query.children as string) || "0";
 
       inquiryLink.value = `/upit/${slugValue}?checkin=${checkin}&checkout=${checkout}&adults=${adults}&children=${children}`;
-
       showLoginModal.value = true;
     } else {
       const slugValue = currentCompleteSmjestaj.value?.slug;
@@ -91,12 +102,11 @@ export function useAccommodationDetail() {
       const children = (route.query.children as string) || "0";
 
       const link = `/upit/${slugValue}?checkin=${checkin}&checkout=${checkout}&adults=${adults}&children=${children}`;
-
       router.push(link);
     }
   };
 
-  const swiperRef = ref(null);
+  const swiperRef = ref<HTMLElement | null>(null);
   const activeDot = ref(0);
   const windowWidth = ref(
     typeof window !== "undefined" ? window.innerWidth : 1024
@@ -119,13 +129,11 @@ export function useAccommodationDetail() {
     currentMobileSlide.value = index;
   };
 
-  const showDesktopControls = computed(() => {
-    return windowWidth.value >= 1024;
-  });
+  const showDesktopControls = computed(() => windowWidth.value >= 1024);
 
   const getSwiperInstance = (): SwiperInstance | null => {
     if (!swiperRef.value) return null;
-    return (swiperRef.value as SwiperInstance)?.swiper || null;
+    return (swiperRef.value as any)?.swiper || null;
   };
 
   const updateActiveDot = () => {
@@ -148,8 +156,42 @@ export function useAccommodationDetail() {
       .padStart(2, "0")}/${date.getFullYear()}`;
   };
 
-  const toggleFavorite = (): void => {
-    isFavorite.value = !isFavorite.value;
+  const toggleFavorite = async (): Promise<void> => {
+    if (!currentCompleteSmjestaj.value) return;
+
+    // Check if user is authenticated
+    const authStore = useAuthStore();
+    if (!authStore.user) {
+      console.log("User not authenticated, cannot toggle favorites");
+      // Optionally, you could redirect to login or show a notification here
+      return;
+    }
+
+    const smjestajId = currentCompleteSmjestaj.value.id;
+    try {
+      console.log(`Toggling favorite for smjestaj ID: ${smjestajId}`);
+
+      if (isFavorite(smjestajId)) {
+        // Find the favorite record to remove
+        const favorite = favorites.value.find(
+          (fav) => fav.smjestaj_id === smjestajId
+        );
+
+        if (favorite) {
+          console.log(`Removing favorite with ID: ${favorite.id}`);
+          await removeFavorite(favorite.id);
+        } else {
+          console.warn(
+            `No favorite record found for smjestaj ID: ${smjestajId}`
+          );
+        }
+      } else {
+        console.log(`Adding favorite for smjestaj ID: ${smjestajId}`);
+        await addFavorite(smjestajId);
+      }
+    } catch (err) {
+      console.error("Error toggling favorite:", err);
+    }
   };
 
   const getMainImageUrl = (): string | null => {
@@ -161,11 +203,9 @@ export function useAccommodationDetail() {
 
   const getGalleryImages = (): string[] => {
     const images: string[] = [];
-
     if (
       currentCompleteSmjestaj.value?.slike_smjestaj &&
-      Array.isArray(currentCompleteSmjestaj.value.slike_smjestaj) &&
-      currentCompleteSmjestaj.value.slike_smjestaj.length > 0
+      Array.isArray(currentCompleteSmjestaj.value.slike_smjestaj)
     ) {
       currentCompleteSmjestaj.value.slike_smjestaj.forEach((slikaItem: any) => {
         if (slikaItem.slika_smjestaj) {
@@ -188,48 +228,33 @@ export function useAccommodationDetail() {
         ];
       }
     }
-
     return images;
   };
 
-  const getTotalImagesCount = (): number => {
-    if (
-      currentCompleteSmjestaj.value?.slike_smjestaj &&
-      Array.isArray(currentCompleteSmjestaj.value.slike_smjestaj)
-    ) {
-      return currentCompleteSmjestaj.value.slike_smjestaj.length;
-    }
-    return 0;
-  };
+  const getTotalImagesCount = (): number =>
+    currentCompleteSmjestaj.value?.slike_smjestaj?.length || 0;
 
   const getAmenities = (): Sadrzaj[] => {
     const amenities: Sadrzaj[] = [];
-
     if (
       currentCompleteSmjestaj.value?.smjestaj_sadrzaji &&
       Array.isArray(currentCompleteSmjestaj.value.smjestaj_sadrzaji)
     ) {
       currentCompleteSmjestaj.value.smjestaj_sadrzaji.forEach(
-        (item: { sadrzaj: any }) => {
-          if (item && item.sadrzaj) {
-            amenities.push(item.sadrzaj);
-          }
+        (item: { sadrzaj: Sadrzaj }) => {
+          if (item?.sadrzaj) amenities.push(item.sadrzaj);
         }
       );
     }
-
     return amenities;
   };
 
   const fetchCityAccommodations = async (city: string, limit: number = 3) => {
     if (!city) return;
-
     loadingCitySmjestaji.value = true;
     citySmjestajiError.value = null;
-
     try {
       const results = await fetchSmjestajiByCity(city, limit + 1);
-
       citySmjestaji.value = results
         .filter((smjestaj) => smjestaj.id !== currentCompleteSmjestaj.value?.id)
         .slice(0, limit);
@@ -243,7 +268,6 @@ export function useAccommodationDetail() {
 
   const goToDetail = (smjestaj: Smjestaj) => {
     const query = { ...route.query };
-
     router.push({
       path: `/smjestaj/${smjestaj.slug || smjestaj.id}`,
       query,
@@ -260,7 +284,6 @@ export function useAccommodationDetail() {
 
     const slideIndex = groupIndex * slidesPerGroup;
     swiper.slideTo(Math.min(slideIndex, totalSlides - 1));
-
     activeDot.value = groupIndex;
   };
 
@@ -282,10 +305,7 @@ export function useAccommodationDetail() {
 
   const isGalleryOpen = ref(false);
   const currentImageIndex = ref(0);
-
-  const galleryImages = computed(() => {
-    return getGalleryImages();
-  });
+  const galleryImages = computed(() => getGalleryImages());
 
   const openGallery = (index: number = 0): void => {
     currentImageIndex.value = index;
@@ -326,25 +346,14 @@ export function useAccommodationDetail() {
   const setupAccommodation = async () => {
     if (slug.value) {
       await fetchCompleteSmjestajBySlug(slug.value);
-
       if (currentCompleteSmjestaj.value?.grad) {
         await fetchCityAccommodations(currentCompleteSmjestaj.value.grad, 5);
       }
-
       nextTick(() => {
         if (!swiperRef.value) return;
-
-        const swiperEl = swiperRef.value as SwiperInstance;
-        if (!swiperEl) return;
-
-        if (swiperEl.initialize) {
-          swiperEl.initialize();
-        }
-
-        swiperEl.addEventListener("slidechange", () => {
-          updateActiveDot();
-        });
-
+        const swiperEl = swiperRef.value as any;
+        if (swiperEl?.initialize) swiperEl.initialize();
+        swiperEl?.addEventListener("slidechange", updateActiveDot);
         updateActiveDot();
       });
     } else {
@@ -352,18 +361,13 @@ export function useAccommodationDetail() {
     }
   };
 
-  // Setup window resize listener
   const setupWindowResizeListener = () => {
     if (typeof window !== "undefined") {
       const handleResize = () => {
         windowWidth.value = window.innerWidth;
       };
-
       window.addEventListener("resize", handleResize);
-
-      onUnmounted(() => {
-        window.removeEventListener("resize", handleResize);
-      });
+      onUnmounted(() => window.removeEventListener("resize", handleResize));
     }
   };
 
@@ -371,7 +375,6 @@ export function useAccommodationDetail() {
     watch(slug, async (newSlug: string) => {
       if (newSlug) {
         await fetchCompleteSmjestajBySlug(newSlug);
-
         if (currentCompleteSmjestaj.value?.grad) {
           await fetchCityAccommodations(currentCompleteSmjestaj.value.grad, 3);
         }
@@ -381,23 +384,16 @@ export function useAccommodationDetail() {
 
   const watchSwiperChanges = () => {
     watch(
-      () => {
-        const swiper = getSwiperInstance();
-        return swiper?.activeIndex;
-      },
-      () => {
-        updateActiveDot();
-      }
+      () => getSwiperInstance()?.activeIndex,
+      () => updateActiveDot()
     );
   };
 
   return {
-    // State
-
     currentCompleteSmjestaj,
     isLoading,
     error,
-    isFavorite,
+    isFavorite: isFavoriteSmjestaj, // Return computed property
     selectedDates,
     swiperRef,
     activeDot,
@@ -409,8 +405,6 @@ export function useAccommodationDetail() {
     citySmjestaji,
     loadingCitySmjestaji,
     citySmjestajiError,
-
-    // Methods
     formatPrice,
     formatPriceHRK,
     getSadrzajIconUrl,
@@ -440,8 +434,6 @@ export function useAccommodationDetail() {
     fetchCityAccommodations,
     handleKeydown,
     handleSendInquiry,
-
-    // Setup methods
     setupAccommodation,
     setupWindowResizeListener,
     watchSlugChanges,

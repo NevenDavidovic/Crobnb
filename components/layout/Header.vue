@@ -35,6 +35,7 @@
       <div class="flex items-center space-x-4">
         <button
           class="text-gray-600 hover:text-red-500 transition-colors md:block hidden"
+          @click="goToFavorites"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -122,6 +123,11 @@ interface AuthLink {
 export default defineComponent({
   setup() {
     const authStore = useAuthStore();
+    const router = useRouter();
+
+    const goToFavorites = () => {
+      router.push("/favoriti");
+    };
 
     const navItems: NavItem[] = [
       { label: "Tipovi smještaja", path: "/tipovi-smjestaja" },
@@ -153,6 +159,7 @@ export default defineComponent({
       mobileMenuOpen,
       toggleMobileMenu,
       authLink,
+      goToFavorites,
     };
   },
 });
