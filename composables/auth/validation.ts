@@ -6,6 +6,7 @@ import type {
   FormErrors,
   PhoneValidationResult,
 } from "~/types/pages/registration-form";
+import type { ApiError } from "~/types/directus";
 
 export const useRegistrationForm = () => {
   // Get the auth composable for registration
@@ -205,14 +206,10 @@ export const useRegistrationForm = () => {
     validateField("telefon");
     validateField("lozinka");
     validateField("potvrdiLozinku");
-    console.log("START");
 
     if (!isFormValid.value) {
-      console.log("Form is invalid, stopping submission");
       return null;
     }
-
-    console.log("Form is valid, proceeding with submission");
 
     try {
       const userData = {
@@ -222,8 +219,6 @@ export const useRegistrationForm = () => {
         last_name: formData.prezime,
         telefon: formData.telefon || undefined,
       };
-
-      const { error: authError } = useAuth();
 
       const success = await registerUser(userData);
 
@@ -249,42 +244,44 @@ export const useRegistrationForm = () => {
 
         return true;
       } else {
-        if (authError.value) {
-          const { $toast } = useNuxtApp();
-          $toast.error(authError.value);
-
-          if (authError.value.includes("email")) {
-            errors.email = authError.value;
-          }
-        } else {
-          const { $toast } = useNuxtApp();
-          $toast.error(
-            "Došlo je do greške prilikom registracije. Pokušajte ponovno."
-          );
-        }
+        const { $toast } = useNuxtApp();
+        $toast.error(authError.value || "Registracija nije uspjela");
         return false;
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Registration submission error:", err);
 
-      if (err.errors && Array.isArray(err.errors)) {
-        console.error("API validation errors:", err.errors);
+      const { $toast } = useNuxtApp();
+
+      // General error handling that works with different error types
+      let errorMessage =
+        "Došlo je do greške prilikom registracije. Pokušajte ponovno.";
+
+      if (err && typeof err === "object") {
+        // Check for common error properties
+        if ("message" in err) {
+          errorMessage = (err as Error).message;
+        }
+
+        // Check for Directus API error structure
+        const apiError = err as ApiError;
+        if (apiError.errors && apiError.errors.length > 0) {
+          const firstError = apiError.errors[0];
+
+          if (firstError.extensions?.code === "RECORD_NOT_UNIQUE") {
+            errorMessage = "Korisnik s ovom email adresom već postoji";
+            errors.email = errorMessage;
+          } else if (firstError.message.includes("email")) {
+            errorMessage = firstError.message;
+            errors.email = errorMessage;
+          }
+        }
       }
 
-      try {
-        const { $toast } = useNuxtApp();
-        $toast.error(
-          "Došlo je do greške prilikom registracije. Pokušajte ponovno."
-        );
-      } catch (toastError) {
-        console.error("Toast error:", toastError);
-        alert("Došlo je do greške prilikom registracije. Pokušajte ponovno.");
-      }
-
+      $toast.error(errorMessage);
       return false;
     }
   };
-
   onMounted(() => {
     phoneValid.value = true;
 

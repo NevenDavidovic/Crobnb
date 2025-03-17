@@ -1,5 +1,6 @@
 import type { Rezervacija, Smjestaj } from "~/types/directus";
 import type { SearchFilters } from "~/types/pages/search-filter";
+import type { RouteLocationNormalizedLoaded } from "vue-router";
 
 export const useRezervacije = () => {
   const {
@@ -27,7 +28,7 @@ export const useRezervacije = () => {
 
       const response = await $getRezervacije(filters);
       rezervacije.value = response;
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Error fetching rezervacije:", err);
       error.value = "Failed to load reservations";
 
@@ -49,7 +50,7 @@ export const useRezervacije = () => {
       availableSmjestaji.value = response;
 
       console.log(`Found ${response.length} available accommodations`);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Error fetching available smjestaji:", err);
       error.value = "Failed to load available accommodations";
 
@@ -76,7 +77,7 @@ export const useRezervacije = () => {
         normalizedCheckin,
         normalizedCheckout
       );
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Error checking smjestaj availability:", err);
       error.value = "Failed to check accommodation availability";
       return { isAvailable: false };
@@ -85,7 +86,9 @@ export const useRezervacije = () => {
     }
   };
 
-  const parseUrlParams = (route: any): SearchFilters => {
+  const parseUrlParams = (
+    route: RouteLocationNormalizedLoaded
+  ): SearchFilters => {
     const query = route.query;
 
     return {

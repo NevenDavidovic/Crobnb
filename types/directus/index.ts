@@ -10,3 +10,4 @@ export * from "./exports/all_data_smjestaj_interface";
 export * from "./exports/sadrzaj_clone";
 export * from "./exports/users";
 export * from "./exports/upit";
+export * from "./exports/directus-error";

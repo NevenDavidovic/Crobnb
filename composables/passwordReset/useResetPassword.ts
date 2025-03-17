@@ -35,22 +35,21 @@ export function useResetPassword() {
       setTimeout(() => {
         router.push("/auth/prijava");
       }, 3000);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      isSubmitting.value = false;
       isSuccess.value = false;
 
-      if (err.errors && Array.isArray(err.errors)) {
-        error.value =
-          err.errors[0]?.message || "Greška prilikom resetiranja lozinke";
-      } else if (err.response && err.response.status === 400) {
-        error.value = "Nevažeći ili istekli token za resetiranje.";
-      } else {
+      // Type-safe error handling
+      if (err instanceof Error) {
         error.value =
           err.message || "Došlo je do greške. Molimo pokušajte ponovno.";
+      } else if (typeof err === "string") {
+        error.value = err;
+      } else {
+        error.value = "Došlo je do greške. Molimo pokušajte ponovno.";
       }
 
       console.error("Password reset error:", err);
-    } finally {
-      isSubmitting.value = false;
     }
   };
 
