@@ -1,4 +1,4 @@
-import type { SmjestajWithRelations } from "~/types/directus/index";
+import type { SmjestajWithRelations } from "~/types/directus";
 
 export const usePriceRange = (allSmjestaji: Ref<SmjestajWithRelations[]>) => {
   const priceMin = ref(0);

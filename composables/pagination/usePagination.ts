@@ -1,5 +1,3 @@
-import { ref, computed } from "vue";
-
 export const usePagination = <T>(
   items: Ref<T[]>,
   itemsPerPage: number = 10

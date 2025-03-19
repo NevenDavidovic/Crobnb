@@ -1,5 +1,5 @@
 import type { Favoriti } from "~/types/directus/exports/favoriti";
-import mitt, { type Emitter } from "mitt";
+import mitt from "mitt";
 
 type FavoriteChangeEvent = {
   action: "add" | "remove";

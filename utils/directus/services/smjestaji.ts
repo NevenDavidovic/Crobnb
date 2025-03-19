@@ -378,11 +378,6 @@ export const SmjestajiService = {
           })
         );
 
-        console.log(
-          `Sadrzaji for smjestaj ${smjestaj.id}:`,
-          JSON.stringify(smjestajSadrzaji, null, 2)
-        );
-
         let regija = smjestaj.regija;
         if (!regija && smjestaj.regija_id) {
           regija = await directus.request(

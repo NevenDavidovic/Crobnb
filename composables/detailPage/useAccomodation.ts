@@ -1,10 +1,5 @@
-// composable/useAccommodationDetail.ts
-import { ref, computed, watch, nextTick, onUnmounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useFavoriti } from "~/composables/useFavoriti"; // Import useFavoriti
-import { useSmjestaji } from "~/composables/useSmjestaji"; // Assuming this exists
-import { useAuthStore } from "~/stores/authStore"; // Adjust path as needed
-import type { Sadrzaj, Smjestaj } from "~/types/directus/index";
+import { useAuthStore } from "~/stores/authStore";
+import type { Sadrzaj, Smjestaj } from "~/types/directus";
 import type { SwiperInstance } from "~/types/pages/swiper-interface";
 
 export function useAccommodationDetail() {

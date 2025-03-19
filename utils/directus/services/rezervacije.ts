@@ -4,7 +4,7 @@ import type {
   RestClient,
   AuthenticationClient,
 } from "@directus/sdk";
-import type { Schema, Rezervacija, Smjestaj } from "~/types/directus/index";
+import type { Schema } from "~/types/directus/index";
 import type { SearchFilters } from "~/types/pages/search-filter";
 
 type Client = DirectusClient<Schema> &
@@ -35,11 +35,6 @@ export const RezervacijeService = {
     if (filters?.type) {
       queryFilter["smjestaj.tip_smjestaja.slug"] = { _eq: filters.type };
     }
-
-    console.log(
-      "Reservation Query Filters:",
-      JSON.stringify(queryFilter, null, 2)
-    );
 
     try {
       const response = await directus.request(

@@ -1,4 +1,4 @@
-import type { Regija } from "~/types/directus/index";
+import type { Regija } from "~/types/directus";
 
 export const useRegije = () => {
   const { $getRegije, $getRegija, $getRegijaBySlug, $getFileUrl } =

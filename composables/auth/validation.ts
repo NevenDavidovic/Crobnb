@@ -1,5 +1,3 @@
-import { reactive, ref, watch, onMounted } from "vue";
-import { useRouter } from "vue-router";
 import { useAuth } from "./useAuth";
 import type {
   FormData,
@@ -9,7 +7,6 @@ import type {
 import type { ApiError } from "~/types/directus";
 
 export const useRegistrationForm = () => {
-  // Get the auth composable for registration
   const {
     registerUser,
     isLoading: authLoading,

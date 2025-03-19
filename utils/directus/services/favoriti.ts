@@ -21,8 +21,6 @@ export const FavoritiService = {
   },
 
   async getFavorites(directus: Client, userId: string) {
-    console.log("[FavoritiService] Getting favorites for user:", userId);
-
     try {
       const favorites = await directus.request(
         readItems("favoriti", {
@@ -61,9 +59,6 @@ export const FavoritiService = {
             }
 
             let smjestaj = smjestajData[0];
-            console.log(
-              `[FavoritiService] Found smjestaj for ID: ${favorite.smjestaj_id}`
-            );
 
             let regija = smjestaj.regija;
             if (!regija && smjestaj.regija_id) {
@@ -71,9 +66,6 @@ export const FavoritiService = {
                 readItem("regija", smjestaj.regija_id, {
                   fields: ["*", { slika: ["*"] }],
                 })
-              );
-              console.log(
-                `[FavoritiService] Fetched regija for smjestaj: ${smjestaj.id}`
               );
             }
 
@@ -83,9 +75,6 @@ export const FavoritiService = {
                 readItem("tipovi_smjestaja", smjestaj.tipovi_smjestaja_id, {
                   fields: ["*", { ikona: ["*"] }],
                 })
-              );
-              console.log(
-                `[FavoritiService] Fetched tip_smjestaja for smjestaj: ${smjestaj.id}`
               );
             }
 
@@ -99,9 +88,6 @@ export const FavoritiService = {
                 },
                 limit: -1,
               })
-            );
-            console.log(
-              `[FavoritiService] Fetched ${smjestajSadrzaji.length} sadrzaji for smjestaj: ${smjestaj.id}`
             );
 
             for (let i = 0; i < smjestajSadrzaji.length; i++) {
@@ -145,10 +131,6 @@ export const FavoritiService = {
 
       const validFavorites = favoritesWithCompleteSmjestaj.filter(
         (fav) => fav.smjestaj && fav.smjestaj.id
-      );
-
-      console.log(
-        `[FavoritiService] Successfully processed ${validFavorites.length} of ${favorites.length} favorites`
       );
 
       return validFavorites;

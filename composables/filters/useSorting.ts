@@ -1,4 +1,4 @@
-import type { SmjestajWithRelations } from "~/types/directus/index";
+import type { SmjestajWithRelations } from "~/types/directus";
 
 export const useSorting = (filteredSmjestaji: Ref<SmjestajWithRelations[]>) => {
   const showSortDropdown = ref(false);

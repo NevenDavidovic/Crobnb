@@ -1,4 +1,4 @@
-import type { SmjestajWithRelations } from "~/types/directus/index";
+import type { SmjestajWithRelations } from "~/types/directus";
 
 export const useAdvancedFilters = (
   allSmjestaji: Ref<SmjestajWithRelations[]>,

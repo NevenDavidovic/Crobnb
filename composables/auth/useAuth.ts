@@ -1,6 +1,5 @@
 import { useCookie } from "#app";
-import type { DirectusUser } from "~/types/directus/exports/users";
-import type { ApiError } from "~/types/directus/exports/directus-error";
+import type { DirectusUser, ApiError } from "~/types/directus";
 
 export const useAuth = () => {
   const { $registerUser } = useNuxtApp();
@@ -55,11 +54,9 @@ export const useAuth = () => {
     } catch (err: unknown) {
       console.error("Registration error:", err);
 
-      // Type guard to check if error is an ApiError
       if (err && typeof err === "object") {
         const apiError = err as ApiError;
 
-        // Check for specific error messages or codes
         if (apiError.errors && apiError.errors.length > 0) {
           error.value = apiError.errors[0].message;
         } else if (apiError.message) {

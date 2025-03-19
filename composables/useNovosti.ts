@@ -1,4 +1,4 @@
-import type { Novost, KategorijaNovosti } from "~/types/directus/index";
+import type { Novost, KategorijaNovosti } from "~/types/directus";
 
 export const useNovosti = () => {
   const {

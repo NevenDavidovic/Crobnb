@@ -1,4 +1,3 @@
-// utils/directus/services/upiti.ts
 import { createItem } from "@directus/sdk";
 import type {
   DirectusClient,

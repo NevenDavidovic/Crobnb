@@ -5,7 +5,7 @@ import type {
   Rezervacija,
   SlikaSmjestaj,
   SmjestajWithRelations,
-} from "~/types/directus/index";
+} from "~/types/directus";
 import type { SearchFilters } from "~/types/pages/search-filter";
 
 export const useSmjestaji = () => {
