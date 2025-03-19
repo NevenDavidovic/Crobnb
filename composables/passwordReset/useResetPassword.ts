@@ -39,7 +39,6 @@ export function useResetPassword() {
       isSubmitting.value = false;
       isSuccess.value = false;
 
-      // Type-safe error handling
       if (err instanceof Error) {
         error.value =
           err.message || "Došlo je do greške. Molimo pokušajte ponovno.";

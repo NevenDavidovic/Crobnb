@@ -13,8 +13,6 @@ type Events = {
 
 const emitter = mitt<Events>();
 
-// Create a typed emitter
-
 export const useFavoriti = () => {
   const { $addFavorite, $getFavorites, $removeFavorite } = useNuxtApp();
   const authStore = useAuthStore();
@@ -34,7 +32,6 @@ export const useFavoriti = () => {
     error.value = null;
 
     try {
-      console.log("[useFavoriti] Fetching favorites for user:", user.value.id);
       const response = await $getFavorites(user.value.id);
 
       const processedFavorites = Array.isArray(response)
@@ -58,25 +55,8 @@ export const useFavoriti = () => {
         return favorite;
       });
 
-      console.log(
-        "[useFavoriti] Processed favorites count:",
-        favorites.value.length
-      );
-
       if (favorites.value.length > 0) {
         const firstFav = favorites.value[0];
-        console.log("[useFavoriti] First favorite structure:", {
-          id: firstFav.id,
-          smjestaj_id: firstFav.smjestaj_id,
-          has_smjestaj: !!firstFav.smjestaj,
-          has_sadrzaji: firstFav.smjestaj?.sadrzaji ? true : false,
-          has_smjestaj_sadrzaji: firstFav.smjestaj?.smjestaj_sadrzaji
-            ? true
-            : false,
-          smjestaj_props: firstFav.smjestaj
-            ? Object.keys(firstFav.smjestaj)
-            : [],
-        });
       }
     } catch (err) {
       error.value = "Failed to fetch favorites";
@@ -96,12 +76,6 @@ export const useFavoriti = () => {
     error.value = null;
 
     try {
-      console.log(
-        "[useFavoriti] Adding favorite for user:",
-        user.value.id,
-        "smjestaj:",
-        smjestajId
-      );
       const response = await $addFavorite(user.value.id, smjestajId);
       await fetchFavorites();
 
@@ -135,7 +109,6 @@ export const useFavoriti = () => {
     error.value = null;
 
     try {
-      console.log("[useFavoriti] Removing favorite:", favoriteId);
       await $removeFavorite(favoriteId);
       await fetchFavorites();
 

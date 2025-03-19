@@ -19,7 +19,6 @@ export const useUpiti = () => {
     } catch (err: unknown) {
       console.error("Error submitting inquiry:", err);
 
-      // Type-safe error handling
       if (err instanceof Error) {
         error.value = err.message || "Failed to submit inquiry";
       } else if (typeof err === "string") {

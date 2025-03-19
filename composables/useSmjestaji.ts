@@ -65,7 +65,7 @@ export const useSmjestaji = () => {
       smjestaji.value = response;
       availableSmjestaji.value = response;
       isLoading.value = false;
-      console.log("SmjestajMTF", response);
+
       return response;
     } catch (err) {
       console.error(`Error fetching smjestaji for city "${city}":`, err);
@@ -179,7 +179,7 @@ export const useSmjestaji = () => {
 
     try {
       const response = (await $getSmjestajiByTip(tipId, limit)) as Smjestaj[];
-      console.log(`Smjestaji for type ${tipId}:`, response.length);
+
       smjestaji.value = response;
       availableSmjestaji.value = response;
       isLoading.value = false;
@@ -311,12 +311,6 @@ export const useSmjestaji = () => {
             const sadrzajItem = sadrzaji.value.find(
               (s) => s.id === relation.sadrzaj_id
             );
-
-            if (!sadrzajItem) {
-              console.log(
-                `Warning: Sadrzaj ID ${relation.sadrzaj_id} not found in loaded sadrzaji list`
-              );
-            }
 
             return {
               id: relation.id,

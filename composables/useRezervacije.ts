@@ -48,8 +48,6 @@ export const useRezervacije = () => {
 
       const response = await $getAvailableSmjestaji(filters);
       availableSmjestaji.value = response;
-
-      console.log(`Found ${response.length} available accommodations`);
     } catch (err: unknown) {
       console.error("Error fetching available smjestaji:", err);
       error.value = "Failed to load available accommodations";

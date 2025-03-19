@@ -36,8 +36,6 @@ export const useAuth = () => {
     registrationSuccess.value = false;
 
     try {
-      console.log("Starting user registration process");
-
       const roleId = config.public.directusUserRoleId as string;
 
       const userPayload = {

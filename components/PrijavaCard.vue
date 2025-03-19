@@ -143,10 +143,7 @@ export default defineComponent({
           console.log("Toast nije dostupan", err);
         }
 
-        console.log("PROPS", props.redirectUrl);
-
         if (props.redirectUrl) {
-          console.log(`Redirecting to: ${props.redirectUrl}`);
           router.push(props.redirectUrl);
         } else {
           router.push("/profil");

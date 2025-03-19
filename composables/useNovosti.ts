@@ -41,8 +41,6 @@ export const useNovosti = () => {
         kategorijeNovosti.value.forEach((cat) => {
           categoriesMap.value[cat.id] = cat;
         });
-
-        console.log("Categories loaded:", kategorijeNovosti.value);
       } catch (err) {
         console.error("Error loading categories:", err);
       }
