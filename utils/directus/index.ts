@@ -5,6 +5,8 @@ import { NovostiService } from "./services/novosti";
 import { getFileUrl } from "./utils";
 import { SmjestajiService } from "./services/smjestaji";
 import { RezervacijeService } from "./services/rezervacije";
+import { FavoritiService } from "./services/favoriti";
+import { AuthService } from "./services/auth";
 
 export {
   createDirectusClient,
@@ -14,4 +16,6 @@ export {
   getFileUrl,
   SmjestajiService,
   RezervacijeService,
+  FavoritiService,
+  AuthService,
 };
