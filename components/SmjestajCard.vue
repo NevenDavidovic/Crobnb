@@ -288,7 +288,7 @@ export default defineComponent({
     });
 
     return {
-      isFavorite, // Directly return the isFavorite function from useFavoriti
+      isFavorite,
       toggleFavorite,
       amenities,
       detailsLink,

@@ -156,44 +156,6 @@ export function useAccommodationDetail() {
       .padStart(2, "0")}/${date.getFullYear()}`;
   };
 
-  const toggleFavorite = async (): Promise<void> => {
-    if (!currentCompleteSmjestaj.value) return;
-
-    // Check if user is authenticated
-    const authStore = useAuthStore();
-    if (!authStore.user) {
-      console.log("User not authenticated, cannot toggle favorites");
-      // Optionally, you could redirect to login or show a notification here
-      return;
-    }
-
-    const smjestajId = currentCompleteSmjestaj.value.id;
-    try {
-      console.log(`Toggling favorite for smjestaj ID: ${smjestajId}`);
-
-      if (isFavorite(smjestajId)) {
-        // Find the favorite record to remove
-        const favorite = favorites.value.find(
-          (fav) => fav.smjestaj_id === smjestajId
-        );
-
-        if (favorite) {
-          console.log(`Removing favorite with ID: ${favorite.id}`);
-          await removeFavorite(favorite.id);
-        } else {
-          console.warn(
-            `No favorite record found for smjestaj ID: ${smjestajId}`
-          );
-        }
-      } else {
-        console.log(`Adding favorite for smjestaj ID: ${smjestajId}`);
-        await addFavorite(smjestajId);
-      }
-    } catch (err) {
-      console.error("Error toggling favorite:", err);
-    }
-  };
-
   const getMainImageUrl = (): string | null => {
     if (currentCompleteSmjestaj.value?.thumbnail) {
       return getSlikaUrl(currentCompleteSmjestaj.value.thumbnail);
@@ -408,7 +370,7 @@ export function useAccommodationDetail() {
     formatPrice,
     formatPriceHRK,
     getSadrzajIconUrl,
-    toggleFavorite,
+
     formatDate,
     getMainImageUrl,
     getGalleryImages,

@@ -44,13 +44,15 @@
             </button>
             <button
               class="flex items-center text-primary-100 hover:text-primary-80"
-              @click="toggleFavorite"
+              @click="toggleFavorite(currentCompleteSmjestaj.id)"
             >
               <span class="mr-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   class="h-5 w-5"
-                  :fill="isFavorite ? 'currentColor' : 'none'"
+                  :fill="
+                    isFavorite(currentCompleteSmjestaj.id) ? '#337589' : 'none'
+                  "
                   viewBox="0 0 24 24"
                   stroke="#337589"
                 >
@@ -197,13 +199,17 @@
 
               <button
                 class="flex items-center md:flex hidden text-primary-100 hover:text-primary-80"
-                @click="toggleFavorite"
+                @click="toggleFavorite(currentCompleteSmjestaj.id)"
               >
                 <span class="mr-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="h-5 w-5"
-                    :fill="isFavorite ? 'currentColor' : 'none'"
+                    :fill="
+                      isFavorite(currentCompleteSmjestaj.id)
+                        ? '#337589'
+                        : 'none'
+                    "
                     viewBox="0 0 24 24"
                     stroke="#337589"
                   >
@@ -747,9 +753,48 @@
 </template>
 
 <script lang="ts">
+import { useFavoriti } from "~/composables/useFavoriti"; // Import useFavoriti
+import { useAuthStore } from "~/stores/authStore"; // Import auth store
+import type { Favoriti } from "~/types/directus/index"; // Import Favoriti type
+
 export default defineComponent({
   setup() {
     const accommodationDetail = useAccommodationDetail();
+    const router = useRouter();
+    const { addFavorite, removeFavorite, isFavorite, favorites } =
+      useFavoriti();
+    const authStore = useAuthStore();
+
+    const toggleFavorite = async (id: number) => {
+      try {
+        if (!authStore.user) {
+          router.push("/auth/prijava");
+          return;
+        }
+
+        const smjestajId =
+          accommodationDetail.currentCompleteSmjestaj.value?.id;
+        if (!smjestajId) return;
+
+        if (isFavorite(smjestajId)) {
+          const favorite = favorites.value.find(
+            (fav: Favoriti) => fav.smjestaj_id === smjestajId
+          );
+
+          if (favorite) {
+            await removeFavorite(favorite.id);
+          } else {
+            console.warn(
+              `No favorite record found for smjestaj ID: ${smjestajId}`
+            );
+          }
+        } else {
+          await addFavorite(smjestajId);
+        }
+      } catch (err) {
+        console.error("Error toggling favorite:", err);
+      }
+    };
 
     const closeLoginModal = () => {
       accommodationDetail.showLoginModal.value = false;
@@ -777,13 +822,22 @@ export default defineComponent({
       }
     });
 
+    const isFavoriteSmjestaj = computed(() => {
+      const smjestajId = accommodationDetail.currentCompleteSmjestaj.value?.id;
+      return smjestajId ? isFavorite(smjestajId) : false;
+    });
+
     return {
-      ...accommodationDetail, // This now includes showLoginModal and handleSendInquiry
+      ...accommodationDetail,
       closeLoginModal,
+      toggleFavorite,
+      isFavoriteSmjestaj,
+      isFavorite,
     };
   },
 });
 </script>
+
 <style>
 .carousel-wrapper {
   position: relative;
