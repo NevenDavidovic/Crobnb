@@ -50,7 +50,10 @@ export const useAuthStore = defineStore("auth", () => {
         try {
           await $logoutUser(refreshTokenCookie.value);
         } catch (apiError) {
-          logout();
+          console.error(
+            "Server logout failed, proceeding with local logout:",
+            apiError
+          );
         }
       }
     } catch (err) {
