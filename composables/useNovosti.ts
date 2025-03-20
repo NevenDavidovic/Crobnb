@@ -104,33 +104,6 @@ export const useNovosti = () => {
     }
   };
 
-  const fetchNovost = async (id: number) => {
-    isLoading.value = true;
-    error.value = null;
-
-    try {
-      await ensureCategoriesLoaded();
-
-      const response = (await $getNovost(id)) as Omit<
-        Novost,
-        "kategorija_novosti"
-      >;
-
-      currentNovost.value = {
-        ...response,
-        kategorija_novosti: response.kategorija_novosti_id
-          ? categoriesMap.value[response.kategorija_novosti_id]
-          : undefined,
-      };
-
-      isLoading.value = false;
-    } catch (err) {
-      console.error(`Error fetching novost with ID ${id}:`, err);
-      error.value = "Failed to load news article";
-      isLoading.value = false;
-    }
-  };
-
   const fetchNovostBySlug = async (slug: string) => {
     isLoading.value = true;
     error.value = null;
@@ -197,7 +170,7 @@ export const useNovosti = () => {
     error,
     fetchNovosti,
     fetchNovostiByKategorija,
-    fetchNovost,
+
     fetchNovostBySlug,
     fetchKategorijeNovosti,
     getHeroImageUrl,
