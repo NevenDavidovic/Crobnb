@@ -1,4 +1,3 @@
-// client.ts
 import { createDirectus, rest, authentication } from "@directus/sdk";
 import type { Schema } from "~/types/directus/exports/schema";
 import type { RestCommand } from "@directus/sdk";
@@ -12,7 +11,6 @@ export const createDirectusClient = (directusUrl: string) => {
   const accessToken = useCookie("directus_access_token");
   const refreshToken = useCookie("directus_refresh_token");
 
-  // Set token if it exists and valid
   if (accessToken.value) {
     try {
       const tokenData = JSON.parse(atob(accessToken.value.split(".")[1]));

@@ -1,7 +1,8 @@
-import { defineNuxtPlugin } from "#app";
+import { defineNuxtPlugin, useRouter } from "#app";
 
 export default defineNuxtPlugin(() => {
-  if (process.client) {
+  if (import.meta.client) {
+    const router = useRouter();
     const accessToken = useCookie("directus_access_token");
     const refreshToken = useCookie("directus_refresh_token");
 
@@ -14,7 +15,7 @@ export default defineNuxtPlugin(() => {
         accessToken.value = null;
         refreshToken.value = null;
 
-        console.log("Cleared expired tokens");
+        router.push("/login?expired=true");
       }
     });
   }
