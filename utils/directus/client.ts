@@ -1,6 +1,6 @@
 import { createDirectus, rest, authentication } from "@directus/sdk";
 import type { Schema } from "~/types/directus/exports/schema";
-import type { RestCommand } from "@directus/sdk";
+
 import { useCookie } from "#app";
 
 export const createDirectusClient = (directusUrl: string) => {
