@@ -261,14 +261,13 @@ export default defineComponent({
     const authStore = useAuthStore();
 
     const user = computed(() => authStore.user);
-
+    const { formatPriceHRK } = usePriceFormatters();
     const smjestajiComposable = useSmjestaji();
     const {
       currentCompleteSmjestaj,
       fetchCompleteSmjestajBySlug,
       isLoading,
       error,
-      formatPriceHRK,
     } = smjestajiComposable;
 
     const upitiComposable = useUpiti();
@@ -320,7 +319,7 @@ export default defineComponent({
       if (dateString.includes(".")) {
         const parts = dateString.split(".");
         if (parts.length >= 3) {
-          return `${parts[0]}.${parts[1]}.${parts[2]}`;
+          return `${parts[0]}/${parts[1]}/${parts[2]}`;
         }
       }
 

@@ -51,11 +51,6 @@ export const useSmjestaji = () => {
   const error = ref<string | null>(null);
   const isSmjestajAvailable = ref<boolean>(true);
 
-  // Utility methods for formatting and display
-  const formatPrice = (price: number): string => {
-    return `${price.toFixed(2)} EUR`;
-  };
-
   const fetchSmjestajiByCity = async (city: string, limit?: number) => {
     isLoading.value = true;
     error.value = null;
@@ -100,17 +95,6 @@ export const useSmjestaji = () => {
     }
 
     return timeString;
-  };
-
-  const convertToHRK = (priceEUR: number): number => {
-    const conversionRate = 7.5345;
-    const result = priceEUR * conversionRate;
-    return result;
-  };
-
-  const formatPriceHRK = (priceEUR: number): string => {
-    const priceHRK = convertToHRK(priceEUR);
-    return `${priceHRK.toFixed(2)} HRK`;
   };
 
   const fetchSmjestaji = async (limit?: number) => {
@@ -521,8 +505,6 @@ export const useSmjestaji = () => {
     checkSmjestajAvailability,
 
     parseSearchParams,
-    formatPrice,
-    formatPriceHRK,
     getThumbnailUrl,
     getSlikaUrl,
     getFullAddress,

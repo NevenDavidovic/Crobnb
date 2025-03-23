@@ -14,8 +14,6 @@ export function useAccommodationDetail() {
     error,
     fetchCompleteSmjestajBySlug,
     fetchSmjestajiByCity,
-    formatPrice,
-    formatPriceHRK,
     getSadrzajIconUrl,
     getSlikaUrl,
     formatTime,
@@ -141,14 +139,6 @@ export function useAccommodationDetail() {
 
     const currentIndex = swiper.activeIndex;
     activeDot.value = Math.min(Math.floor(currentIndex / slidesPerGroup), 2);
-  };
-
-  const formatDate = (date: Date): string => {
-    return `${date.getDate().toString().padStart(2, "0")}/${(
-      date.getMonth() + 1
-    )
-      .toString()
-      .padStart(2, "0")}/${date.getFullYear()}`;
   };
 
   const getMainImageUrl = (): string | null => {
@@ -362,11 +352,8 @@ export function useAccommodationDetail() {
     citySmjestaji,
     loadingCitySmjestaji,
     citySmjestajiError,
-    formatPrice,
-    formatPriceHRK,
     getSadrzajIconUrl,
 
-    formatDate,
     getMainImageUrl,
     getGalleryImages,
     getTotalImagesCount,

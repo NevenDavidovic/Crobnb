@@ -206,13 +206,6 @@ export default defineComponent({
       return new Date();
     };
 
-    const formatLocalDate = (date: Date): string => {
-      const day = date.getDate().toString().padStart(2, "0");
-      const month = (date.getMonth() + 1).toString().padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day}.${month}.${year}.`;
-    };
-
     const initializeDates = () => {
       const checkinParam = route.query.checkin as string;
       const checkoutParam = route.query.checkout as string;
@@ -232,8 +225,8 @@ export default defineComponent({
 
     const dateRange = computed((): string => {
       if (datePickerRange.value?.start && datePickerRange.value?.end) {
-        const start = formatLocalDate(datePickerRange.value.start);
-        const end = formatLocalDate(datePickerRange.value.end);
+        const start = props.formatDate(datePickerRange.value.start);
+        const end = props.formatDate(datePickerRange.value.end);
         return `${start} - ${end}`;
       }
       return "Odaberite datume";
@@ -248,8 +241,8 @@ export default defineComponent({
       showCalendar.value = false;
 
       if (datePickerRange.value?.start && datePickerRange.value?.end) {
-        const checkinFormatted = formatLocalDate(datePickerRange.value.start);
-        const checkoutFormatted = formatLocalDate(datePickerRange.value.end);
+        const checkinFormatted = props.formatDate(datePickerRange.value.start);
+        const checkoutFormatted = props.formatDate(datePickerRange.value.end);
 
         const query = { ...route.query };
         query.checkin = checkinFormatted;

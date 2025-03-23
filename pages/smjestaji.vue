@@ -441,6 +441,8 @@ export default defineComponent({
       fetchRegije,
     } = useRegije();
 
+    const { formatPrice, formatPriceHRK } = usePriceFormatters();
+
     const {
       completeSmjestaji,
       fetchCompleteSmjestaji,
@@ -448,8 +450,6 @@ export default defineComponent({
       isLoading,
       error,
       getThumbnailUrl,
-      formatPrice,
-      formatPriceHRK,
       getSadrzajIconUrl,
       hasAmenity,
       fetchSadrzaji,

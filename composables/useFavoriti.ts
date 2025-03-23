@@ -79,7 +79,6 @@ export const useFavoriti = () => {
       const response = await $addFavorite(user.value.id, smjestajId);
       await fetchFavorites();
 
-      // Emit a global event that favorites have changed
       emitter.emit("favorites-changed", { action: "add", smjestajId });
 
       return response;
@@ -112,7 +111,6 @@ export const useFavoriti = () => {
       await $removeFavorite(favoriteId);
       await fetchFavorites();
 
-      // Emit a global event that favorites have changed
       emitter.emit("favorites-changed", { action: "remove", favoriteId });
     } catch (err) {
       error.value = "Failed to remove favorite";

@@ -85,7 +85,6 @@ export const useAuth = () => {
     } catch (err) {
       console.error("Logout error:", err);
     } finally {
-      // Clean up local state
       Object.assign(user, {
         id: "",
         email: "",
@@ -225,7 +224,6 @@ export const useAuth = () => {
           error.value = "Registration failed";
         }
 
-        // Optional: Handle specific error codes
         if (apiError.errors?.[0]?.extensions?.code === "RECORD_NOT_UNIQUE") {
           error.value = "An account with this email already exists";
         }
@@ -238,16 +236,13 @@ export const useAuth = () => {
     }
   };
 
-  // Initialize auth state when composable is used
   const initAuth = async () => {
     if (accessToken.value || refreshTokenCookie.value) {
-      // Try to use access token first
       if (accessToken.value) {
         isAuthenticated.value = true;
         const success = await fetchCurrentUser();
 
         if (!success && refreshTokenCookie.value) {
-          // If access token failed, try to refresh
           const refreshed = await refreshAuthToken();
           if (refreshed) {
             await fetchCurrentUser();
@@ -257,9 +252,7 @@ export const useAuth = () => {
         } else if (!success) {
           isAuthenticated.value = false;
         }
-      }
-      // If only refresh token is available
-      else if (refreshTokenCookie.value) {
+      } else if (refreshTokenCookie.value) {
         const refreshed = await refreshAuthToken();
         if (refreshed) {
           isAuthenticated.value = true;
@@ -268,8 +261,6 @@ export const useAuth = () => {
       }
     }
   };
-
-  // Check authentication status when the composable is first used
   onMounted(() => {
     if (process.client) {
       initAuth();

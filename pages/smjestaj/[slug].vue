@@ -759,6 +759,8 @@ export default defineComponent({
     const { addFavorite, removeFavorite, isFavorite, favorites } =
       useFavoriti();
     const authStore = useAuthStore();
+    const { formatPrice, formatPriceHRK } = usePriceFormatters();
+    const { formatDate } = useDateFormatter();
 
     const toggleFavorite = async (id: number) => {
       try {
@@ -828,6 +830,9 @@ export default defineComponent({
       toggleFavorite,
       isFavoriteSmjestaj,
       isFavorite,
+      formatPrice,
+      formatPriceHRK,
+      formatDate,
     };
   },
 });

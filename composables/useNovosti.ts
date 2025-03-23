@@ -18,19 +18,7 @@ export const useNovosti = () => {
 
   const categoriesMap = ref<Record<number, KategorijaNovosti>>({});
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-
-    const parts = date
-      .toLocaleDateString("hr-HR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      })
-      .split(".");
-
-    return parts.filter(Boolean).join("/");
-  };
+  const { formatDate } = useDateFormatter();
 
   const ensureCategoriesLoaded = async () => {
     if (Object.keys(categoriesMap.value).length === 0) {
