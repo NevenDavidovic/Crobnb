@@ -1,11 +1,9 @@
 <template>
   <div class="max-w-1200 mx-auto px-4 py-8 mt-14">
-    <!-- Page Header -->
     <div class="mb-8">
       <h1 class="text-[40px] font-bold mb-2">Tipovi smještaja</h1>
     </div>
 
-    <!-- Loading and Error States -->
     <div v-if="isLoading" class="flex justify-center items-center py-12">
       <div
         class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"
@@ -19,16 +17,12 @@
       {{ error }}
     </div>
 
-    <!-- Content -->
     <div v-else>
-      <!-- For each accommodation type -->
       <div v-for="(tip, index) in tipovi" :key="tip.id" class="mb-16">
-        <!-- Alternating layout based on even/odd index -->
         <div
           class="flex flex-col md:flex-row items-stretch h-full mb-4 gap-6"
           :class="[index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse']"
         >
-          <!-- Description Box -->
           <div
             class="bg-primary-5 p-6 md:p-10 rounded-lg flex flex-col w-full md:w-2/5 max-h-[380px]"
           >
@@ -62,7 +56,6 @@
             </NuxtLink>
           </div>
 
-          <!-- Accommodations Box -->
           <div class="w-full md:w-3/5 flex flex-col">
             <template
               v-if="!tipSmjestaji[tip.id] || tipSmjestaji[tip.id].length === 0"
@@ -75,7 +68,6 @@
             </template>
 
             <template v-else>
-              <!-- Desktop: Normal Flex Row -->
               <div class="hidden md:flex flex-row gap-4 h-full">
                 <SmjestajDetailCard
                   v-for="smjestaj in tipSmjestaji[tip.id]"
@@ -92,7 +84,6 @@
                 />
               </div>
 
-              <!-- Mobile: Swiper -->
               <div class="md:hidden relative md:px-10 sm:px-0">
                 <button
                   @click="prevSlide"

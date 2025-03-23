@@ -350,7 +350,7 @@ export function useAccommodationDetail() {
     currentCompleteSmjestaj,
     isLoading,
     error,
-    isFavorite: isFavoriteSmjestaj, // Return computed property
+    isFavorite: isFavoriteSmjestaj,
     selectedDates,
     swiperRef,
     activeDot,
