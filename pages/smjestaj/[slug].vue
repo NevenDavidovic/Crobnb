@@ -753,9 +753,7 @@
 </template>
 
 <script lang="ts">
-import { useFavoriti } from "~/composables/useFavoriti"; // Import useFavoriti
-import { useAuthStore } from "~/stores/authStore"; // Import auth store
-import type { Favoriti } from "~/types/directus/index"; // Import Favoriti type
+import type { Favoriti } from "~/types/directus/index";
 
 export default defineComponent({
   setup() {
