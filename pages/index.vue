@@ -5,10 +5,10 @@
       :is-visible="false"
       :tipovi="tipovi"
       :tipovi-loading="tipoviLoading"
-      :tipovi-error="tipoviError || undefined"
+      :tipovi-error="tipoviError"
       :regije="regije"
       :regije-loading="regijeLoading"
-      :regije-error="regijeError || undefined"
+      :regije-error="regijeError"
       @search="onSearch"
     />
 

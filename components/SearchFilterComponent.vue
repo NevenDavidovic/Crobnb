@@ -442,8 +442,7 @@
 </template>
 
 <script lang="ts">
-import type { Regija } from "~/types/directus/index";
-import type { TipSmjestaja } from "~/types/directus/index";
+import type { Regija, TipSmjestaja } from "~/types/directus/index";
 import type { DateRange } from "~/types/pages/date-range";
 import type { SearchFilters } from "~/types/pages/search-filter";
 import type { SearchComponentProps } from "~/types/pages/search-props";
