@@ -196,7 +196,7 @@ export default defineComponent({
     const parseDate = (dateStr: string): Date => {
       if (!dateStr) return new Date();
 
-      const parts = dateStr.split(".");
+      const parts = dateStr.split("/");
       if (parts.length >= 3) {
         const day = parseInt(parts[0]);
         const month = parseInt(parts[1]) - 1;

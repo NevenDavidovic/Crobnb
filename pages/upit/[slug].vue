@@ -262,6 +262,7 @@ export default defineComponent({
 
     const user = computed(() => authStore.user);
     const { formatPriceHRK } = usePriceFormatters();
+    const { formatDate } = useDateFormatter();
     const smjestajiComposable = useSmjestaji();
     const {
       currentCompleteSmjestaj,
@@ -312,19 +313,6 @@ export default defineComponent({
         return 1;
       }
     });
-
-    const formatDate = (dateString: string): string => {
-      if (!dateString) return "";
-
-      if (dateString.includes(".")) {
-        const parts = dateString.split(".");
-        if (parts.length >= 3) {
-          return `${parts[0]}/${parts[1]}/${parts[2]}`;
-        }
-      }
-
-      return dateString;
-    };
 
     const submitForm = async (): Promise<void> => {
       try {
