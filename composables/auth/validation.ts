@@ -173,7 +173,6 @@ export const useRegistrationForm = () => {
     isFormValid.value = hasAllRequiredFields && hasNoErrors && isPhoneValid;
   };
 
-  // Update isLoading to reflect auth loading state
   watch(
     () => authLoading.value,
     (newValue) => {
@@ -181,7 +180,6 @@ export const useRegistrationForm = () => {
     }
   );
 
-  // Watch for auth errors and display them in the form
   watch(
     () => authError.value,
     (newError) => {
@@ -189,7 +187,6 @@ export const useRegistrationForm = () => {
         if (newError.includes("Email")) {
           errors.email = newError;
         } else {
-          // Show general error in email field
           errors.email = newError;
         }
       }
@@ -250,17 +247,14 @@ export const useRegistrationForm = () => {
 
       const { $toast } = useNuxtApp();
 
-      // General error handling that works with different error types
       let errorMessage =
         "Došlo je do greške prilikom registracije. Pokušajte ponovno.";
 
       if (err && typeof err === "object") {
-        // Check for common error properties
         if ("message" in err) {
           errorMessage = (err as Error).message;
         }
 
-        // Check for Directus API error structure
         const apiError = err as ApiError;
         if (apiError.errors && apiError.errors.length > 0) {
           const firstError = apiError.errors[0];

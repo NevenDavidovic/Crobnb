@@ -214,7 +214,6 @@ export default defineComponent({
 
     const tipSmjestaji = ref<Record<number, Smjestaj[]>>({});
 
-    // Helper to get swiper instance
     const getSwiperInstance = (): SwiperInstance | null => {
       if (!swiperRef.value) return null;
       return (swiperRef.value as any)?.swiper || null;

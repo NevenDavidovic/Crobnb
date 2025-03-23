@@ -609,7 +609,7 @@
       <div v-else class="carousel-wrapper relative max-w-[1284px] px-4 mx-auto">
         <button
           @click="prevSlide"
-          class="nav-arrow nav-prev"
+          class="nav-arrow nav-prev left-0"
           v-show="showDesktopControls"
           type="button"
         >
@@ -650,7 +650,7 @@
                 spaceBetween: 30,
               },
             }"
-            class="smjestaji-carousel px-4 lg:px-0"
+            class="smjestaji-carousel px-4 lg:px-0 pb-[10px]"
           >
             <swiper-slide
               v-for="smjestaj in citySmjestaji"
@@ -685,9 +685,6 @@
           </div>
         </ClientOnly>
 
-        <!-- Rest of your component HTML -->
-
-        <!-- Login Modal with Tailwind CSS -->
         <Teleport to="body">
           <div
             v-if="showLoginModal"
@@ -728,7 +725,7 @@
 
         <button
           @click="nextSlide"
-          class="nav-arrow nav-next"
+          class="nav-arrow nav-next right-0"
           v-show="showDesktopControls"
           type="button"
         >
