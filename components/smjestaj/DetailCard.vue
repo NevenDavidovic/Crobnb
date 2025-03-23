@@ -41,7 +41,6 @@
 </template>
 
 <script lang="ts">
-import { useSmjestaji } from "~/composables/useSmjestaji";
 import type { DetailItem } from "~/types/pages/detail-item";
 
 export default defineComponent({
@@ -62,7 +61,7 @@ export default defineComponent({
     },
   },
   setup() {
-    const { formatPrice, formatPriceHRK } = useSmjestaji();
+    const { formatPrice, formatPriceHRK } = usePriceFormatters();
 
     return {
       formatPrice,

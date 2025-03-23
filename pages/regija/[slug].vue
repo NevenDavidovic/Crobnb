@@ -158,9 +158,8 @@ export default defineComponent({
         );
       }
     };
-
-    const { formatPrice, formatPriceHRK, getThumbnailUrl, getSadrzajIconUrl } =
-      smjestajiComposable;
+    const { formatPrice, formatPriceHRK } = usePriceFormatters();
+    const { getThumbnailUrl, getSadrzajIconUrl } = smjestajiComposable;
 
     onMounted(async () => {
       await fetchRegije();
