@@ -22,7 +22,7 @@ export function useAccommodationDetail() {
     getThumbnailUrl,
   } = useSmjestaji();
 
-  const { addFavorite, removeFavorite, isFavorite, favorites } = useFavoriti();
+  const { isFavorite } = useFavoriti();
 
   const isFavoriteSmjestaj = computed(() =>
     currentCompleteSmjestaj.value
