@@ -1,11 +1,9 @@
 <template>
   <div class="max-w-1200 mx-auto px-4 py-8 md:mt-16">
-    <!-- Loading state -->
     <div v-if="isLoading" class="text-center py-16">
       <p class="text-xl">Učitavanje detalja smještaja...</p>
     </div>
 
-    <!-- Error state -->
     <div v-else-if="error" class="text-center py-16">
       <p class="text-xl text-red-500">{{ error }}</p>
     </div>
@@ -76,8 +74,9 @@
             </div>
 
             <div class="mb-6">
-              <label for="poruka" class="block mb-2 text-sm">Poruka</label>
+              <label for="poruka" class="block mb-2 text-sm">Poruka*</label>
               <textarea
+                required
                 id="poruka"
                 v-model="form.poruka"
                 class="w-full border border-gray-5 rounded p-2 h-24"
@@ -193,7 +192,6 @@
                   </div>
                 </div>
 
-                <!-- Gosti column -->
                 <div class="flex flex-col">
                   <div class="text-sm text-gray-100 font-bold mb-2">Gosti</div>
                   <div class="font-normal text-sm text-gray-80">
@@ -202,7 +200,6 @@
                   </div>
                 </div>
 
-                <!-- Noćenja column -->
                 <div class="flex flex-col">
                   <div class="text-sm text-gray-100 font-bold mb-2">
                     Noćenja
