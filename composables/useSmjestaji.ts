@@ -32,7 +32,7 @@ export const useSmjestaji = () => {
     $provjeriDostupnost,
 
     // Reservation methods
-    $getRezervacije,
+
     $getAvailableSmjestaji,
     $checkSmjestajAvailability,
   } = useNuxtApp();
